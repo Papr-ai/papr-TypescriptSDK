@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import PaprMemory from 'papr-memory';
+import Papr from 'papr-memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   apiKey: 'My API Key',
   bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
@@ -38,7 +38,7 @@ describe('resource memory', () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.memory.delete('memory_id', { skip_parse: true }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(PaprMemory.NotFoundError);
+    ).rejects.toThrow(Papr.NotFoundError);
   });
 
   // skipped: tests are disabled for the time being
