@@ -5,8 +5,8 @@
   "compilerOptions": {
     "rootDir": "./dist/src",
     "paths": {
-      "papr-memory/*": ["dist/src/*"],
-      "papr-memory": ["dist/src/index.ts"]
+      "papr_memory/*": ["dist/src/*"],
+      "papr_memory": ["dist/src/index.ts"]
     },
     "noEmit": false,
     "declaration": true,
