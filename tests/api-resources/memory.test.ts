@@ -65,7 +65,7 @@ describe('resource memory', () => {
       metadata: {
         conversationId: 'conv-123',
         createdAt: '2024-03-21T10:00:00Z',
-        'emoji tags': 'ðŸ“Š,ðŸ’¡,ðŸ“',
+        'emoji tags': '📊,💡,📝',
         'emotion tags': 'focused, productive',
         hierarchical_structures: 'hierarchical_structures',
         location: 'Conference Room A',
@@ -118,7 +118,7 @@ describe('resource memory', () => {
           metadata: {
             conversationId: 'conversationId',
             createdAt: '2024-03-21T10:00:00Z',
-            'emoji tags': 'ðŸ“Š,ðŸ’¡,ðŸ“',
+            'emoji tags': '📊,💡,📝',
             'emotion tags': 'focused, productive',
             hierarchical_structures: 'hierarchical_structures',
             location: 'location',
@@ -148,7 +148,7 @@ describe('resource memory', () => {
           metadata: {
             conversationId: 'conversationId',
             createdAt: '2024-03-21T11:00:00Z',
-            'emoji tags': 'âœ…,ðŸ“‹',
+            'emoji tags': '✅,📋',
             'emotion tags': 'organized',
             hierarchical_structures: 'hierarchical_structures',
             location: 'location',
