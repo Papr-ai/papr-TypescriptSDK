@@ -1,5 +1,5 @@
-import { multipartFormRequestOptions, createForm } from 'papr_memory/internal/uploads';
-import { toFile } from 'papr_memory/core/uploads';
+import { multipartFormRequestOptions, createForm } from 'papr-memory/internal/uploads';
+import { toFile } from 'papr-memory/core/uploads';
 
 describe('form data validation', () => {
   test('valid values do not error', async () => {

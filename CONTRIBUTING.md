@@ -55,12 +55,12 @@ $ cd papr-TypescriptSDK
 # With yarn
 $ yarn link
 $ cd ../my-package
-$ yarn link papr_memory
+$ yarn link papr-memory
 
 # With pnpm
 $ pnpm link --global
 $ cd ../my-package
-$ pnpm link -—global papr_memory
+$ pnpm link -—global papr-memory
 ```
 
 ## Running tests
