@@ -261,6 +261,9 @@ export interface ContextItem {
 export interface MemoryMetadata {
   conversationId?: string | null;
 
+  /**
+   * ISO datetime when the memory was created
+   */
   createdAt?: string | null;
 
   'emoji tags'?: string | null;
@@ -1129,6 +1132,12 @@ export interface MemorySearchParams {
    * search pipeline and need additional result ranking.
    */
   rank_results?: boolean;
+
+  /**
+   * Body param: Optional user ID to filter search results by a specific user. If not
+   * provided, results are not filtered by user.
+   */
+  user_id?: string | null;
 
   /**
    * Header param: Recommended to use 'gzip' for response compression

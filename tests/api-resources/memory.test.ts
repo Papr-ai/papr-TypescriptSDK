@@ -213,6 +213,7 @@ describe('resource memory', () => {
       max_memories: 1,
       max_nodes: 1,
       rank_results: true,
+      user_id: 'user123',
       'Accept-Encoding': 'Accept-Encoding',
     });
   });
