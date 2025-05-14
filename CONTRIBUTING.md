@@ -42,15 +42,15 @@ If you’d like to use the repository from source, you can either install from g
 To install via git:
 
 ```sh
-$ npm install git+ssh://git@github.com:stainless-sdks/papr-memory-typescript.git
+$ npm install git+ssh://git@github.com:Papr-ai/papr-TypescriptSDK.git
 ```
 
 Alternatively, to link a local copy of the repo:
 
 ```sh
 # Clone
-$ git clone https://www.github.com/stainless-sdks/papr-memory-typescript
-$ cd papr-memory-typescript
+$ git clone https://www.github.com/Papr-ai/papr-TypescriptSDK
+$ cd papr-TypescriptSDK
 
 # With yarn
 $ yarn link
