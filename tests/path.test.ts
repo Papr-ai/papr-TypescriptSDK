@@ -1,4 +1,4 @@
-import { createPathTagFunction, encodeURIPath } from 'papr-memory/internal/utils/path';
+import { createPathTagFunction, encodeURIPath } from '@papr/memory/internal/utils/path';
 import { inspect } from 'node:util';
 
 describe('path template tag function', () => {
