@@ -1,6 +1,6 @@
 import fs from 'fs';
-import type { ResponseLike } from 'papr_memory/internal/to-file';
-import { toFile } from 'papr_memory/core/uploads';
+import type { ResponseLike } from 'papr-memory/internal/to-file';
+import { toFile } from 'papr-memory/core/uploads';
 import { File } from 'node:buffer';
 
 class MyClass {
@@ -97,7 +97,7 @@ describe('missing File error message', () => {
   });
 
   test('is thrown', async () => {
-    const uploads = await import('papr_memory/core/uploads');
+    const uploads = await import('papr-memory/core/uploads');
     await expect(
       uploads.toFile(mockResponse({ url: 'https://example.com/my/audio.mp3' })),
     ).rejects.toMatchInlineSnapshot(

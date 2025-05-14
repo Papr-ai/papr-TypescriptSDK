@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { Papr } from 'papr_memory';
+import { Papr } from 'papr-memory';
 
 const { stringifyQuery } = Papr.prototype as any;
 
