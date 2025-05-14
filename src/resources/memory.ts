@@ -9,58 +9,6 @@ import { path } from '../internal/utils/path';
 
 export class Memory extends APIResource {
   /**
-   * Add a new memory item to the system with size validation and background
-   * processing.
-   *
-   *     **Authentication Required**:
-   *     One of the following authentication methods must be used:
-   *     - Bearer token in `Authorization` header
-   *     - API Key in `X-API-Key` header
-   *     - Session token in `X-Session-Token` header
-   *
-   *     **Required Headers**:
-   *     - Content-Type: application/json
-   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
-   *
-   *     The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
-   *
-   * @example
-   * ```ts
-   * const addMemoryResponse = await client.memory.create({
-   *   content:
-   *     'Meeting notes from the product planning session',
-   * });
-   * ```
-   */
-  create(params: MemoryCreateParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
-    const { skip_background_processing, ...body } = params;
-    return this._client.post('/v1/memory', { query: { skip_background_processing }, body, ...options });
-  }
-
-  /**
-   * Retrieve a memory item by ID.
-   *
-   *     **Authentication Required**:
-   *     One of the following authentication methods must be used:
-   *     - Bearer token in `Authorization` header
-   *     - API Key in `X-API-Key` header
-   *     - Session token in `X-Session-Token` header
-   *
-   *     **Required Headers**:
-   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
-   *
-   * @example
-   * ```ts
-   * const searchResponse = await client.memory.retrieve(
-   *   'memory_id',
-   * );
-   * ```
-   */
-  retrieve(memoryID: string, options?: RequestOptions): APIPromise<SearchResponse> {
-    return this._client.get(path`/v1/memory/${memoryID}`, options);
-  }
-
-  /**
    * Update an existing memory item by ID.
    *
    *     **Authentication Required**:
@@ -115,6 +63,35 @@ export class Memory extends APIResource {
   }
 
   /**
+   * Add a new memory item to the system with size validation and background
+   * processing.
+   *
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
+   *
+   *     **Required Headers**:
+   *     - Content-Type: application/json
+   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+   *
+   *     The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
+   *
+   * @example
+   * ```ts
+   * const addMemoryResponse = await client.memory.add({
+   *   content:
+   *     'Meeting notes from the product planning session',
+   * });
+   * ```
+   */
+  add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
+    const { skip_background_processing, ...body } = params;
+    return this._client.post('/v1/memory', { query: { skip_background_processing }, body, ...options });
+  }
+
+  /**
    * Add multiple memory items in a batch with size validation and background
    * processing.
    *
@@ -132,7 +109,7 @@ export class Memory extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.memory.createBatch({
+   * const response = await client.memory.addBatch({
    *   memories: [
    *     {
    *       content:
@@ -145,12 +122,30 @@ export class Memory extends APIResource {
    * });
    * ```
    */
-  createBatch(
-    params: MemoryCreateBatchParams,
-    options?: RequestOptions,
-  ): APIPromise<MemoryCreateBatchResponse> {
+  addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<MemoryAddBatchResponse> {
     const { skip_background_processing, ...body } = params;
     return this._client.post('/v1/memory/batch', { query: { skip_background_processing }, body, ...options });
+  }
+
+  /**
+   * Retrieve a memory item by ID.
+   *
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
+   *
+   *     **Required Headers**:
+   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+   *
+   * @example
+   * ```ts
+   * const searchResponse = await client.memory.get('memory_id');
+   * ```
+   */
+  get(memoryID: string, options?: RequestOptions): APIPromise<SearchResponse> {
+    return this._client.get(path`/v1/memory/${memoryID}`, options);
   }
 
   /**
@@ -962,7 +957,7 @@ export namespace MemoryDeleteResponse {
   }
 }
 
-export interface MemoryCreateBatchResponse {
+export interface MemoryAddBatchResponse {
   /**
    * HTTP status code for the batch operation
    */
@@ -981,7 +976,7 @@ export interface MemoryCreateBatchResponse {
   /**
    * List of errors for failed items
    */
-  errors?: Array<MemoryCreateBatchResponse.Error>;
+  errors?: Array<MemoryAddBatchResponse.Error>;
 
   /**
    * Human-readable status message
@@ -1009,7 +1004,7 @@ export interface MemoryCreateBatchResponse {
   total_successful?: number;
 }
 
-export namespace MemoryCreateBatchResponse {
+export namespace MemoryAddBatchResponse {
   export interface Error {
     error: string;
 
@@ -1021,39 +1016,6 @@ export namespace MemoryCreateBatchResponse {
 
     status?: string | null;
   }
-}
-
-export interface MemoryCreateParams {
-  /**
-   * Body param: The content of the memory item you want to add to memory
-   */
-  content: string;
-
-  /**
-   * Query param: If True, skips adding background tasks for processing
-   */
-  skip_background_processing?: boolean;
-
-  /**
-   * Body param: Context can be conversation history or any relevant context for a
-   * memory item
-   */
-  context?: Array<ContextItem> | null;
-
-  /**
-   * Body param: Metadata for memory request
-   */
-  metadata?: MemoryMetadata | null;
-
-  /**
-   * Body param: Array of relationships that we can use in Graph DB (neo4J)
-   */
-  relationships_json?: Array<RelationshipItem> | null;
-
-  /**
-   * Body param: Content type of the memory item
-   */
-  type?: MemoryType;
 }
 
 export interface MemoryUpdateParams {
@@ -1090,7 +1052,40 @@ export interface MemoryDeleteParams {
   skip_parse?: boolean;
 }
 
-export interface MemoryCreateBatchParams {
+export interface MemoryAddParams {
+  /**
+   * Body param: The content of the memory item you want to add to memory
+   */
+  content: string;
+
+  /**
+   * Query param: If True, skips adding background tasks for processing
+   */
+  skip_background_processing?: boolean;
+
+  /**
+   * Body param: Context can be conversation history or any relevant context for a
+   * memory item
+   */
+  context?: Array<ContextItem> | null;
+
+  /**
+   * Body param: Metadata for memory request
+   */
+  metadata?: MemoryMetadata | null;
+
+  /**
+   * Body param: Array of relationships that we can use in Graph DB (neo4J)
+   */
+  relationships_json?: Array<RelationshipItem> | null;
+
+  /**
+   * Body param: Content type of the memory item
+   */
+  type?: MemoryType;
+}
+
+export interface MemoryAddBatchParams {
   /**
    * Body param: List of memory items to add in batch
    */
@@ -1152,11 +1147,11 @@ export declare namespace Memory {
     type SearchResponse as SearchResponse,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
-    type MemoryCreateBatchResponse as MemoryCreateBatchResponse,
-    type MemoryCreateParams as MemoryCreateParams,
+    type MemoryAddBatchResponse as MemoryAddBatchResponse,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
-    type MemoryCreateBatchParams as MemoryCreateBatchParams,
+    type MemoryAddParams as MemoryAddParams,
+    type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemorySearchParams as MemorySearchParams,
   };
 }

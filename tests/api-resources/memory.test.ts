@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   apiKey: 'My API Key',
   bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
@@ -10,10 +10,8 @@ const client = new PaprMemory({
 
 describe('resource memory', () => {
   // skipped: tests are disabled for the time being
-  test.skip('create: only required params', async () => {
-    const responsePromise = client.memory.create({
-      content: 'Meeting notes from the product planning session',
-    });
+  test.skip('update', async () => {
+    const responsePromise = client.memory.update('memory_id', {});
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -24,8 +22,40 @@ describe('resource memory', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('create: required and optional params', async () => {
-    const response = await client.memory.create({
+  test.skip('delete', async () => {
+    const responsePromise = client.memory.delete('memory_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('delete: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.memory.delete('memory_id', { skip_parse: true }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('add: only required params', async () => {
+    const responsePromise = client.memory.add({ content: 'Meeting notes from the product planning session' });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('add: required and optional params', async () => {
+    const response = await client.memory.add({
       content: 'Meeting notes from the product planning session',
       skip_background_processing: true,
       context: [
@@ -62,52 +92,8 @@ describe('resource memory', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('retrieve', async () => {
-    const responsePromise = client.memory.retrieve('memory_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // skipped: tests are disabled for the time being
-  test.skip('update', async () => {
-    const responsePromise = client.memory.update('memory_id', {});
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // skipped: tests are disabled for the time being
-  test.skip('delete', async () => {
-    const responsePromise = client.memory.delete('memory_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // skipped: tests are disabled for the time being
-  test.skip('delete: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.memory.delete('memory_id', { skip_parse: true }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(PaprMemory.NotFoundError);
-  });
-
-  // skipped: tests are disabled for the time being
-  test.skip('createBatch: only required params', async () => {
-    const responsePromise = client.memory.createBatch({
+  test.skip('addBatch: only required params', async () => {
+    const responsePromise = client.memory.addBatch({
       memories: [
         { content: 'Meeting notes from the product planning session' },
         { content: 'Follow-up tasks from the planning meeting' },
@@ -123,8 +109,8 @@ describe('resource memory', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('createBatch: required and optional params', async () => {
-    const response = await client.memory.createBatch({
+  test.skip('addBatch: required and optional params', async () => {
+    const response = await client.memory.addBatch({
       memories: [
         {
           content: 'Meeting notes from the product planning session',
@@ -190,6 +176,18 @@ describe('resource memory', () => {
       skip_background_processing: true,
       batch_size: 10,
     });
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('get', async () => {
+    const responsePromise = client.memory.get('memory_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
   });
 
   // skipped: tests are disabled for the time being

@@ -1,12 +1,12 @@
 {
-  "name": "papr-memory",
-  "version": "0.0.1-alpha.0",
-  "description": "The official TypeScript library for the Papr Memory API",
-  "author": "Papr Memory <>",
+  "name": "papr_memory",
+  "version": "0.1.0-alpha.1",
+  "description": "The official TypeScript library for the Papr API",
+  "author": "Papr <support@papr.ai>",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "type": "commonjs",
-  "repository": "github:stainless-sdks/papr-memory-typescript",
+  "repository": "github:Papr-ai/papr-TypescriptSDK",
   "license": "Apache-2.0",
   "packageManager": "yarn@1.22.22",
   "files": [
@@ -50,8 +50,8 @@
     "synckit": "0.8.8"
   },
   "imports": {
-    "papr-memory": ".",
-    "papr-memory/*": "./src/*"
+    "papr_memory": ".",
+    "papr_memory/*": "./src/*"
   },
   "exports": {
     ".": {

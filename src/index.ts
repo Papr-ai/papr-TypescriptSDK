@@ -1,12 +1,12 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export { PaprMemory as default } from './client';
+export { Papr as default } from './client';
 
 export { type Uploadable, toFile } from './core/uploads';
 export { APIPromise } from './core/api-promise';
-export { PaprMemory, type ClientOptions } from './client';
+export { Papr, type ClientOptions } from './client';
 export {
-  PaprMemoryError,
+  PaprError,
   APIError,
   APIConnectionError,
   APIConnectionTimeoutError,

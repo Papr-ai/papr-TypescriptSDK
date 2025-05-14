@@ -1,21 +1,18 @@
-# Papr Memory TypeScript API Library
+# Papr TypeScript API Library
 
-[![NPM version](https://img.shields.io/npm/v/papr-memory.svg)](https://npmjs.org/package/papr-memory) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/papr-memory)
+[![NPM version](https://img.shields.io/npm/v/papr_memory.svg)](https://npmjs.org/package/papr_memory) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/papr_memory)
 
-This library provides convenient access to the Papr Memory REST API from server-side TypeScript or JavaScript.
+This library provides convenient access to the Papr REST API from server-side TypeScript or JavaScript.
 
-The full API of this library can be found in [api.md](api.md).
+The REST API documentation can be found on [platform.papr.ai](https://platform.papr.ai). The full API of this library can be found in [api.md](api.md).
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 ## Installation
 
 ```sh
-npm install git+ssh://git@github.com:stainless-sdks/papr-memory-typescript.git
+npm install papr_memory
 ```
-
-> [!NOTE]
-> Once this package is [published to npm](https://app.stainless.com/docs/guides/publish), this will become: `npm install papr-memory`
 
 ## Usage
 
@@ -23,9 +20,9 @@ The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
 ```js
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
   bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted
 });
@@ -45,16 +42,16 @@ This library includes TypeScript definitions for all request params and response
 
 <!-- prettier-ignore -->
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
   bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted
 });
 
 async function main() {
-  const params: PaprMemory.UserCreateParams = { external_id: 'user123' };
-  const userResponse: PaprMemory.UserResponse = await client.user.create(params);
+  const params: Papr.UserCreateParams = { external_id: 'user123' };
+  const userResponse: Papr.UserResponse = await client.user.create(params);
 }
 
 main();
@@ -72,7 +69,7 @@ a subclass of `APIError` will be thrown:
 ```ts
 async function main() {
   const userResponse = await client.user.create({ external_id: 'user123' }).catch(async (err) => {
-    if (err instanceof PaprMemory.APIError) {
+    if (err instanceof Papr.APIError) {
       console.log(err.status); // 400
       console.log(err.name); // BadRequestError
       console.log(err.headers); // {server: 'nginx', ...}
@@ -109,7 +106,7 @@ You can use the `maxRetries` option to configure or disable this:
 <!-- prettier-ignore -->
 ```js
 // Configure the default for all requests:
-const client = new PaprMemory({
+const client = new Papr({
   maxRetries: 0, // default is 2
 });
 
@@ -126,7 +123,7 @@ Requests time out after 1 minute by default. You can configure this with a `time
 <!-- prettier-ignore -->
 ```ts
 // Configure the default for all requests:
-const client = new PaprMemory({
+const client = new Papr({
   timeout: 20 * 1000, // 20 seconds (default is 1 minute)
 });
 
@@ -152,7 +149,7 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 
 <!-- prettier-ignore -->
 ```ts
-const client = new PaprMemory();
+const client = new Papr();
 
 const response = await client.user.create({ external_id: 'user123' }).asResponse();
 console.log(response.headers.get('X-My-Header'));
@@ -175,13 +172,13 @@ console.log(userResponse.external_id);
 
 The log level can be configured in two ways:
 
-1. Via the `PAPR_MEMORY_LOG` environment variable
+1. Via the `PAPR_LOG` environment variable
 2. Using the `logLevel` client option (overrides the environment variable if set)
 
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   logLevel: 'debug', // Show all log messages
 });
 ```
@@ -207,13 +204,13 @@ When providing a custom logger, the `logLevel` option still controls which messa
 below the configured level will not be sent to your logger.
 
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 import pino from 'pino';
 
 const logger = pino();
 
-const client = new PaprMemory({
-  logger: logger.child({ name: 'PaprMemory' }),
+const client = new Papr({
+  logger: logger.child({ name: 'Papr' }),
   logLevel: 'debug', // Send all messages to pino, allowing it to filter
 });
 ```
@@ -277,10 +274,10 @@ globalThis.fetch = fetch;
 Or pass it to the client:
 
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 import fetch from 'my-fetch';
 
-const client = new PaprMemory({ fetch });
+const client = new Papr({ fetch });
 ```
 
 ### Fetch options
@@ -288,9 +285,9 @@ const client = new PaprMemory({ fetch });
 If you want to set custom `fetch` options without overriding the `fetch` function, you can provide a `fetchOptions` object when instantiating the client or making a request. (Request-specific options override client options.)
 
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   fetchOptions: {
     // `RequestInit` options
   },
@@ -305,11 +302,11 @@ options to requests:
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/node.svg" align="top" width="18" height="21"> **Node** <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/docs/api/ProxyAgent.md#example---proxyagent-with-fetch)]</sup>
 
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 import * as undici from 'undici';
 
 const proxyAgent = new undici.ProxyAgent('http://localhost:8888');
-const client = new PaprMemory({
+const client = new Papr({
   fetchOptions: {
     dispatcher: proxyAgent,
   },
@@ -319,9 +316,9 @@ const client = new PaprMemory({
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/bun.svg" align="top" width="18" height="21"> **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
 
 ```ts
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   fetchOptions: {
     proxy: 'http://localhost:8888',
   },
@@ -331,10 +328,10 @@ const client = new PaprMemory({
 <img src="https://raw.githubusercontent.com/stainless-api/sdk-assets/refs/heads/main/deno.svg" align="top" width="18" height="21"> **Deno** <sup>[[docs](https://docs.deno.com/api/deno/~/Deno.createHttpClient)]</sup>
 
 ```ts
-import PaprMemory from 'npm:papr-memory';
+import Papr from 'npm:papr_memory';
 
 const httpClient = Deno.createHttpClient({ proxy: { url: 'http://localhost:8888' } });
-const client = new PaprMemory({
+const client = new Papr({
   fetchOptions: {
     client: httpClient,
   },
@@ -353,7 +350,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/papr-memory-typescript/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/Papr-ai/papr-TypescriptSDK/issues) with questions, bugs, or suggestions.
 
 ## Requirements
 

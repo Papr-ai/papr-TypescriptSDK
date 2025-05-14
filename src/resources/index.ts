@@ -17,11 +17,11 @@ export {
   type SearchResponse,
   type MemoryUpdateResponse,
   type MemoryDeleteResponse,
-  type MemoryCreateBatchResponse,
-  type MemoryCreateParams,
+  type MemoryAddBatchResponse,
   type MemoryUpdateParams,
   type MemoryDeleteParams,
-  type MemoryCreateBatchParams,
+  type MemoryAddParams,
+  type MemoryAddBatchParams,
   type MemorySearchParams,
 } from './memory';
 export {

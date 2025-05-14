@@ -1,8 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import PaprMemory from 'papr-memory';
+import Papr from 'papr_memory';
 
-const client = new PaprMemory({
+const client = new Papr({
   apiKey: 'My API Key',
   bearerToken: 'My Bearer Token',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
@@ -29,6 +29,6 @@ describe('resource document', () => {
         { post_objectId: 'post_objectId', skip_background_processing: true },
         { path: '/_stainless_unknown_path' },
       ),
-    ).rejects.toThrow(PaprMemory.NotFoundError);
+    ).rejects.toThrow(Papr.NotFoundError);
   });
 });

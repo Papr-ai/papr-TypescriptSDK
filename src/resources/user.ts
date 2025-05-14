@@ -21,18 +21,6 @@ export class User extends APIResource {
   }
 
   /**
-   * Get user details by user_id (\_User.objectId) and developer association
-   *
-   * @example
-   * ```ts
-   * const userResponse = await client.user.retrieve('user_id');
-   * ```
-   */
-  retrieve(userID: string, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.get(path`/v1/user/${userID}`, options);
-  }
-
-  /**
    * Update user details by user_id (\_User.objectId) and developer association
    *
    * @example
@@ -70,6 +58,18 @@ export class User extends APIResource {
    */
   delete(userID: string, options?: RequestOptions): APIPromise<UserDeleteResponse> {
     return this._client.delete(path`/v1/user/${userID}`, options);
+  }
+
+  /**
+   * Get user details by user_id (\_User.objectId) and developer association
+   *
+   * @example
+   * ```ts
+   * const userResponse = await client.user.get('user_id');
+   * ```
+   */
+  get(userID: string, options?: RequestOptions): APIPromise<UserResponse> {
+    return this._client.get(path`/v1/user/${userID}`, options);
   }
 }
 
