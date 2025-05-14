@@ -67,7 +67,7 @@ export interface ClientOptions {
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
-   * Defaults to process.env['PAPR_MEMORY_BASE_URL'].
+   * Defaults to process.env['PAPR_BASE_URL'].
    */
   baseURL?: string | null | undefined;
 
@@ -119,7 +119,7 @@ export interface ClientOptions {
   /**
    * Set the log level.
    *
-   * Defaults to process.env['PAPR_MEMORY_LOG'] or 'warn' if it isn't set.
+   * Defaults to process.env['PAPR_LOG'] or 'warn' if it isn't set.
    */
   logLevel?: LogLevel | undefined;
 
@@ -132,9 +132,9 @@ export interface ClientOptions {
 }
 
 /**
- * API Client for interfacing with the Papr Memory API.
+ * API Client for interfacing with the Papr API.
  */
-export class PaprMemory {
+export class Papr {
   apiKey: string;
   bearerToken: string;
 
@@ -151,11 +151,11 @@ export class PaprMemory {
   private _options: ClientOptions;
 
   /**
-   * API Client for interfacing with the Papr Memory API.
+   * API Client for interfacing with the Papr API.
    *
    * @param {string | undefined} [opts.apiKey=process.env['PAPR_MEMORY_API_KEY'] ?? undefined]
    * @param {string | undefined} [opts.bearerToken=process.env['PAPR_MEMORY_BEARER_TOKEN'] ?? undefined]
-   * @param {string} [opts.baseURL=process.env['PAPR_MEMORY_BASE_URL'] ?? https://api.example.com] - Override the default base URL for the API.
+   * @param {string} [opts.baseURL=process.env['PAPR_BASE_URL'] ?? https://api.example.com] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -164,19 +164,19 @@ export class PaprMemory {
    * @param {Record<string, string | undefined>} opts.defaultQuery - Default query parameters to include with every request to the API.
    */
   constructor({
-    baseURL = readEnv('PAPR_MEMORY_BASE_URL'),
+    baseURL = readEnv('PAPR_BASE_URL'),
     apiKey = readEnv('PAPR_MEMORY_API_KEY'),
     bearerToken = readEnv('PAPR_MEMORY_BEARER_TOKEN'),
     ...opts
   }: ClientOptions = {}) {
     if (apiKey === undefined) {
-      throw new Errors.PaprMemoryError(
-        "The PAPR_MEMORY_API_KEY environment variable is missing or empty; either provide it, or instantiate the PaprMemory client with an apiKey option, like new PaprMemory({ apiKey: 'My API Key' }).",
+      throw new Errors.PaprError(
+        "The PAPR_MEMORY_API_KEY environment variable is missing or empty; either provide it, or instantiate the Papr client with an apiKey option, like new Papr({ apiKey: 'My API Key' }).",
       );
     }
     if (bearerToken === undefined) {
-      throw new Errors.PaprMemoryError(
-        "The PAPR_MEMORY_BEARER_TOKEN environment variable is missing or empty; either provide it, or instantiate the PaprMemory client with an bearerToken option, like new PaprMemory({ bearerToken: 'My Bearer Token' }).",
+      throw new Errors.PaprError(
+        "The PAPR_MEMORY_BEARER_TOKEN environment variable is missing or empty; either provide it, or instantiate the Papr client with an bearerToken option, like new Papr({ bearerToken: 'My Bearer Token' }).",
       );
     }
 
@@ -188,14 +188,14 @@ export class PaprMemory {
     };
 
     this.baseURL = options.baseURL!;
-    this.timeout = options.timeout ?? PaprMemory.DEFAULT_TIMEOUT /* 1 minute */;
+    this.timeout = options.timeout ?? Papr.DEFAULT_TIMEOUT /* 1 minute */;
     this.logger = options.logger ?? console;
     const defaultLogLevel = 'warn';
     // Set default logLevel early so that we can log a warning in parseLogLevel.
     this.logLevel = defaultLogLevel;
     this.logLevel =
       parseLogLevel(options.logLevel, 'ClientOptions.logLevel', this) ??
-      parseLogLevel(readEnv('PAPR_MEMORY_LOG'), "process.env['PAPR_MEMORY_LOG']", this) ??
+      parseLogLevel(readEnv('PAPR_LOG'), "process.env['PAPR_LOG']", this) ??
       defaultLogLevel;
     this.fetchOptions = options.fetchOptions;
     this.maxRetries = options.maxRetries ?? 2;
@@ -259,7 +259,7 @@ export class PaprMemory {
         if (value === null) {
           return `${encodeURIComponent(key)}=`;
         }
-        throw new Errors.PaprMemoryError(
+        throw new Errors.PaprError(
           `Cannot stringify type ${typeof value}; Expected string, number, boolean, or null. If you need to pass nested query parameters, you can manually encode them, e.g. { query: { 'foo[key1]': value1, 'foo[key2]': value2 } }, and please open a GitHub issue requesting better support for your use case.`,
         );
       })
@@ -724,10 +724,10 @@ export class PaprMemory {
     }
   }
 
-  static PaprMemory = this;
+  static Papr = this;
   static DEFAULT_TIMEOUT = 60000; // 1 minute
 
-  static PaprMemoryError = Errors.PaprMemoryError;
+  static PaprError = Errors.PaprError;
   static APIError = Errors.APIError;
   static APIConnectionError = Errors.APIConnectionError;
   static APIConnectionTimeoutError = Errors.APIConnectionTimeoutError;
@@ -747,10 +747,10 @@ export class PaprMemory {
   memory: API.Memory = new API.Memory(this);
   document: API.Document = new API.Document(this);
 }
-PaprMemory.User = User;
-PaprMemory.Memory = Memory;
-PaprMemory.Document = Document;
-export declare namespace PaprMemory {
+Papr.User = User;
+Papr.Memory = Memory;
+Papr.Document = Document;
+export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
 
   export {
