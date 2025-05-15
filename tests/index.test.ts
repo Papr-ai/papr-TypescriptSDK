@@ -24,7 +24,6 @@ describe('instantiate client', () => {
       baseURL: 'http://localhost:5000/',
       defaultHeaders: { 'X-My-Default-Header': '2' },
       apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
     });
 
     test('they are used in the request', () => {
@@ -88,19 +87,14 @@ describe('instantiate client', () => {
         error: jest.fn(),
       };
 
-      const client = new Papr({
-        logger: logger,
-        logLevel: 'debug',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ logger: logger, logLevel: 'debug', apiKey: 'My API Key' });
 
       await forceAPIResponseForClient(client);
       expect(debugMock).toHaveBeenCalled();
     });
 
     test('default logLevel is warn', async () => {
-      const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+      const client = new Papr({ apiKey: 'My API Key' });
       expect(client.logLevel).toBe('warn');
     });
 
@@ -113,12 +107,7 @@ describe('instantiate client', () => {
         error: jest.fn(),
       };
 
-      const client = new Papr({
-        logger: logger,
-        logLevel: 'info',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ logger: logger, logLevel: 'info', apiKey: 'My API Key' });
 
       await forceAPIResponseForClient(client);
       expect(debugMock).not.toHaveBeenCalled();
@@ -134,7 +123,7 @@ describe('instantiate client', () => {
       };
 
       process.env['PAPR_LOG'] = 'debug';
-      const client = new Papr({ logger: logger, apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+      const client = new Papr({ logger: logger, apiKey: 'My API Key' });
       expect(client.logLevel).toBe('debug');
 
       await forceAPIResponseForClient(client);
@@ -151,7 +140,7 @@ describe('instantiate client', () => {
       };
 
       process.env['PAPR_LOG'] = 'not a log level';
-      const client = new Papr({ logger: logger, apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+      const client = new Papr({ logger: logger, apiKey: 'My API Key' });
       expect(client.logLevel).toBe('warn');
       expect(warnMock).toHaveBeenCalledWith(
         'process.env[\'PAPR_LOG\'] was set to "not a log level", expected one of ["off","error","warn","info","debug"]',
@@ -168,12 +157,7 @@ describe('instantiate client', () => {
       };
 
       process.env['PAPR_LOG'] = 'debug';
-      const client = new Papr({
-        logger: logger,
-        logLevel: 'off',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ logger: logger, logLevel: 'off', apiKey: 'My API Key' });
 
       await forceAPIResponseForClient(client);
       expect(debugMock).not.toHaveBeenCalled();
@@ -189,12 +173,7 @@ describe('instantiate client', () => {
       };
 
       process.env['PAPR_LOG'] = 'not a log level';
-      const client = new Papr({
-        logger: logger,
-        logLevel: 'debug',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ logger: logger, logLevel: 'debug', apiKey: 'My API Key' });
       expect(client.logLevel).toBe('debug');
       expect(warnMock).not.toHaveBeenCalled();
     });
@@ -206,7 +185,6 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5000/',
         defaultQuery: { apiVersion: 'foo' },
         apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo');
     });
@@ -216,7 +194,6 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5000/',
         defaultQuery: { apiVersion: 'foo', hello: 'world' },
         apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
       });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/foo?apiVersion=foo&hello=world');
     });
@@ -226,7 +203,6 @@ describe('instantiate client', () => {
         baseURL: 'http://localhost:5000/',
         defaultQuery: { hello: 'world' },
         apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
       });
       expect(client.buildURL('/foo', { hello: undefined })).toEqual('http://localhost:5000/foo');
     });
@@ -236,7 +212,6 @@ describe('instantiate client', () => {
     const client = new Papr({
       baseURL: 'http://localhost:5000/',
       apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
       fetch: (url) => {
         return Promise.resolve(
           new Response(JSON.stringify({ url, custom: true }), {
@@ -252,19 +227,13 @@ describe('instantiate client', () => {
 
   test('explicit global fetch', async () => {
     // make sure the global fetch type is assignable to our Fetch type
-    const client = new Papr({
-      baseURL: 'http://localhost:5000/',
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: defaultFetch,
-    });
+    const client = new Papr({ baseURL: 'http://localhost:5000/', apiKey: 'My API Key', fetch: defaultFetch });
   });
 
   test('custom signal', async () => {
     const client = new Papr({
       baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
       apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
       fetch: (...args) => {
         return new Promise((resolve, reject) =>
           setTimeout(
@@ -294,12 +263,7 @@ describe('instantiate client', () => {
       return new Response(JSON.stringify({}), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Papr({
-      baseURL: 'http://localhost:5000/',
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-    });
+    const client = new Papr({ baseURL: 'http://localhost:5000/', apiKey: 'My API Key', fetch: testFetch });
 
     await client.patch('/foo');
     expect(capturedRequest?.method).toEqual('PATCH');
@@ -307,20 +271,12 @@ describe('instantiate client', () => {
 
   describe('baseUrl', () => {
     test('trailing slash', () => {
-      const client = new Papr({
-        baseURL: 'http://localhost:5000/custom/path/',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ baseURL: 'http://localhost:5000/custom/path/', apiKey: 'My API Key' });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
 
     test('no trailing slash', () => {
-      const client = new Papr({
-        baseURL: 'http://localhost:5000/custom/path',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ baseURL: 'http://localhost:5000/custom/path', apiKey: 'My API Key' });
       expect(client.buildURL('/foo', null)).toEqual('http://localhost:5000/custom/path/foo');
     });
 
@@ -329,50 +285,41 @@ describe('instantiate client', () => {
     });
 
     test('explicit option', () => {
-      const client = new Papr({
-        baseURL: 'https://example.com',
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ baseURL: 'https://example.com', apiKey: 'My API Key' });
       expect(client.baseURL).toEqual('https://example.com');
     });
 
     test('env variable', () => {
       process.env['PAPR_BASE_URL'] = 'https://example.com/from_env';
-      const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+      const client = new Papr({ apiKey: 'My API Key' });
       expect(client.baseURL).toEqual('https://example.com/from_env');
     });
 
     test('empty env variable', () => {
       process.env['PAPR_BASE_URL'] = ''; // empty
-      const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+      const client = new Papr({ apiKey: 'My API Key' });
       expect(client.baseURL).toEqual('https://memory.papr.ai');
     });
 
     test('blank env variable', () => {
       process.env['PAPR_BASE_URL'] = '  '; // blank
-      const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+      const client = new Papr({ apiKey: 'My API Key' });
       expect(client.baseURL).toEqual('https://memory.papr.ai');
     });
   });
 
   test('maxRetries option is correctly set', () => {
-    const client = new Papr({ maxRetries: 4, apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+    const client = new Papr({ maxRetries: 4, apiKey: 'My API Key' });
     expect(client.maxRetries).toEqual(4);
 
     // default
-    const client2 = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+    const client2 = new Papr({ apiKey: 'My API Key' });
     expect(client2.maxRetries).toEqual(2);
   });
 
   describe('withOptions', () => {
     test('creates a new client with overridden options', () => {
-      const client = new Papr({
-        baseURL: 'http://localhost:5000/',
-        maxRetries: 3,
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ baseURL: 'http://localhost:5000/', maxRetries: 3, apiKey: 'My API Key' });
 
       const newClient = client.withOptions({
         maxRetries: 5,
@@ -398,7 +345,6 @@ describe('instantiate client', () => {
         defaultHeaders: { 'X-Test-Header': 'test-value' },
         defaultQuery: { 'test-param': 'test-value' },
         apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
       });
 
       const newClient = client.withOptions({
@@ -413,12 +359,7 @@ describe('instantiate client', () => {
     });
 
     test('respects runtime property changes when creating new client', () => {
-      const client = new Papr({
-        baseURL: 'http://localhost:5000/',
-        timeout: 1000,
-        apiKey: 'My API Key',
-        bearerToken: 'My Bearer Token',
-      });
+      const client = new Papr({ baseURL: 'http://localhost:5000/', timeout: 1000, apiKey: 'My API Key' });
 
       // Modify the client properties directly after creation
       client.baseURL = 'http://localhost:6000/';
@@ -447,24 +388,20 @@ describe('instantiate client', () => {
   test('with environment variable arguments', () => {
     // set options via env var
     process.env['PAPR_MEMORY_API_KEY'] = 'My API Key';
-    process.env['PAPR_MEMORY_BEARER_TOKEN'] = 'My Bearer Token';
     const client = new Papr();
     expect(client.apiKey).toBe('My API Key');
-    expect(client.bearerToken).toBe('My Bearer Token');
   });
 
   test('with overridden environment variable arguments', () => {
     // set options via env var
     process.env['PAPR_MEMORY_API_KEY'] = 'another My API Key';
-    process.env['PAPR_MEMORY_BEARER_TOKEN'] = 'another My Bearer Token';
-    const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+    const client = new Papr({ apiKey: 'My API Key' });
     expect(client.apiKey).toBe('My API Key');
-    expect(client.bearerToken).toBe('My Bearer Token');
   });
 });
 
 describe('request building', () => {
-  const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+  const client = new Papr({ apiKey: 'My API Key' });
 
   describe('custom headers', () => {
     test('handles undefined', () => {
@@ -483,7 +420,7 @@ describe('request building', () => {
 });
 
 describe('default encoder', () => {
-  const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
+  const client = new Papr({ apiKey: 'My API Key' });
 
   class Serializable {
     toJSON() {
@@ -568,12 +505,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Papr({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      timeout: 10,
-      fetch: testFetch,
-    });
+    const client = new Papr({ apiKey: 'My API Key', timeout: 10, fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
@@ -603,12 +535,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Papr({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-    });
+    const client = new Papr({ apiKey: 'My API Key', fetch: testFetch, maxRetries: 4 });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
 
@@ -632,12 +559,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Papr({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-    });
+    const client = new Papr({ apiKey: 'My API Key', fetch: testFetch, maxRetries: 4 });
 
     expect(
       await client.request({
@@ -668,7 +590,6 @@ describe('retries', () => {
     };
     const client = new Papr({
       apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
       fetch: testFetch,
       maxRetries: 4,
       defaultHeaders: { 'X-Stainless-Retry-Count': null },
@@ -700,12 +621,7 @@ describe('retries', () => {
       capturedRequest = init;
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
-    const client = new Papr({
-      apiKey: 'My API Key',
-      bearerToken: 'My Bearer Token',
-      fetch: testFetch,
-      maxRetries: 4,
-    });
+    const client = new Papr({ apiKey: 'My API Key', fetch: testFetch, maxRetries: 4 });
 
     expect(
       await client.request({
@@ -735,7 +651,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token', fetch: testFetch });
+    const client = new Papr({ apiKey: 'My API Key', fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
@@ -765,7 +681,7 @@ describe('retries', () => {
       return new Response(JSON.stringify({ a: 1 }), { headers: { 'Content-Type': 'application/json' } });
     };
 
-    const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token', fetch: testFetch });
+    const client = new Papr({ apiKey: 'My API Key', fetch: testFetch });
 
     expect(await client.request({ path: '/foo', method: 'get' })).toEqual({ a: 1 });
     expect(count).toEqual(2);
