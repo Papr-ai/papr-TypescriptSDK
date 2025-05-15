@@ -346,13 +346,13 @@ describe('instantiate client', () => {
     test('empty env variable', () => {
       process.env['PAPR_BASE_URL'] = ''; // empty
       const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
-      expect(client.baseURL).toEqual('https://api.example.com');
+      expect(client.baseURL).toEqual('https://memory.papr.ai');
     });
 
     test('blank env variable', () => {
       process.env['PAPR_BASE_URL'] = '  '; // blank
       const client = new Papr({ apiKey: 'My API Key', bearerToken: 'My Bearer Token' });
-      expect(client.baseURL).toEqual('https://api.example.com');
+      expect(client.baseURL).toEqual('https://memory.papr.ai');
     });
   });
 

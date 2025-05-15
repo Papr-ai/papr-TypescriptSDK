@@ -155,7 +155,7 @@ export class Papr {
    *
    * @param {string | undefined} [opts.apiKey=process.env['PAPR_MEMORY_API_KEY'] ?? undefined]
    * @param {string | undefined} [opts.bearerToken=process.env['PAPR_MEMORY_BEARER_TOKEN'] ?? undefined]
-   * @param {string} [opts.baseURL=process.env['PAPR_BASE_URL'] ?? https://api.example.com] - Override the default base URL for the API.
+   * @param {string} [opts.baseURL=process.env['PAPR_BASE_URL'] ?? https://memory.papr.ai] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
    * @param {Fetch} [opts.fetch] - Specify a custom `fetch` function implementation.
@@ -184,7 +184,7 @@ export class Papr {
       apiKey,
       bearerToken,
       ...opts,
-      baseURL: baseURL || `https://api.example.com`,
+      baseURL: baseURL || `https://memory.papr.ai`,
     };
 
     this.baseURL = options.baseURL!;

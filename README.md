@@ -24,7 +24,6 @@ import Papr from '@papr/memory';
 
 const client = new Papr({
   apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
-  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted
 });
 
 async function main() {
@@ -46,7 +45,6 @@ import Papr from '@papr/memory';
 
 const client = new Papr({
   apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
-  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted
 });
 
 async function main() {
