@@ -57,7 +57,7 @@ export interface ClientOptions {
   /**
    * Defaults to process.env['PAPR_MEMORY_API_KEY'].
    */
-  apiKey?: string | null | undefined;
+  apiKey?: string | undefined;
 
   /**
    * Defaults to process.env['PAPR_MEMORY_BEARER_TOKEN'].
@@ -135,7 +135,7 @@ export interface ClientOptions {
  * API Client for interfacing with the Papr API.
  */
 export class Papr {
-  apiKey: string | null;
+  apiKey: string;
   bearerToken: string | null;
 
   baseURL: string;
@@ -153,7 +153,7 @@ export class Papr {
   /**
    * API Client for interfacing with the Papr API.
    *
-   * @param {string | null | undefined} [opts.apiKey=process.env['PAPR_MEMORY_API_KEY'] ?? null]
+   * @param {string | undefined} [opts.apiKey=process.env['PAPR_MEMORY_API_KEY'] ?? undefined]
    * @param {string | null | undefined} [opts.bearerToken=process.env['PAPR_MEMORY_BEARER_TOKEN'] ?? null]
    * @param {string} [opts.baseURL=process.env['PAPR_BASE_URL'] ?? https://memory.papr.ai] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
@@ -165,10 +165,16 @@ export class Papr {
    */
   constructor({
     baseURL = readEnv('PAPR_BASE_URL'),
-    apiKey = readEnv('PAPR_MEMORY_API_KEY') ?? null,
+    apiKey = readEnv('PAPR_MEMORY_API_KEY'),
     bearerToken = readEnv('PAPR_MEMORY_BEARER_TOKEN') ?? null,
     ...opts
   }: ClientOptions = {}) {
+    if (apiKey === undefined) {
+      throw new Errors.PaprError(
+        "The PAPR_MEMORY_API_KEY environment variable is missing or empty; either provide it, or instantiate the Papr client with an apiKey option, like new Papr({ apiKey: 'My API Key' }).",
+      );
+    }
+
     const options: ClientOptions = {
       apiKey,
       bearerToken,
@@ -220,23 +226,7 @@ export class Papr {
   }
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
-    if (this.apiKey && values.get('x-api-key')) {
-      return;
-    }
-    if (nulls.has('x-api-key')) {
-      return;
-    }
-
-    if (this.bearerToken && values.get('authorization')) {
-      return;
-    }
-    if (nulls.has('authorization')) {
-      return;
-    }
-
-    throw new Error(
-      'Could not resolve authentication method. Expected either apiKey or bearerToken to be set. Or for one of the "X-API-Key" or "Authorization" headers to be explicitly omitted',
-    );
+    return;
   }
 
   protected authHeaders(opts: FinalRequestOptions): NullableHeaders | undefined {
@@ -244,9 +234,6 @@ export class Papr {
   }
 
   protected apiKeyHeaderAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
-    if (this.apiKey == null) {
-      return undefined;
-    }
     return buildHeaders([{ 'X-API-Key': this.apiKey }]);
   }
 
