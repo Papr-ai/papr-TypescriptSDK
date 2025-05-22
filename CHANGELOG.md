@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.1 (2025-05-22)
+
+Full Changelog: [v1.5.0...v1.5.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.5.0...v1.5.1)
+
+### Chores
+
+* **docs:** grammar improvements ([702f6f5](https://github.com/Papr-ai/papr-TypescriptSDK/commit/702f6f576e7582984660e04455ddff6a6da5b668))
+
 ## 1.5.0 (2025-05-15)
 
 Full Changelog: [v1.4.0...v1.5.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.4.0...v1.5.0)
