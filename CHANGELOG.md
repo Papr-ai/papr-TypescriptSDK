@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.5.1 (2025-05-30)
+
+Full Changelog: [v1.5.0...v1.5.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.5.0...v1.5.1)
+
+### Bug Fixes
+
+* compat with more runtimes ([8288819](https://github.com/Papr-ai/papr-TypescriptSDK/commit/8288819d5781da12432567775c553c7269ab8271))
+
+
+### Chores
+
+* **docs:** grammar improvements ([702f6f5](https://github.com/Papr-ai/papr-TypescriptSDK/commit/702f6f576e7582984660e04455ddff6a6da5b668))
+* improve publish-npm script --latest tag logic ([b5e20eb](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b5e20eb11ddd24629a2c914a7579222fe910ea94))
+
 ## 1.5.0 (2025-05-15)
 
 Full Changelog: [v1.4.0...v1.5.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.4.0...v1.5.0)
