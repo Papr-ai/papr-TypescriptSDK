@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.2 (2025-05-31)
+
+Full Changelog: [v1.5.1...v1.5.2](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.5.1...v1.5.2)
+
+### Chores
+
+* **deps:** bump eslint-plugin-prettier ([c3f39e1](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c3f39e1a9cef3c355fd2ca82e15248647d6e898b))
+* **internal:** update jest config ([18d1295](https://github.com/Papr-ai/papr-TypescriptSDK/commit/18d129540f57cdda77af4ce5c86ac9e7b817b9a5))
+
 ## 1.5.1 (2025-05-30)
 
 Full Changelog: [v1.5.0...v1.5.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.5.0...v1.5.1)
