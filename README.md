@@ -26,13 +26,9 @@ const client = new Papr({
   apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
 });
 
-async function main() {
-  const userResponse = await client.user.create({ external_id: 'user123' });
+const userResponse = await client.user.create({ external_id: 'user123' });
 
-  console.log(userResponse.external_id);
-}
-
-main();
+console.log(userResponse.external_id);
 ```
 
 ### Request & Response types
@@ -47,12 +43,8 @@ const client = new Papr({
   apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
 });
 
-async function main() {
-  const params: Papr.UserCreateParams = { external_id: 'user123' };
-  const userResponse: Papr.UserResponse = await client.user.create(params);
-}
-
-main();
+const params: Papr.UserCreateParams = { external_id: 'user123' };
+const userResponse: Papr.UserResponse = await client.user.create(params);
 ```
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
@@ -65,19 +57,15 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-async function main() {
-  const userResponse = await client.user.create({ external_id: 'user123' }).catch(async (err) => {
-    if (err instanceof Papr.APIError) {
-      console.log(err.status); // 400
-      console.log(err.name); // BadRequestError
-      console.log(err.headers); // {server: 'nginx', ...}
-    } else {
-      throw err;
-    }
-  });
-}
-
-main();
+const userResponse = await client.user.create({ external_id: 'user123' }).catch(async (err) => {
+  if (err instanceof Papr.APIError) {
+    console.log(err.status); // 400
+    console.log(err.name); // BadRequestError
+    console.log(err.headers); // {server: 'nginx', ...}
+  } else {
+    throw err;
+  }
+});
 ```
 
 Error codes are as follows:
