@@ -2,7 +2,6 @@
 
 import { APIResource } from '../core/resource';
 import * as MemoryAPI from './memory';
-import * as DocumentAPI from './document';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
@@ -237,7 +236,7 @@ export interface AddMemoryResponse {
   /**
    * List of memory items if successful
    */
-  data?: Array<DocumentAPI.AddMemoryItem> | null;
+  data?: Array<AddMemoryResponse.Data> | null;
 
   /**
    * Additional error details or context
@@ -253,6 +252,21 @@ export interface AddMemoryResponse {
    * 'success' or 'error'
    */
   status?: string;
+}
+
+export namespace AddMemoryResponse {
+  /**
+   * Response model for a single memory item in add_memory response
+   */
+  export interface Data {
+    createdAt: string;
+
+    memoryId: string;
+
+    objectId: string;
+
+    memoryChunkIds?: Array<string>;
+  }
 }
 
 /**

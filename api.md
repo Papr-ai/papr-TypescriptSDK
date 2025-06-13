@@ -6,6 +6,7 @@ Types:
 - <code><a href="./src/resources/user.ts">UserType</a></code>
 - <code><a href="./src/resources/user.ts">UserListResponse</a></code>
 - <code><a href="./src/resources/user.ts">UserDeleteResponse</a></code>
+- <code><a href="./src/resources/user.ts">UserCreateBatchResponse</a></code>
 
 Methods:
 
@@ -13,6 +14,7 @@ Methods:
 - <code title="put /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">update</a>(userID, { ...params }) -> UserResponse</code>
 - <code title="get /v1/user">client.user.<a href="./src/resources/user.ts">list</a>({ ...params }) -> UserListResponse</code>
 - <code title="delete /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">delete</a>(userID) -> UserDeleteResponse</code>
+- <code title="post /v1/user/batch">client.user.<a href="./src/resources/user.ts">createBatch</a>({ ...params }) -> UserCreateBatchResponse</code>
 - <code title="get /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">get</a>(userID) -> UserResponse</code>
 
 # Memory
@@ -38,9 +40,3 @@ Methods:
 - <code title="post /v1/memory/batch">client.memory.<a href="./src/resources/memory.ts">addBatch</a>({ ...params }) -> MemoryAddBatchResponse</code>
 - <code title="get /v1/memory/{memory_id}">client.memory.<a href="./src/resources/memory.ts">get</a>(memoryID) -> SearchResponse</code>
 - <code title="post /v1/memory/search">client.memory.<a href="./src/resources/memory.ts">search</a>({ ...params }) -> SearchResponse</code>
-
-# Document
-
-Types:
-
-- <code><a href="./src/resources/document.ts">AddMemoryItem</a></code>

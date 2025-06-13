@@ -20,7 +20,6 @@ import { APIPromise } from './core/api-promise';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
-import { AddMemoryItem, Document } from './resources/document';
 import {
   AddMemory,
   AddMemoryResponse,
@@ -41,6 +40,8 @@ import {
 } from './resources/memory';
 import {
   User,
+  UserCreateBatchParams,
+  UserCreateBatchResponse,
   UserCreateParams,
   UserDeleteResponse,
   UserListParams,
@@ -743,11 +744,9 @@ export class Papr {
 
   user: API.User = new API.User(this);
   memory: API.Memory = new API.Memory(this);
-  document: API.Document = new API.Document(this);
 }
 Papr.User = User;
 Papr.Memory = Memory;
-Papr.Document = Document;
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
 
@@ -757,9 +756,11 @@ export declare namespace Papr {
     type UserType as UserType,
     type UserListResponse as UserListResponse,
     type UserDeleteResponse as UserDeleteResponse,
+    type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
     type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
+    type UserCreateBatchParams as UserCreateBatchParams,
   };
 
   export {
@@ -780,6 +781,4 @@ export declare namespace Papr {
     type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemorySearchParams as MemorySearchParams,
   };
-
-  export { Document as Document, type AddMemoryItem as AddMemoryItem };
 }
