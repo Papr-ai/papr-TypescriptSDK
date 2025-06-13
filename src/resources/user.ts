@@ -48,8 +48,8 @@ export class User extends APIResource {
   }
 
   /**
-   * Delete user association with developer and the user itself by user_id
-   * (\_User.objectId)
+   * Delete user association with developer and the user itself by , assume external
+   * user_id is provided, and resolve to internal user_id (\_User.objectId)
    *
    * @example
    * ```ts
@@ -97,7 +97,7 @@ export interface UserResponse {
 
   external_id?: string | null;
 
-  metadata?: unknown | null;
+  metadata?: Record<string, unknown> | null;
 
   updated_at?: string | null;
 
@@ -167,7 +167,7 @@ export interface UserCreateParams {
 
   email?: string | null;
 
-  metadata?: unknown | null;
+  metadata?: Record<string, unknown> | null;
 
   type?: UserType;
 }
@@ -177,7 +177,7 @@ export interface UserUpdateParams {
 
   external_id?: string | null;
 
-  metadata?: unknown | null;
+  metadata?: Record<string, unknown> | null;
 
   type?: UserType | null;
 }

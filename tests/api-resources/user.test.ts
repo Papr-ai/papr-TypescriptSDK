@@ -25,7 +25,7 @@ describe('resource user', () => {
     const response = await client.user.create({
       external_id: 'user123',
       email: 'user@example.com',
-      metadata: { name: 'John Doe', preferences: { theme: 'dark' } },
+      metadata: { name: 'bar', preferences: 'bar' },
       type: 'developerUser',
     });
   });
