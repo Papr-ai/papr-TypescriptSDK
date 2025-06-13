@@ -1,6 +1,5 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export { Document, type AddMemoryItem } from './document';
 export {
   Memory,
   type AddMemory,
@@ -25,7 +24,9 @@ export {
   type UserType,
   type UserListResponse,
   type UserDeleteResponse,
+  type UserCreateBatchResponse,
   type UserCreateParams,
   type UserUpdateParams,
   type UserListParams,
+  type UserCreateBatchParams,
 } from './user';

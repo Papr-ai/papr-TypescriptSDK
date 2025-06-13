@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as UserAPI from './user';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -58,6 +59,21 @@ export class User extends APIResource {
    */
   delete(userID: string, options?: RequestOptions): APIPromise<UserDeleteResponse> {
     return this._client.delete(path`/v1/user/${userID}`, options);
+  }
+
+  /**
+   * Create multiple users or link existing users to developer, and add each to the
+   * developer's workspace (if one exists).
+   *
+   * @example
+   * ```ts
+   * const response = await client.user.createBatch({
+   *   users: [{ external_id: 'user123' }],
+   * });
+   * ```
+   */
+  createBatch(body: UserCreateBatchParams, options?: RequestOptions): APIPromise<UserCreateBatchResponse> {
+    return this._client.post('/v1/user/batch', { body, ...options });
   }
 
   /**
@@ -162,6 +178,30 @@ export interface UserDeleteResponse {
   user_id?: string | null;
 }
 
+export interface UserCreateBatchResponse {
+  /**
+   * HTTP status code
+   */
+  code: number;
+
+  /**
+   * 'success' or 'error'
+   */
+  status: string;
+
+  data?: Array<UserResponse> | null;
+
+  details?: unknown;
+
+  error?: string | null;
+
+  page?: number | null;
+
+  page_size?: number | null;
+
+  total?: number | null;
+}
+
 export interface UserCreateParams {
   external_id: string;
 
@@ -192,14 +232,35 @@ export interface UserListParams {
   page_size?: number;
 }
 
+export interface UserCreateBatchParams {
+  users: Array<UserCreateBatchParams.User>;
+}
+
+export namespace UserCreateBatchParams {
+  /**
+   * Request model for creating a user
+   */
+  export interface User {
+    external_id: string;
+
+    email?: string | null;
+
+    metadata?: Record<string, unknown> | null;
+
+    type?: UserAPI.UserType;
+  }
+}
+
 export declare namespace User {
   export {
     type UserResponse as UserResponse,
     type UserType as UserType,
     type UserListResponse as UserListResponse,
     type UserDeleteResponse as UserDeleteResponse,
+    type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
     type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
+    type UserCreateBatchParams as UserCreateBatchParams,
   };
 }

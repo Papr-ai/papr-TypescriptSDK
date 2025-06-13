@@ -78,6 +78,32 @@ describe('resource user', () => {
   });
 
   // skipped: tests are disabled for the time being
+  test.skip('createBatch: only required params', async () => {
+    const responsePromise = client.user.createBatch({ users: [{ external_id: 'user123' }] });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('createBatch: required and optional params', async () => {
+    const response = await client.user.createBatch({
+      users: [
+        {
+          external_id: 'user123',
+          email: 'user@example.com',
+          metadata: { name: 'bar', preferences: 'bar' },
+          type: 'developerUser',
+        },
+      ],
+    });
+  });
+
+  // skipped: tests are disabled for the time being
   test.skip('get', async () => {
     const responsePromise = client.user.get('user_id');
     const rawResponse = await responsePromise.asResponse();
