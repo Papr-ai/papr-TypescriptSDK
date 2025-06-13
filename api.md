@@ -44,8 +44,3 @@ Methods:
 Types:
 
 - <code><a href="./src/resources/document.ts">AddMemoryItem</a></code>
-- <code><a href="./src/resources/document.ts">DocumentUploadResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/document">client.document.<a href="./src/resources/document.ts">upload</a>({ ...params }) -> DocumentUploadResponse</code>

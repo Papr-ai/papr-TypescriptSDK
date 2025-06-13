@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as MemoryAPI from './memory';
 import * as DocumentAPI from './document';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
@@ -83,6 +84,7 @@ export class Memory extends APIResource {
    * const addMemoryResponse = await client.memory.add({
    *   content:
    *     'Meeting notes from the product planning session',
+   *   type: 'text',
    * });
    * ```
    */
@@ -114,9 +116,11 @@ export class Memory extends APIResource {
    *     {
    *       content:
    *         'Meeting notes from the product planning session',
+   *       type: 'text',
    *     },
    *     {
    *       content: 'Follow-up tasks from the planning meeting',
+   *       type: 'text',
    *     },
    *   ],
    * });
@@ -164,11 +168,16 @@ export class Memory extends APIResource {
    *
    *     The API supports response compression for improved performance. Responses larger than 1KB will be automatically compressed when this header is present.
    *
+   *     **User Resolution Precedence:**
+   *     - If both user_id and external_user_id are provided, user_id takes precedence.
+   *     - If only external_user_id is provided, it will be resolved to the internal user.
+   *     - If neither is provided, the authenticated user is used.
+   *
    * @example
    * ```ts
    * const searchResponse = await client.memory.search({
    *   query:
-   *     'Find recurring customer complaints about API performance from the last month. Focus on issues where customers specifically mentioned timeout errors or slow response times in their conversations.',
+   *     "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
    * });
    * ```
    */
@@ -196,6 +205,11 @@ export interface AddMemory {
   content: string;
 
   /**
+   * Valid memory types
+   */
+  type: MemoryType;
+
+  /**
    * Context can be conversation history or any relevant context for a memory item
    */
   context?: Array<ContextItem> | null;
@@ -209,11 +223,6 @@ export interface AddMemory {
    * Array of relationships that we can use in Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
-
-  /**
-   * Content type of the memory item
-   */
-  type?: MemoryType;
 }
 
 /**
@@ -266,9 +275,21 @@ export interface MemoryMetadata {
    */
   createdAt?: string | null;
 
-  'emoji tags'?: string | null;
+  /**
+   * Optional object for arbitrary custom metadata fields. Only string, number,
+   * boolean, or list of strings allowed. Nested dicts are not allowed.
+   */
+  customMetadata?: Record<string, string | number | boolean | Array<string>> | null;
 
-  'emotion tags'?: string | null;
+  'emoji tags'?: Array<string> | null;
+
+  'emotion tags'?: Array<string> | null;
+
+  external_user_id?: string | null;
+
+  external_user_read_access?: Array<string> | null;
+
+  external_user_write_access?: Array<string> | null;
 
   /**
    * Hierarchical structures to enable navigation from broad topics to specific ones
@@ -277,19 +298,25 @@ export interface MemoryMetadata {
 
   location?: string | null;
 
+  pageId?: string | null;
+
   role_read_access?: Array<string> | null;
 
   role_write_access?: Array<string> | null;
 
+  sourceType?: string | null;
+
   sourceUrl?: string | null;
 
-  topics?: string | null;
+  topics?: Array<string> | null;
 
   user_id?: string | null;
 
   user_read_access?: Array<string> | null;
 
   user_write_access?: Array<string> | null;
+
+  workspace_id?: string | null;
 
   workspace_read_access?: Array<string> | null;
 
@@ -313,7 +340,7 @@ export interface RelationshipItem {
 
   relation_type: string;
 
-  metadata?: unknown;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SearchResponse {
@@ -368,13 +395,21 @@ export namespace SearchResponse {
 
       user_id: string;
 
-      context?: string | null;
+      context?: Array<MemoryAPI.ContextItem> | null;
 
       conversation_id?: string;
 
       created_at?: string | null;
 
       current_step?: string | null;
+
+      customMetadata?: Record<string, unknown> | null;
+
+      external_user_id?: string | null;
+
+      external_user_read_access?: Array<string> | null;
+
+      external_user_write_access?: Array<string> | null;
 
       file_url?: string | null;
 
@@ -384,11 +419,15 @@ export namespace SearchResponse {
 
       location?: string | null;
 
-      metadata?: string | unknown | null;
+      metadata?: string | Record<string, unknown> | null;
 
       page?: string | null;
 
       page_number?: number | null;
+
+      role_read_access?: Array<string> | null;
+
+      role_write_access?: Array<string> | null;
 
       source_document_id?: string | null;
 
@@ -410,7 +449,15 @@ export namespace SearchResponse {
 
       updated_at?: string | null;
 
+      user_read_access?: Array<string> | null;
+
+      user_write_access?: Array<string> | null;
+
       workspace_id?: string | null;
+
+      workspace_read_access?: Array<string> | null;
+
+      workspace_write_access?: Array<string> | null;
 
       [k: string]: unknown;
     }
@@ -470,6 +517,10 @@ export namespace SearchResponse {
 
         emoji_tags?: Array<string> | null;
 
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
+
         hierarchical_structures?: string | null;
 
         pageId?: string | null;
@@ -515,6 +566,10 @@ export namespace SearchResponse {
 
         createdAt?: string | null;
 
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
+
         pageId?: string | null;
 
         role_read_access?: Array<string> | null;
@@ -553,6 +608,10 @@ export namespace SearchResponse {
         conversationId?: string | null;
 
         createdAt?: string | null;
+
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
 
         pageId?: string | null;
 
@@ -594,6 +653,10 @@ export namespace SearchResponse {
         conversationId?: string | null;
 
         createdAt?: string | null;
+
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
 
         pageId?: string | null;
 
@@ -637,6 +700,15 @@ export namespace SearchResponse {
         conversationId?: string | null;
 
         createdAt?: string | null;
+
+        /**
+         * Due date for the task in ISO 8601 format
+         */
+        date?: string | null;
+
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
 
         pageId?: string | null;
 
@@ -686,6 +758,10 @@ export namespace SearchResponse {
         conversationId?: string | null;
 
         createdAt?: string | null;
+
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
 
         pageId?: string | null;
 
@@ -740,6 +816,10 @@ export namespace SearchResponse {
 
         createdAt?: string | null;
 
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
+
         pageId?: string | null;
 
         role_read_access?: Array<string> | null;
@@ -789,6 +869,10 @@ export namespace SearchResponse {
 
         createdAt?: string | null;
 
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
+
         pageId?: string | null;
 
         role_read_access?: Array<string> | null;
@@ -829,6 +913,10 @@ export namespace SearchResponse {
         conversationId?: string | null;
 
         createdAt?: string | null;
+
+        external_user_read_access?: Array<string> | null;
+
+        external_user_write_access?: Array<string> | null;
 
         pageId?: string | null;
 
@@ -912,6 +1000,11 @@ export namespace MemoryUpdateResponse {
     content?: string | null;
 
     memoryChunkIds?: Array<string> | null;
+
+    /**
+     * Metadata for memory request
+     */
+    metadata?: MemoryAPI.MemoryMetadata | null;
   }
 
   /**
@@ -1062,6 +1155,11 @@ export interface MemoryAddParams {
   content: string;
 
   /**
+   * Body param: Valid memory types
+   */
+  type: MemoryType;
+
+  /**
    * Query param: If True, skips adding background tasks for processing
    */
   skip_background_processing?: boolean;
@@ -1081,11 +1179,6 @@ export interface MemoryAddParams {
    * Body param: Array of relationships that we can use in Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
-
-  /**
-   * Body param: Content type of the memory item
-   */
-  type?: MemoryType;
 }
 
 export interface MemoryAddBatchParams {
@@ -1103,6 +1196,18 @@ export interface MemoryAddBatchParams {
    * Body param: Number of items to process in parallel
    */
   batch_size?: number | null;
+
+  /**
+   * Body param: External user ID for all memories in the batch. If provided and
+   * user_id is not, will be resolved to internal user ID.
+   */
+  external_user_id?: string | null;
+
+  /**
+   * Body param: Internal user ID for all memories in the batch. If not provided,
+   * developer's user ID will be used.
+   */
+  user_id?: string | null;
 }
 
 export interface MemorySearchParams {
@@ -1126,6 +1231,18 @@ export interface MemorySearchParams {
   max_nodes?: number;
 
   /**
+   * Body param: Optional external user ID to filter search results by a specific
+   * external user. If both user_id and external_user_id are provided, user_id takes
+   * precedence.
+   */
+  external_user_id?: string | null;
+
+  /**
+   * Body param: Metadata for memory request
+   */
+  metadata?: MemoryMetadata | null;
+
+  /**
    * Body param: Whether to enable additional ranking of search results. Default is
    * false because results are already ranked when using an LLM for search
    * (recommended approach). Only enable this if you're not using an LLM in your
@@ -1134,8 +1251,9 @@ export interface MemorySearchParams {
   rank_results?: boolean;
 
   /**
-   * Body param: Optional user ID to filter search results by a specific user. If not
-   * provided, results are not filtered by user.
+   * Body param: Optional internal user ID to filter search results by a specific
+   * user. If not provided, results are not filtered by user. If both user_id and
+   * external_user_id are provided, user_id takes precedence.
    */
   user_id?: string | null;
 
