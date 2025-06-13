@@ -20,7 +20,7 @@ import { APIPromise } from './core/api-promise';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
-import { AddMemoryItem, Document, DocumentUploadParams, DocumentUploadResponse } from './resources/document';
+import { AddMemoryItem, Document } from './resources/document';
 import {
   AddMemory,
   AddMemoryResponse,
@@ -781,10 +781,5 @@ export declare namespace Papr {
     type MemorySearchParams as MemorySearchParams,
   };
 
-  export {
-    Document as Document,
-    type AddMemoryItem as AddMemoryItem,
-    type DocumentUploadResponse as DocumentUploadResponse,
-    type DocumentUploadParams as DocumentUploadParams,
-  };
+  export { Document as Document, type AddMemoryItem as AddMemoryItem };
 }

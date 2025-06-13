@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.6.0 (2025-06-13)
+
+Full Changelog: [v1.5.1...v1.6.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.5.1...v1.6.0)
+
+### Features
+
+* **api:** update via SDK Studio ([70e09c0](https://github.com/Papr-ai/papr-TypescriptSDK/commit/70e09c09657aa91656f25aad7527325362322cba))
+
+
+### Chores
+
+* adjust eslint.config.mjs ignore pattern ([4d08dfd](https://github.com/Papr-ai/papr-TypescriptSDK/commit/4d08dfd83ed71c0b1ec0a6ff4ec5e51b4e6e6aef))
+* avoid type error in certain environments ([f51de88](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f51de88648d0aa5c953b73303bc491e664e43a42))
+* **deps:** bump eslint-plugin-prettier ([c3f39e1](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c3f39e1a9cef3c355fd2ca82e15248647d6e898b))
+* **docs:** use top-level-await in example snippets ([56ffc56](https://github.com/Papr-ai/papr-TypescriptSDK/commit/56ffc5672121296707e5a459063839430df4763e))
+* **internal:** fix readablestream types in node 20 ([aab4ff1](https://github.com/Papr-ai/papr-TypescriptSDK/commit/aab4ff12450f492e760f9780d3aa213f5957e914))
+* **internal:** update jest config ([18d1295](https://github.com/Papr-ai/papr-TypescriptSDK/commit/18d129540f57cdda77af4ce5c86ac9e7b817b9a5))
+
 ## 1.5.1 (2025-05-30)
 
 Full Changelog: [v1.5.0...v1.5.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.5.0...v1.5.1)

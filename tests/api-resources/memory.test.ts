@@ -42,7 +42,10 @@ describe('resource memory', () => {
 
   // skipped: tests are disabled for the time being
   test.skip('add: only required params', async () => {
-    const responsePromise = client.memory.add({ content: 'Meeting notes from the product planning session' });
+    const responsePromise = client.memory.add({
+      content: 'Meeting notes from the product planning session',
+      type: 'text',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -56,6 +59,7 @@ describe('resource memory', () => {
   test.skip('add: required and optional params', async () => {
     const response = await client.memory.add({
       content: 'Meeting notes from the product planning session',
+      type: 'text',
       skip_background_processing: true,
       context: [
         { content: "Let's discuss the Q2 product roadmap", role: 'user' },
@@ -64,17 +68,24 @@ describe('resource memory', () => {
       metadata: {
         conversationId: 'conv-123',
         createdAt: '2024-03-21T10:00:00Z',
-        'emoji tags': '📊,💡,📝',
-        'emotion tags': 'focused, productive',
-        hierarchical_structures: 'hierarchical_structures',
+        customMetadata: { foo: 'string' },
+        'emoji tags': ['string'],
+        'emotion tags': ['string'],
+        external_user_id: 'external_user_123',
+        external_user_read_access: ['external_user_123', 'external_user_789'],
+        external_user_write_access: ['external_user_123'],
+        hierarchical_structures: 'Business/Planning/Product',
         location: 'Conference Room A',
+        pageId: 'pageId',
         role_read_access: ['string'],
         role_write_access: ['string'],
+        sourceType: 'sourceType',
         sourceUrl: 'https://meeting-notes.example.com/123',
-        topics: 'product, planning',
+        topics: ['string'],
         user_id: 'user_id',
         user_read_access: ['string'],
         user_write_access: ['string'],
+        workspace_id: 'workspace_id',
         workspace_read_access: ['string'],
         workspace_write_access: ['string'],
       },
@@ -83,10 +94,9 @@ describe('resource memory', () => {
           related_item_id: 'previous_memory_item_id',
           related_item_type: 'TextMemoryItem',
           relation_type: 'follows',
-          metadata: { relevance: 'high' },
+          metadata: { relevance: 'bar' },
         },
       ],
-      type: 'text',
     });
   });
 
@@ -94,8 +104,8 @@ describe('resource memory', () => {
   test.skip('addBatch: only required params', async () => {
     const responsePromise = client.memory.addBatch({
       memories: [
-        { content: 'Meeting notes from the product planning session' },
-        { content: 'Follow-up tasks from the planning meeting' },
+        { content: 'Meeting notes from the product planning session', type: 'text' },
+        { content: 'Follow-up tasks from the planning meeting', type: 'text' },
       ],
     });
     const rawResponse = await responsePromise.asResponse();
@@ -113,21 +123,29 @@ describe('resource memory', () => {
       memories: [
         {
           content: 'Meeting notes from the product planning session',
+          type: 'text',
           context: [{ content: 'content', role: 'user' }],
           metadata: {
             conversationId: 'conversationId',
             createdAt: '2024-03-21T10:00:00Z',
-            'emoji tags': '📊,💡,📝',
-            'emotion tags': 'focused, productive',
+            customMetadata: { foo: 'string' },
+            'emoji tags': ['string'],
+            'emotion tags': ['string'],
+            external_user_id: 'external_user_id',
+            external_user_read_access: ['string'],
+            external_user_write_access: ['string'],
             hierarchical_structures: 'hierarchical_structures',
             location: 'location',
+            pageId: 'pageId',
             role_read_access: ['string'],
             role_write_access: ['string'],
+            sourceType: 'sourceType',
             sourceUrl: 'sourceUrl',
-            topics: 'product, planning',
+            topics: ['string'],
             user_id: 'user_id',
             user_read_access: ['string'],
             user_write_access: ['string'],
+            workspace_id: 'workspace_id',
             workspace_read_access: ['string'],
             workspace_write_access: ['string'],
           },
@@ -136,28 +154,35 @@ describe('resource memory', () => {
               related_item_id: 'TextMemoryItem',
               related_item_type: 'TextMemoryItem',
               relation_type: 'relation_type',
-              metadata: {},
+              metadata: { foo: 'bar' },
             },
           ],
-          type: 'text',
         },
         {
           content: 'Follow-up tasks from the planning meeting',
+          type: 'text',
           context: [{ content: 'content', role: 'user' }],
           metadata: {
             conversationId: 'conversationId',
             createdAt: '2024-03-21T11:00:00Z',
-            'emoji tags': '✅,📋',
-            'emotion tags': 'organized',
+            customMetadata: { foo: 'string' },
+            'emoji tags': ['string'],
+            'emotion tags': ['string'],
+            external_user_id: 'external_user_id',
+            external_user_read_access: ['string'],
+            external_user_write_access: ['string'],
             hierarchical_structures: 'hierarchical_structures',
             location: 'location',
+            pageId: 'pageId',
             role_read_access: ['string'],
             role_write_access: ['string'],
+            sourceType: 'sourceType',
             sourceUrl: 'sourceUrl',
-            topics: 'tasks, planning',
+            topics: ['string'],
             user_id: 'user_id',
             user_read_access: ['string'],
             user_write_access: ['string'],
+            workspace_id: 'workspace_id',
             workspace_read_access: ['string'],
             workspace_write_access: ['string'],
           },
@@ -166,14 +191,15 @@ describe('resource memory', () => {
               related_item_id: 'TextMemoryItem',
               related_item_type: 'TextMemoryItem',
               relation_type: 'relation_type',
-              metadata: {},
+              metadata: { foo: 'bar' },
             },
           ],
-          type: 'text',
         },
       ],
       skip_background_processing: true,
       batch_size: 10,
+      external_user_id: 'external_user_abcde',
+      user_id: 'internal_user_id_12345',
     });
   });
 
@@ -193,7 +219,7 @@ describe('resource memory', () => {
   test.skip('search: only required params', async () => {
     const responsePromise = client.memory.search({
       query:
-        'Find recurring customer complaints about API performance from the last month. Focus on issues where customers specifically mentioned timeout errors or slow response times in their conversations.',
+        "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -208,9 +234,34 @@ describe('resource memory', () => {
   test.skip('search: required and optional params', async () => {
     const response = await client.memory.search({
       query:
-        'Find recurring customer complaints about API performance from the last month. Focus on issues where customers specifically mentioned timeout errors or slow response times in their conversations.',
+        "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
       max_memories: 1,
       max_nodes: 1,
+      external_user_id: 'external_abc',
+      metadata: {
+        conversationId: 'conversationId',
+        createdAt: 'createdAt',
+        customMetadata: { priority: 'high' },
+        'emoji tags': ['string'],
+        'emotion tags': ['string'],
+        external_user_id: 'external_user_id',
+        external_user_read_access: ['string'],
+        external_user_write_access: ['string'],
+        hierarchical_structures: 'hierarchical_structures',
+        location: 'US',
+        pageId: 'pageId',
+        role_read_access: ['string'],
+        role_write_access: ['string'],
+        sourceType: 'sourceType',
+        sourceUrl: 'sourceUrl',
+        topics: ['string'],
+        user_id: 'user_id',
+        user_read_access: ['string'],
+        user_write_access: ['string'],
+        workspace_id: 'workspace_id',
+        workspace_read_access: ['string'],
+        workspace_write_access: ['string'],
+      },
       rank_results: true,
       user_id: 'user123',
       'Accept-Encoding': 'Accept-Encoding',
