@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.2 (2025-06-14)
+
+Full Changelog: [v1.7.1...v1.7.2](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.7.1...v1.7.2)
+
+### Chores
+
+* **internal:** add pure annotations, make base APIResource abstract ([a6af2b7](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a6af2b7bc6ce1412b084289c60bc298bec54856e))
+
 ## 1.7.1 (2025-06-14)
 
 Full Changelog: [v1.7.0...v1.7.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.7.0...v1.7.1)
