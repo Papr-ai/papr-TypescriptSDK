@@ -2,7 +2,7 @@
 
 import type { Papr } from '../client';
 
-export class APIResource {
+export abstract class APIResource {
   protected _client: Papr;
 
   constructor(client: Papr) {
