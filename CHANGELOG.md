@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.1 (2025-06-14)
+
+Full Changelog: [v1.7.0...v1.7.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.7.0...v1.7.1)
+
+### Bug Fixes
+
+* publish script — handle NPM errors correctly ([d658fd1](https://github.com/Papr-ai/papr-TypescriptSDK/commit/d658fd10a53cef94d068363681ccbb8b42db8804))
+
 ## 1.7.0 (2025-06-13)
 
 Full Changelog: [v1.6.0...v1.7.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.6.0...v1.7.0)
