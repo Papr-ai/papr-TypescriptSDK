@@ -39,6 +39,7 @@ import {
   UserCreateBatchParams,
   UserCreateBatchResponse,
   UserCreateParams,
+  UserDeleteParams,
   UserDeleteResponse,
   UserListParams,
   UserListResponse,
@@ -777,6 +778,7 @@ export declare namespace Papr {
     type UserCreateParams as UserCreateParams,
     type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
+    type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
   };
 

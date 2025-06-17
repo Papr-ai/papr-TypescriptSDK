@@ -57,8 +57,13 @@ export class User extends APIResource {
    * const user = await client.user.delete('user_id');
    * ```
    */
-  delete(userID: string, options?: RequestOptions): APIPromise<UserDeleteResponse> {
-    return this._client.delete(path`/v1/user/${userID}`, options);
+  delete(
+    userID: string,
+    params: UserDeleteParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<UserDeleteResponse> {
+    const { is_external } = params ?? {};
+    return this._client.delete(path`/v1/user/${userID}`, { query: { is_external }, ...options });
   }
 
   /**
@@ -113,7 +118,7 @@ export interface UserResponse {
 
   external_id?: string | null;
 
-  metadata?: Record<string, unknown> | null;
+  metadata?: unknown | null;
 
   updated_at?: string | null;
 
@@ -207,7 +212,7 @@ export interface UserCreateParams {
 
   email?: string | null;
 
-  metadata?: Record<string, unknown> | null;
+  metadata?: unknown | null;
 
   type?: UserType;
 }
@@ -217,7 +222,7 @@ export interface UserUpdateParams {
 
   external_id?: string | null;
 
-  metadata?: Record<string, unknown> | null;
+  metadata?: unknown | null;
 
   type?: UserType | null;
 }
@@ -230,6 +235,13 @@ export interface UserListParams {
   page?: number;
 
   page_size?: number;
+}
+
+export interface UserDeleteParams {
+  /**
+   * Is this an external user ID?
+   */
+  is_external?: boolean;
 }
 
 export interface UserCreateBatchParams {
@@ -245,7 +257,7 @@ export namespace UserCreateBatchParams {
 
     email?: string | null;
 
-    metadata?: Record<string, unknown> | null;
+    metadata?: unknown | null;
 
     type?: UserAPI.UserType;
   }
@@ -261,6 +273,7 @@ export declare namespace User {
     type UserCreateParams as UserCreateParams,
     type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
+    type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
   };
 }
