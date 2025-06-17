@@ -354,7 +354,7 @@ export interface RelationshipItem {
 
   relation_type: string;
 
-  metadata?: Record<string, unknown>;
+  metadata?: unknown;
 }
 
 export interface SearchResponse {
@@ -417,7 +417,7 @@ export namespace SearchResponse {
 
       current_step?: string | null;
 
-      customMetadata?: Record<string, unknown> | null;
+      customMetadata?: unknown | null;
 
       external_user_id?: string | null;
 
@@ -433,7 +433,7 @@ export namespace SearchResponse {
 
       location?: string | null;
 
-      metadata?: string | Record<string, unknown> | null;
+      metadata?: string | unknown | null;
 
       page?: string | null;
 
@@ -725,6 +725,8 @@ export namespace SearchResponse {
         external_user_write_access?: Array<string> | null;
 
         pageId?: string | null;
+
+        priority?: 'low' | 'medium' | 'high' | 'urgent' | null;
 
         role_read_access?: Array<string> | null;
 
@@ -1243,6 +1245,12 @@ export interface MemorySearchParams {
    * Query param: Maximum number of neo nodes to return
    */
   max_nodes?: number;
+
+  /**
+   * Body param: Whether to enable agentic graph search. Default is false (graph
+   * search is skipped). Set to true to use agentic graph search.
+   */
+  enable_agentic_graph?: boolean;
 
   /**
    * Body param: Optional external user ID to filter search results by a specific
