@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.8.0 (2025-06-17)
+
+Full Changelog: [v1.7.1...v1.8.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.7.1...v1.8.0)
+
+### Features
+
+* **api:** update via SDK Studio ([385554a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/385554aea149e380bbf37ca90a09193af4c9eb1a))
+* **client:** add support for endpoint-specific base URLs ([37a8c21](https://github.com/Papr-ai/papr-TypescriptSDK/commit/37a8c21194773b2893d39c263ea16518fdf2c3c5))
+
+
+### Chores
+
+* **ci:** enable for pull requests ([349b79a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/349b79a6199b09b2112dced09c392c55ec56b1c8))
+* **client:** refactor imports ([f363e3d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f363e3dab197801ade1d5305da455be4037c2187))
+* **internal:** add pure annotations, make base APIResource abstract ([a6af2b7](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a6af2b7bc6ce1412b084289c60bc298bec54856e))
+
 ## 1.7.1 (2025-06-14)
 
 Full Changelog: [v1.7.0...v1.7.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.7.0...v1.7.1)
