@@ -25,7 +25,7 @@ describe('resource user', () => {
     const response = await client.user.create({
       external_id: 'user123',
       email: 'user@example.com',
-      metadata: { name: 'bar', preferences: 'bar' },
+      metadata: { name: 'John Doe', preferences: { theme: 'dark' } },
       type: 'developerUser',
     });
   });
@@ -78,6 +78,14 @@ describe('resource user', () => {
   });
 
   // skipped: tests are disabled for the time being
+  test.skip('delete: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.user.delete('user_id', { is_external: true }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // skipped: tests are disabled for the time being
   test.skip('createBatch: only required params', async () => {
     const responsePromise = client.user.createBatch({ users: [{ external_id: 'user123' }] });
     const rawResponse = await responsePromise.asResponse();
@@ -96,7 +104,7 @@ describe('resource user', () => {
         {
           external_id: 'user123',
           email: 'user@example.com',
-          metadata: { name: 'bar', preferences: 'bar' },
+          metadata: { name: 'John Doe', preferences: { theme: 'dark' } },
           type: 'developerUser',
         },
       ],
