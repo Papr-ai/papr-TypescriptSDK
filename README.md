@@ -1,6 +1,6 @@
 # Papr TypeScript API Library
 
-[![NPM version](https://img.shields.io/npm/v/@papr/memory.svg)](https://npmjs.org/package/@papr/memory) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/@papr/memory)
+[![NPM version](<https://img.shields.io/npm/v/@papr/memory.svg?label=npm%20(stable)>)](https://npmjs.org/package/@papr/memory) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/@papr/memory)
 
 This library provides convenient access to the Papr REST API from server-side TypeScript or JavaScript.
 
