@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.8.1 (2025-06-19)
+
+Full Changelog: [v1.8.0...v1.8.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.0...v1.8.1)
+
+### Chores
+
+* **readme:** update badges ([6c070ec](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6c070ec5cdc4727a13a6565c64c51143b9acf5f4))
+* **readme:** use better example snippet for undocumented params ([477b777](https://github.com/Papr-ai/papr-TypescriptSDK/commit/477b777b5be8f6f846e9d138e5e3decb9d1ae2f5))
+
 ## 1.8.0 (2025-06-17)
 
 Full Changelog: [v1.7.1...v1.8.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.7.1...v1.8.0)
