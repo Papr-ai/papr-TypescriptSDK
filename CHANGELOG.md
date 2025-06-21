@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.2 (2025-06-21)
+
+Full Changelog: [v1.8.1...v1.8.2](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.1...v1.8.2)
+
+### Bug Fixes
+
+* **client:** explicitly copy fetch in withOptions ([2475e1f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/2475e1f4cf329b12b2fdfcaea1377f8ff287e00a))
+
 ## 1.8.1 (2025-06-19)
 
 Full Changelog: [v1.8.0...v1.8.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.0...v1.8.1)
