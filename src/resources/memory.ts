@@ -293,7 +293,7 @@ export interface MemoryMetadata {
    * Optional object for arbitrary custom metadata fields. Only string, number,
    * boolean, or list of strings allowed. Nested dicts are not allowed.
    */
-  customMetadata?: Record<string, string | number | boolean | Array<string>> | null;
+  customMetadata?: { [key: string]: string | number | boolean | Array<string> } | null;
 
   'emoji tags'?: Array<string> | null;
 
@@ -401,7 +401,7 @@ export namespace SearchResponse {
     export interface Memory {
       id: string;
 
-      acl: Record<string, Record<string, boolean>>;
+      acl: { [key: string]: { [key: string]: boolean } };
 
       content: string;
 
