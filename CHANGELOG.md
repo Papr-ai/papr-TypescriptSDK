@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.8.3 (2025-06-27)
+
+Full Changelog: [v1.8.2...v1.8.3](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.2...v1.8.3)
+
+### Bug Fixes
+
+* **ci:** release-doctor — report correct token name ([279b4c4](https://github.com/Papr-ai/papr-TypescriptSDK/commit/279b4c49ac3c00b706f4bf4a72df2c70bbcfd307))
+* **client:** get fetchOptions type more reliably ([7f2590d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7f2590d2444536be6b34a88516223f9120ce5c92))
+
+
+### Refactors
+
+* **types:** replace Record with mapped types ([fc28afe](https://github.com/Papr-ai/papr-TypescriptSDK/commit/fc28afea4e4dba19dfcadb151bc9364ca16e207c))
+
 ## 1.8.2 (2025-06-21)
 
 Full Changelog: [v1.8.1...v1.8.2](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.1...v1.8.2)
