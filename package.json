@@ -1,6 +1,6 @@
 {
   "name": "@papr/memory",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "The official TypeScript library for the Papr API",
   "author": "Papr <support@papr.ai>",
   "types": "dist/index.d.ts",
