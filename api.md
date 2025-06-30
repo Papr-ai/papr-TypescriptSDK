@@ -15,7 +15,7 @@ Methods:
 - <code title="get /v1/user">client.user.<a href="./src/resources/user.ts">list</a>({ ...params }) -> UserListResponse</code>
 - <code title="delete /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">delete</a>(userID, { ...params }) -> UserDeleteResponse</code>
 - <code title="post /v1/user/batch">client.user.<a href="./src/resources/user.ts">createBatch</a>({ ...params }) -> UserCreateBatchResponse</code>
-- <code title="get /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">get</a>(userID) -> UserResponse</code>
+- <code title="get /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">get</a>(userID, { ...params }) -> UserResponse</code>
 
 # Memory
 

@@ -30,4 +30,5 @@ export {
   type UserListParams,
   type UserDeleteParams,
   type UserCreateBatchParams,
+  type UserGetParams,
 } from './user';

@@ -41,6 +41,7 @@ import {
   UserCreateParams,
   UserDeleteParams,
   UserDeleteResponse,
+  UserGetParams,
   UserListParams,
   UserListResponse,
   UserResponse,
@@ -249,7 +250,7 @@ export class Papr {
   }
 
   protected apiKeyHeaderAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
-    return buildHeaders([{ 'X-API-Key': this.apiKey }]);
+    return buildHeaders([{ 'X-Session-Token': this.apiKey }]);
   }
 
   protected bearerAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
@@ -781,6 +782,7 @@ export declare namespace Papr {
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
+    type UserGetParams as UserGetParams,
   };
 
   export {
