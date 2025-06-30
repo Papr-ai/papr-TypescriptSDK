@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.9.0 (2025-06-30)
+
+Full Changelog: [v1.8.3...v1.9.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.3...v1.9.0)
+
+### Features
+
+* **api:** update via SDK Studio ([52836f2](https://github.com/Papr-ai/papr-TypescriptSDK/commit/52836f28e321ac6db62e91c4e865563a318defea))
+
+
+### Chores
+
+* **ci:** only run for pushes and fork pull requests ([acbf2c7](https://github.com/Papr-ai/papr-TypescriptSDK/commit/acbf2c73ade9b62d7959f652edfcf1136ada4060))
+
 ## 1.8.3 (2025-06-27)
 
 Full Changelog: [v1.8.2...v1.8.3](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.2...v1.8.3)
