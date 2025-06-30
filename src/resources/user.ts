@@ -3,6 +3,7 @@
 import { APIResource } from '../core/resource';
 import * as UserAPI from './user';
 import { APIPromise } from '../core/api-promise';
+import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
 
@@ -14,11 +15,17 @@ export class User extends APIResource {
    * ```ts
    * const userResponse = await client.user.create({
    *   external_id: 'user123',
+   *   'X-API-Key': 'X-API-Key',
    * });
    * ```
    */
-  create(body: UserCreateParams, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.post('/v1/user', { body, ...options });
+  create(params: UserCreateParams, options?: RequestOptions): APIPromise<UserResponse> {
+    const { 'X-API-Key': xAPIKey, ...body } = params;
+    return this._client.post('/v1/user', {
+      body,
+      ...options,
+      headers: buildHeaders([{ 'X-API-Key': xAPIKey }, options?.headers]),
+    });
   }
 
   /**
@@ -26,11 +33,18 @@ export class User extends APIResource {
    *
    * @example
    * ```ts
-   * const userResponse = await client.user.update('user_id');
+   * const userResponse = await client.user.update('user_id', {
+   *   'X-API-Key': 'X-API-Key',
+   * });
    * ```
    */
-  update(userID: string, body: UserUpdateParams, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.put(path`/v1/user/${userID}`, { body, ...options });
+  update(userID: string, params: UserUpdateParams, options?: RequestOptions): APIPromise<UserResponse> {
+    const { 'X-API-Key': xAPIKey, ...body } = params;
+    return this._client.put(path`/v1/user/${userID}`, {
+      body,
+      ...options,
+      headers: buildHeaders([{ 'X-API-Key': xAPIKey }, options?.headers]),
+    });
   }
 
   /**
@@ -38,14 +52,18 @@ export class User extends APIResource {
    *
    * @example
    * ```ts
-   * const users = await client.user.list();
+   * const users = await client.user.list({
+   *   'X-API-Key': 'X-API-Key',
+   * });
    * ```
    */
-  list(
-    query: UserListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<UserListResponse> {
-    return this._client.get('/v1/user', { query, ...options });
+  list(params: UserListParams, options?: RequestOptions): APIPromise<UserListResponse> {
+    const { 'X-API-Key': xAPIKey, ...query } = params;
+    return this._client.get('/v1/user', {
+      query,
+      ...options,
+      headers: buildHeaders([{ 'X-API-Key': xAPIKey }, options?.headers]),
+    });
   }
 
   /**
@@ -54,16 +72,18 @@ export class User extends APIResource {
    *
    * @example
    * ```ts
-   * const user = await client.user.delete('user_id');
+   * const user = await client.user.delete('user_id', {
+   *   'X-API-Key': 'X-API-Key',
+   * });
    * ```
    */
-  delete(
-    userID: string,
-    params: UserDeleteParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<UserDeleteResponse> {
-    const { is_external } = params ?? {};
-    return this._client.delete(path`/v1/user/${userID}`, { query: { is_external }, ...options });
+  delete(userID: string, params: UserDeleteParams, options?: RequestOptions): APIPromise<UserDeleteResponse> {
+    const { 'X-API-Key': xAPIKey, is_external } = params;
+    return this._client.delete(path`/v1/user/${userID}`, {
+      query: { is_external },
+      ...options,
+      headers: buildHeaders([{ 'X-API-Key': xAPIKey }, options?.headers]),
+    });
   }
 
   /**
@@ -74,11 +94,17 @@ export class User extends APIResource {
    * ```ts
    * const response = await client.user.createBatch({
    *   users: [{ external_id: 'user123' }],
+   *   'X-API-Key': 'X-API-Key',
    * });
    * ```
    */
-  createBatch(body: UserCreateBatchParams, options?: RequestOptions): APIPromise<UserCreateBatchResponse> {
-    return this._client.post('/v1/user/batch', { body, ...options });
+  createBatch(params: UserCreateBatchParams, options?: RequestOptions): APIPromise<UserCreateBatchResponse> {
+    const { 'X-API-Key': xAPIKey, ...body } = params;
+    return this._client.post('/v1/user/batch', {
+      body,
+      ...options,
+      headers: buildHeaders([{ 'X-API-Key': xAPIKey }, options?.headers]),
+    });
   }
 
   /**
@@ -86,11 +112,17 @@ export class User extends APIResource {
    *
    * @example
    * ```ts
-   * const userResponse = await client.user.get('user_id');
+   * const userResponse = await client.user.get('user_id', {
+   *   'X-API-Key': 'X-API-Key',
+   * });
    * ```
    */
-  get(userID: string, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.get(path`/v1/user/${userID}`, options);
+  get(userID: string, params: UserGetParams, options?: RequestOptions): APIPromise<UserResponse> {
+    const { 'X-API-Key': xAPIKey } = params;
+    return this._client.get(path`/v1/user/${userID}`, {
+      ...options,
+      headers: buildHeaders([{ 'X-API-Key': xAPIKey }, options?.headers]),
+    });
   }
 }
 
@@ -208,44 +240,108 @@ export interface UserCreateBatchResponse {
 }
 
 export interface UserCreateParams {
+  /**
+   * Body param:
+   */
   external_id: string;
 
+  /**
+   * Header param:
+   */
+  'X-API-Key': string;
+
+  /**
+   * Body param:
+   */
   email?: string | null;
 
+  /**
+   * Body param:
+   */
   metadata?: unknown | null;
 
+  /**
+   * Body param:
+   */
   type?: UserType;
 }
 
 export interface UserUpdateParams {
+  /**
+   * Header param:
+   */
+  'X-API-Key': string;
+
+  /**
+   * Body param:
+   */
   email?: string | null;
 
+  /**
+   * Body param:
+   */
   external_id?: string | null;
 
+  /**
+   * Body param:
+   */
   metadata?: unknown | null;
 
+  /**
+   * Body param:
+   */
   type?: UserType | null;
 }
 
 export interface UserListParams {
+  /**
+   * Header param:
+   */
+  'X-API-Key': string;
+
+  /**
+   * Query param:
+   */
   email?: string | null;
 
+  /**
+   * Query param:
+   */
   external_id?: string | null;
 
+  /**
+   * Query param:
+   */
   page?: number;
 
+  /**
+   * Query param:
+   */
   page_size?: number;
 }
 
 export interface UserDeleteParams {
   /**
-   * Is this an external user ID?
+   * Header param:
+   */
+  'X-API-Key': string;
+
+  /**
+   * Query param: Is this an external user ID?
    */
   is_external?: boolean;
 }
 
 export interface UserCreateBatchParams {
+  /**
+   * Body param:
+   */
   users: Array<UserCreateBatchParams.User>;
+
+  /**
+   * Header param:
+   */
+  'X-API-Key': string;
 }
 
 export namespace UserCreateBatchParams {
@@ -263,6 +359,10 @@ export namespace UserCreateBatchParams {
   }
 }
 
+export interface UserGetParams {
+  'X-API-Key': string;
+}
+
 export declare namespace User {
   export {
     type UserResponse as UserResponse,
@@ -275,5 +375,6 @@ export declare namespace User {
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
+    type UserGetParams as UserGetParams,
   };
 }

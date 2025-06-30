@@ -282,6 +282,8 @@ export interface ContextItem {
  * Metadata for memory request
  */
 export interface MemoryMetadata {
+  assistantMessage?: string | null;
+
   conversationId?: string | null;
 
   /**
@@ -305,6 +307,8 @@ export interface MemoryMetadata {
 
   external_user_write_access?: Array<string> | null;
 
+  goalClassificationScores?: Array<number> | null;
+
   /**
    * Hierarchical structures to enable navigation from broad topics to specific ones
    */
@@ -314,21 +318,37 @@ export interface MemoryMetadata {
 
   pageId?: string | null;
 
+  post?: string | null;
+
+  relatedGoals?: Array<string> | null;
+
+  relatedSteps?: Array<string> | null;
+
+  relatedUseCases?: Array<string> | null;
+
   role_read_access?: Array<string> | null;
 
   role_write_access?: Array<string> | null;
+
+  sessionId?: string | null;
 
   sourceType?: string | null;
 
   sourceUrl?: string | null;
 
+  stepClassificationScores?: Array<number> | null;
+
   topics?: Array<string> | null;
+
+  useCaseClassificationScores?: Array<number> | null;
 
   user_id?: string | null;
 
   user_read_access?: Array<string> | null;
 
   user_write_access?: Array<string> | null;
+
+  userMessage?: string | null;
 
   workspace_id?: string | null;
 
@@ -348,13 +368,21 @@ export type MemoryType = 'text' | 'code_snippet' | 'document';
  * Relationship item for memory request
  */
 export interface RelationshipItem {
-  related_item_id: 'TextMemoryItem' | 'previous_memory_item_id';
-
-  related_item_type: 'TextMemoryItem';
-
   relation_type: string;
 
   metadata?: unknown;
+
+  related_item_id?: string | null;
+
+  /**
+   * Legacy field - not used in processing
+   */
+  related_item_type?: string | null;
+
+  /**
+   * Enum for relationship types
+   */
+  relationship_type?: 'previous_memory_item_id' | 'all_previous_memory_items' | null;
 }
 
 export interface SearchResponse {

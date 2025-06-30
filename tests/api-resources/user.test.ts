@@ -10,7 +10,7 @@ const client = new Papr({
 describe('resource user', () => {
   // skipped: tests are disabled for the time being
   test.skip('create: only required params', async () => {
-    const responsePromise = client.user.create({ external_id: 'user123' });
+    const responsePromise = client.user.create({ external_id: 'user123', 'X-API-Key': 'X-API-Key' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -24,6 +24,7 @@ describe('resource user', () => {
   test.skip('create: required and optional params', async () => {
     const response = await client.user.create({
       external_id: 'user123',
+      'X-API-Key': 'X-API-Key',
       email: 'user@example.com',
       metadata: { name: 'John Doe', preferences: { theme: 'dark' } },
       type: 'developerUser',
@@ -31,8 +32,8 @@ describe('resource user', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('update', async () => {
-    const responsePromise = client.user.update('user_id', {});
+  test.skip('update: only required params', async () => {
+    const responsePromise = client.user.update('user_id', { 'X-API-Key': 'X-API-Key' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -43,8 +44,19 @@ describe('resource user', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('list', async () => {
-    const responsePromise = client.user.list();
+  test.skip('update: required and optional params', async () => {
+    const response = await client.user.update('user_id', {
+      'X-API-Key': 'X-API-Key',
+      email: 'updated.user@example.com',
+      external_id: 'updated_user_123',
+      metadata: { name: 'Updated User', preferences: { theme: 'light' } },
+      type: 'developerUser',
+    });
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('list: only required params', async () => {
+    const responsePromise = client.user.list({ 'X-API-Key': 'X-API-Key' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -55,19 +67,19 @@ describe('resource user', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('list: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.user.list(
-        { email: 'email', external_id: 'external_id', page: 1, page_size: 1 },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(Papr.NotFoundError);
+  test.skip('list: required and optional params', async () => {
+    const response = await client.user.list({
+      'X-API-Key': 'X-API-Key',
+      email: 'email',
+      external_id: 'external_id',
+      page: 1,
+      page_size: 1,
+    });
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('delete', async () => {
-    const responsePromise = client.user.delete('user_id');
+  test.skip('delete: only required params', async () => {
+    const responsePromise = client.user.delete('user_id', { 'X-API-Key': 'X-API-Key' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -78,16 +90,16 @@ describe('resource user', () => {
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('delete: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.user.delete('user_id', { is_external: true }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(Papr.NotFoundError);
+  test.skip('delete: required and optional params', async () => {
+    const response = await client.user.delete('user_id', { 'X-API-Key': 'X-API-Key', is_external: true });
   });
 
   // skipped: tests are disabled for the time being
   test.skip('createBatch: only required params', async () => {
-    const responsePromise = client.user.createBatch({ users: [{ external_id: 'user123' }] });
+    const responsePromise = client.user.createBatch({
+      users: [{ external_id: 'user123' }],
+      'X-API-Key': 'X-API-Key',
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -108,12 +120,13 @@ describe('resource user', () => {
           type: 'developerUser',
         },
       ],
+      'X-API-Key': 'X-API-Key',
     });
   });
 
   // skipped: tests are disabled for the time being
-  test.skip('get', async () => {
-    const responsePromise = client.user.get('user_id');
+  test.skip('get: only required params', async () => {
+    const responsePromise = client.user.get('user_id', { 'X-API-Key': 'X-API-Key' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -121,5 +134,10 @@ describe('resource user', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // skipped: tests are disabled for the time being
+  test.skip('get: required and optional params', async () => {
+    const response = await client.user.get('user_id', { 'X-API-Key': 'X-API-Key' });
   });
 });
