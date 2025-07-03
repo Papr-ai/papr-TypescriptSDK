@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.9.1 (2025-07-03)
+
+Full Changelog: [v1.9.0...v1.9.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.9.0...v1.9.1)
+
+### Chores
+
+* add docs to RequestOptions type ([969ee17](https://github.com/Papr-ai/papr-TypescriptSDK/commit/969ee177bd1860fdd3b9d25e177349a7b5b5229f))
+* **client:** improve path param validation ([0bad0e2](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0bad0e28cbb072c44ff84bf88eb2893eaf33c393))
+
 ## 1.9.0 (2025-06-30)
 
 Full Changelog: [v1.8.3...v1.9.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.8.3...v1.9.0)
