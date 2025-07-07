@@ -1,6 +1,15 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 export {
+  Feedback,
+  type BatchRequest,
+  type BatchResponse,
+  type FeedbackRequest,
+  type FeedbackResponse,
+  type FeedbackSubmitParams,
+  type FeedbackSubmitBatchParams,
+} from './feedback';
+export {
   Memory,
   type AddMemory,
   type AddMemoryResponse,
@@ -30,5 +39,4 @@ export {
   type UserListParams,
   type UserDeleteParams,
   type UserCreateBatchParams,
-  type UserGetParams,
 } from './user';
