@@ -102,7 +102,7 @@ describe('resource memory', () => {
       relationships_json: [
         {
           relation_type: 'follows',
-          metadata: { relevance: 'high' },
+          metadata: { relevance: 'bar' },
           related_item_id: 'previous_memory_item_id',
           related_item_type: 'TextMemoryItem',
           relationship_type: 'previous_memory_item_id',
@@ -173,7 +173,7 @@ describe('resource memory', () => {
           relationships_json: [
             {
               relation_type: 'relation_type',
-              metadata: {},
+              metadata: { foo: 'bar' },
               related_item_id: 'related_item_id',
               related_item_type: 'related_item_type',
               relationship_type: 'previous_memory_item_id',
@@ -221,7 +221,7 @@ describe('resource memory', () => {
           relationships_json: [
             {
               relation_type: 'relation_type',
-              metadata: {},
+              metadata: { foo: 'bar' },
               related_item_id: 'related_item_id',
               related_item_type: 'related_item_type',
               relationship_type: 'previous_memory_item_id',
@@ -268,9 +268,9 @@ describe('resource memory', () => {
     const response = await client.memory.search({
       query:
         "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
-      max_memories: 1,
-      max_nodes: 1,
-      enable_agentic_graph: false,
+      max_memories: 10,
+      max_nodes: 10,
+      enable_agentic_graph: true,
       external_user_id: 'external_abc',
       metadata: {
         assistantMessage: 'assistantMessage',
@@ -306,7 +306,7 @@ describe('resource memory', () => {
         workspace_read_access: ['string'],
         workspace_write_access: ['string'],
       },
-      rank_results: true,
+      rank_results: false,
       user_id: 'user123',
       'Accept-Encoding': 'Accept-Encoding',
     });

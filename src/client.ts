@@ -247,21 +247,6 @@ export class Papr {
     return;
   }
 
-  protected authHeaders(opts: FinalRequestOptions): NullableHeaders | undefined {
-    return buildHeaders([this.apiKeyHeaderAuth(opts), this.bearerAuth(opts)]);
-  }
-
-  protected apiKeyHeaderAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
-    return buildHeaders([{ 'X-Session-Token': this.apiKey }]);
-  }
-
-  protected bearerAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
-    if (this.bearerToken == null) {
-      return undefined;
-    }
-    return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
-  }
-
   /**
    * Basic re-implementation of `qs.stringify` for primitive types.
    */
@@ -697,7 +682,6 @@ export class Papr {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
-      this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
