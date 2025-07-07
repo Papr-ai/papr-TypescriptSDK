@@ -17,6 +17,15 @@ import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
 import {
+  BatchRequest,
+  BatchResponse,
+  Feedback,
+  FeedbackRequest,
+  FeedbackResponse,
+  FeedbackSubmitBatchParams,
+  FeedbackSubmitParams,
+} from './resources/feedback';
+import {
   AddMemory,
   AddMemoryResponse,
   ContextItem,
@@ -41,7 +50,6 @@ import {
   UserCreateParams,
   UserDeleteParams,
   UserDeleteResponse,
-  UserGetParams,
   UserListParams,
   UserListResponse,
   UserResponse,
@@ -65,7 +73,12 @@ export interface ClientOptions {
   /**
    * Defaults to process.env['PAPR_MEMORY_API_KEY'].
    */
-  apiKey?: string | undefined;
+  xAPIKey?: string | undefined;
+
+  /**
+   * Defaults to process.env['PAPR_MEMORY_Session_Token'].
+   */
+  xSessionToken?: string | null | undefined;
 
   /**
    * Defaults to process.env['PAPR_MEMORY_BEARER_TOKEN'].
@@ -145,7 +158,8 @@ export interface ClientOptions {
  * API Client for interfacing with the Papr API.
  */
 export class Papr {
-  apiKey: string;
+  xAPIKey: string;
+  xSessionToken: string | null;
   bearerToken: string | null;
 
   baseURL: string;
@@ -163,7 +177,8 @@ export class Papr {
   /**
    * API Client for interfacing with the Papr API.
    *
-   * @param {string | undefined} [opts.apiKey=process.env['PAPR_MEMORY_API_KEY'] ?? undefined]
+   * @param {string | undefined} [opts.xAPIKey=process.env['PAPR_MEMORY_API_KEY'] ?? undefined]
+   * @param {string | null | undefined} [opts.xSessionToken=process.env['PAPR_MEMORY_Session_Token'] ?? null]
    * @param {string | null | undefined} [opts.bearerToken=process.env['PAPR_MEMORY_BEARER_TOKEN'] ?? null]
    * @param {string} [opts.baseURL=process.env['PAPR_BASE_URL'] ?? https://memory.papr.ai] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
@@ -175,18 +190,20 @@ export class Papr {
    */
   constructor({
     baseURL = readEnv('PAPR_BASE_URL'),
-    apiKey = readEnv('PAPR_MEMORY_API_KEY'),
+    xAPIKey = readEnv('PAPR_MEMORY_API_KEY'),
+    xSessionToken = readEnv('PAPR_MEMORY_Session_Token') ?? null,
     bearerToken = readEnv('PAPR_MEMORY_BEARER_TOKEN') ?? null,
     ...opts
   }: ClientOptions = {}) {
-    if (apiKey === undefined) {
+    if (xAPIKey === undefined) {
       throw new Errors.PaprError(
-        "The PAPR_MEMORY_API_KEY environment variable is missing or empty; either provide it, or instantiate the Papr client with an apiKey option, like new Papr({ apiKey: 'My API Key' }).",
+        "The PAPR_MEMORY_API_KEY environment variable is missing or empty; either provide it, or instantiate the Papr client with an xAPIKey option, like new Papr({ xAPIKey: 'My X API Key' }).",
       );
     }
 
     const options: ClientOptions = {
-      apiKey,
+      xAPIKey,
+      xSessionToken,
       bearerToken,
       ...opts,
       baseURL: baseURL || `https://memory.papr.ai`,
@@ -209,7 +226,8 @@ export class Papr {
 
     this._options = options;
 
-    this.apiKey = apiKey;
+    this.xAPIKey = xAPIKey;
+    this.xSessionToken = xSessionToken;
     this.bearerToken = bearerToken;
   }
 
@@ -226,7 +244,8 @@ export class Papr {
       logLevel: this.logLevel,
       fetch: this.fetch,
       fetchOptions: this.fetchOptions,
-      apiKey: this.apiKey,
+      xAPIKey: this.xAPIKey,
+      xSessionToken: this.xSessionToken,
       bearerToken: this.bearerToken,
       ...options,
     });
@@ -245,6 +264,28 @@ export class Papr {
 
   protected validateHeaders({ values, nulls }: NullableHeaders) {
     return;
+  }
+
+  protected authHeaders(opts: FinalRequestOptions): NullableHeaders | undefined {
+    return buildHeaders([this.bearerAuth(opts), this.xSessionTokenAuth(opts), this.xAPIKeyAuth(opts)]);
+  }
+
+  protected bearerAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
+    if (this.bearerToken == null) {
+      return undefined;
+    }
+    return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
+  }
+
+  protected xSessionTokenAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
+    if (this.xSessionToken == null) {
+      return undefined;
+    }
+    return buildHeaders([{ 'X-Session-Token': this.xSessionToken }]);
+  }
+
+  protected xAPIKeyAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
+    return buildHeaders([{ 'X-API-Key': this.xAPIKey }]);
   }
 
   /**
@@ -682,6 +723,7 @@ export class Papr {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
+      this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
@@ -750,9 +792,11 @@ export class Papr {
 
   user: API.User = new API.User(this);
   memory: API.Memory = new API.Memory(this);
+  feedback: API.Feedback = new API.Feedback(this);
 }
 Papr.User = User;
 Papr.Memory = Memory;
+Papr.Feedback = Feedback;
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
 
@@ -768,7 +812,6 @@ export declare namespace Papr {
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
-    type UserGetParams as UserGetParams,
   };
 
   export {
@@ -788,5 +831,15 @@ export declare namespace Papr {
     type MemoryAddParams as MemoryAddParams,
     type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemorySearchParams as MemorySearchParams,
+  };
+
+  export {
+    Feedback as Feedback,
+    type BatchRequest as BatchRequest,
+    type BatchResponse as BatchResponse,
+    type FeedbackRequest as FeedbackRequest,
+    type FeedbackResponse as FeedbackResponse,
+    type FeedbackSubmitParams as FeedbackSubmitParams,
+    type FeedbackSubmitBatchParams as FeedbackSubmitBatchParams,
   };
 }
