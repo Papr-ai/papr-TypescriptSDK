@@ -150,7 +150,7 @@ export interface UserResponse {
 
   external_id?: string | null;
 
-  metadata?: unknown | null;
+  metadata?: { [key: string]: unknown } | null;
 
   updated_at?: string | null;
 
@@ -258,7 +258,7 @@ export interface UserCreateParams {
   /**
    * Body param:
    */
-  metadata?: unknown | null;
+  metadata?: { [key: string]: unknown } | null;
 
   /**
    * Body param:
@@ -285,7 +285,7 @@ export interface UserUpdateParams {
   /**
    * Body param:
    */
-  metadata?: unknown | null;
+  metadata?: { [key: string]: unknown } | null;
 
   /**
    * Body param:
@@ -353,7 +353,7 @@ export namespace UserCreateBatchParams {
 
     email?: string | null;
 
-    metadata?: unknown | null;
+    metadata?: { [key: string]: unknown } | null;
 
     type?: UserAPI.UserType;
   }

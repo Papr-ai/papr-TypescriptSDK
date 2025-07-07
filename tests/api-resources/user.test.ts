@@ -26,7 +26,7 @@ describe('resource user', () => {
       external_id: 'user123',
       'X-API-Key': 'X-API-Key',
       email: 'user@example.com',
-      metadata: { name: 'John Doe', preferences: { theme: 'dark' } },
+      metadata: { name: 'bar', preferences: 'bar' },
       type: 'developerUser',
     });
   });
@@ -49,7 +49,7 @@ describe('resource user', () => {
       'X-API-Key': 'X-API-Key',
       email: 'updated.user@example.com',
       external_id: 'updated_user_123',
-      metadata: { name: 'Updated User', preferences: { theme: 'light' } },
+      metadata: { name: 'bar', preferences: 'bar' },
       type: 'developerUser',
     });
   });
@@ -116,7 +116,7 @@ describe('resource user', () => {
         {
           external_id: 'user123',
           email: 'user@example.com',
-          metadata: { name: 'John Doe', preferences: { theme: 'dark' } },
+          metadata: { name: 'bar', preferences: 'bar' },
           type: 'developerUser',
         },
       ],

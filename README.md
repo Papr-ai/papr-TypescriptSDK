@@ -22,9 +22,7 @@ The full API of this library can be found in [api.md](api.md).
 ```js
 import Papr from '@papr/memory';
 
-const client = new Papr({
-  apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
-});
+const client = new Papr();
 
 const userResponse = await client.user.create({ external_id: 'user123', 'X-API-Key': 'X-API-Key' });
 
@@ -39,9 +37,7 @@ This library includes TypeScript definitions for all request params and response
 ```ts
 import Papr from '@papr/memory';
 
-const client = new Papr({
-  apiKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
-});
+const client = new Papr();
 
 const params: Papr.UserCreateParams = { external_id: 'user123', 'X-API-Key': 'X-API-Key' };
 const userResponse: Papr.UserResponse = await client.user.create(params);
@@ -95,6 +91,7 @@ You can use the `maxRetries` option to configure or disable this:
 ```js
 // Configure the default for all requests:
 const client = new Papr({
+  apiKey: 'My API Key',
   maxRetries: 0, // default is 2
 });
 
@@ -112,6 +109,7 @@ Requests time out after 1 minute by default. You can configure this with a `time
 ```ts
 // Configure the default for all requests:
 const client = new Papr({
+  apiKey: 'My API Key',
   timeout: 20 * 1000, // 20 seconds (default is 1 minute)
 });
 
