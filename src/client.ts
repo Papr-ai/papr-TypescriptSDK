@@ -235,7 +235,7 @@ export class Papr {
    * Create a new client instance re-using the same options given to the current client with optional overriding.
    */
   withOptions(options: Partial<ClientOptions>): this {
-    return new (this.constructor as any as new (props: ClientOptions) => typeof this)({
+    const client = new (this.constructor as any as new (props: ClientOptions) => typeof this)({
       ...this._options,
       baseURL: this.baseURL,
       maxRetries: this.maxRetries,
@@ -249,6 +249,8 @@ export class Papr {
       bearerToken: this.bearerToken,
       ...options,
     });
+    client.oAuth2AuthState = this.oAuth2AuthState;
+    return client;
   }
 
   /**
@@ -266,26 +268,35 @@ export class Papr {
     return;
   }
 
-  protected authHeaders(opts: FinalRequestOptions): NullableHeaders | undefined {
-    return buildHeaders([this.bearerAuth(opts), this.xSessionTokenAuth(opts), this.xAPIKeyAuth(opts)]);
+  protected async authHeaders(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    return buildHeaders([
+      await this.bearerAuth(opts),
+      await this.xSessionTokenAuth(opts),
+      await this.xAPIKeyAuth(opts),
+      await this.oAuth2Auth(opts),
+    ]);
   }
 
-  protected bearerAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
+  protected async bearerAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     if (this.bearerToken == null) {
       return undefined;
     }
     return buildHeaders([{ Authorization: `Bearer ${this.bearerToken}` }]);
   }
 
-  protected xSessionTokenAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
+  protected async xSessionTokenAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     if (this.xSessionToken == null) {
       return undefined;
     }
     return buildHeaders([{ 'X-Session-Token': this.xSessionToken }]);
   }
 
-  protected xAPIKeyAuth(opts: FinalRequestOptions): NullableHeaders | undefined {
+  protected async xAPIKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     return buildHeaders([{ 'X-API-Key': this.xAPIKey }]);
+  }
+
+  protected async oAuth2Auth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    return undefined;
   }
 
   /**
@@ -416,7 +427,9 @@ export class Papr {
 
     await this.prepareOptions(options);
 
-    const { req, url, timeout } = this.buildRequest(options, { retryCount: maxRetries - retriesRemaining });
+    const { req, url, timeout } = await this.buildRequest(options, {
+      retryCount: maxRetries - retriesRemaining,
+    });
 
     await this.prepareRequest(req, { url, options });
 
@@ -494,7 +507,7 @@ export class Papr {
     } with status ${response.status} in ${headersTime - startTime}ms`;
 
     if (!response.ok) {
-      const shouldRetry = this.shouldRetry(response);
+      const shouldRetry = await this.shouldRetry(response);
       if (retriesRemaining && shouldRetry) {
         const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
 
@@ -593,13 +606,20 @@ export class Papr {
     }
   }
 
-  private shouldRetry(response: Response): boolean {
+  private async shouldRetry(response: Response): Promise<boolean> {
     // Note this is not a standard header.
     const shouldRetryHeader = response.headers.get('x-should-retry');
 
     // If the server explicitly says whether or not to retry, obey.
     if (shouldRetryHeader === 'true') return true;
     if (shouldRetryHeader === 'false') return false;
+
+    // Retry if the token has expired
+    const oAuth2Auth = await this.oAuth2AuthState?.promise;
+    if (response.status === 401 && oAuth2Auth && +oAuth2Auth.expires_at - Date.now() < 10 * 1000) {
+      this.oAuth2AuthState = undefined;
+      return true;
+    }
 
     // Retry on request timeouts.
     if (response.status === 408) return true;
@@ -670,10 +690,10 @@ export class Papr {
     return sleepSeconds * jitter * 1000;
   }
 
-  buildRequest(
+  async buildRequest(
     inputOptions: FinalRequestOptions,
     { retryCount = 0 }: { retryCount?: number } = {},
-  ): { req: FinalizedRequestInit; url: string; timeout: number } {
+  ): Promise<{ req: FinalizedRequestInit; url: string; timeout: number }> {
     const options = { ...inputOptions };
     const { method, path, query, defaultBaseURL } = options;
 
@@ -681,7 +701,7 @@ export class Papr {
     if ('timeout' in options) validatePositiveInteger('timeout', options.timeout);
     options.timeout = options.timeout ?? this.timeout;
     const { bodyHeaders, body } = this.buildBody({ options });
-    const reqHeaders = this.buildHeaders({ options: inputOptions, method, bodyHeaders, retryCount });
+    const reqHeaders = await this.buildHeaders({ options: inputOptions, method, bodyHeaders, retryCount });
 
     const req: FinalizedRequestInit = {
       method,
@@ -697,7 +717,7 @@ export class Papr {
     return { req, url, timeout: options.timeout };
   }
 
-  private buildHeaders({
+  private async buildHeaders({
     options,
     method,
     bodyHeaders,
@@ -707,7 +727,7 @@ export class Papr {
     method: HTTPMethod;
     bodyHeaders: HeadersLike;
     retryCount: number;
-  }): Headers {
+  }): Promise<Headers> {
     let idempotencyHeaders: HeadersLike = {};
     if (this.idempotencyHeader && method !== 'get') {
       if (!options.idempotencyKey) options.idempotencyKey = this.defaultIdempotencyKey();
@@ -723,7 +743,7 @@ export class Papr {
         ...(options.timeout ? { 'X-Stainless-Timeout': String(Math.trunc(options.timeout / 1000)) } : {}),
         ...getPlatformHeaders(),
       },
-      this.authHeaders(options),
+      await this.authHeaders(options),
       this._options.defaultHeaders,
       bodyHeaders,
       options.headers,
