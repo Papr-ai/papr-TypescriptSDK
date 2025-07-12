@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.1 (2025-07-12)
+
+Full Changelog: [v1.10.0...v1.10.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.10.0...v1.10.1)
+
+### Chores
+
+* make some internal functions async ([ca4351a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ca4351ab115afec8e9bdd6c72506182546ff050a))
+
 ## 1.10.0 (2025-07-07)
 
 Full Changelog: [v1.9.0...v1.10.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.9.0...v1.10.0)
