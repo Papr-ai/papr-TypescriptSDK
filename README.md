@@ -26,7 +26,7 @@ const client = new Papr({
   xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
 });
 
-const userResponse = await client.user.create({ external_id: 'user123' });
+const userResponse = await client.user.create({ external_id: 'demo_user_123', email: 'user@example.com' });
 
 console.log(userResponse.external_id);
 ```
