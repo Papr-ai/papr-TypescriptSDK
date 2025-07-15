@@ -43,7 +43,7 @@ const client = new Papr({
   xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted
 });
 
-const params: Papr.UserCreateParams = { external_id: 'user123' };
+const params: Papr.UserCreateParams = { external_id: 'demo_user_123', email: 'user@example.com' };
 const userResponse: Papr.UserResponse = await client.user.create(params);
 ```
 
@@ -57,15 +57,17 @@ a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
 ```ts
-const userResponse = await client.user.create({ external_id: 'user123' }).catch(async (err) => {
-  if (err instanceof Papr.APIError) {
-    console.log(err.status); // 400
-    console.log(err.name); // BadRequestError
-    console.log(err.headers); // {server: 'nginx', ...}
-  } else {
-    throw err;
-  }
-});
+const userResponse = await client.user
+  .create({ external_id: 'demo_user_123', email: 'user@example.com' })
+  .catch(async (err) => {
+    if (err instanceof Papr.APIError) {
+      console.log(err.status); // 400
+      console.log(err.name); // BadRequestError
+      console.log(err.headers); // {server: 'nginx', ...}
+    } else {
+      throw err;
+    }
+  });
 ```
 
 Error codes are as follows:
@@ -97,7 +99,7 @@ const client = new Papr({
 });
 
 // Or, configure per-request:
-await client.user.create({ external_id: 'user123' }, {
+await client.user.create({ external_id: 'demo_user_123', email: 'user@example.com' }, {
   maxRetries: 5,
 });
 ```
@@ -114,7 +116,7 @@ const client = new Papr({
 });
 
 // Override per-request:
-await client.user.create({ external_id: 'user123' }, {
+await client.user.create({ external_id: 'demo_user_123', email: 'user@example.com' }, {
   timeout: 5 * 1000,
 });
 ```
@@ -137,12 +139,14 @@ Unlike `.asResponse()` this method consumes the body, returning once it is parse
 ```ts
 const client = new Papr();
 
-const response = await client.user.create({ external_id: 'user123' }).asResponse();
+const response = await client.user
+  .create({ external_id: 'demo_user_123', email: 'user@example.com' })
+  .asResponse();
 console.log(response.headers.get('X-My-Header'));
 console.log(response.statusText); // access the underlying Response object
 
 const { data: userResponse, response: raw } = await client.user
-  .create({ external_id: 'user123' })
+  .create({ external_id: 'demo_user_123', email: 'user@example.com' })
   .withResponse();
 console.log(raw.headers.get('X-My-Header'));
 console.log(userResponse.external_id);
