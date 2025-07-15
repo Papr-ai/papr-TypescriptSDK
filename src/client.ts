@@ -85,6 +85,8 @@ export interface ClientOptions {
    */
   bearerToken?: string | null | undefined;
 
+  oAuth2?: string | null | undefined;
+
   /**
    * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
    *
@@ -161,6 +163,7 @@ export class Papr {
   xAPIKey: string;
   xSessionToken: string | null;
   bearerToken: string | null;
+  oAuth2: string | null;
 
   baseURL: string;
   maxRetries: number;
@@ -180,6 +183,7 @@ export class Papr {
    * @param {string | undefined} [opts.xAPIKey=process.env['PAPR_MEMORY_API_KEY'] ?? undefined]
    * @param {string | null | undefined} [opts.xSessionToken=process.env['PAPR_MEMORY_Session_Token'] ?? null]
    * @param {string | null | undefined} [opts.bearerToken=process.env['PAPR_MEMORY_BEARER_TOKEN'] ?? null]
+   * @param {string | null | undefined} [opts.oAuth2]
    * @param {string} [opts.baseURL=process.env['PAPR_BASE_URL'] ?? https://memory.papr.ai] - Override the default base URL for the API.
    * @param {number} [opts.timeout=1 minute] - The maximum amount of time (in milliseconds) the client will wait for a response before timing out.
    * @param {MergedRequestInit} [opts.fetchOptions] - Additional `RequestInit` options to be passed to `fetch` calls.
@@ -193,6 +197,7 @@ export class Papr {
     xAPIKey = readEnv('PAPR_MEMORY_API_KEY'),
     xSessionToken = readEnv('PAPR_MEMORY_Session_Token') ?? null,
     bearerToken = readEnv('PAPR_MEMORY_BEARER_TOKEN') ?? null,
+    oAuth2 = null,
     ...opts
   }: ClientOptions = {}) {
     if (xAPIKey === undefined) {
@@ -205,6 +210,7 @@ export class Papr {
       xAPIKey,
       xSessionToken,
       bearerToken,
+      oAuth2,
       ...opts,
       baseURL: baseURL || `https://memory.papr.ai`,
     };
@@ -229,6 +235,7 @@ export class Papr {
     this.xAPIKey = xAPIKey;
     this.xSessionToken = xSessionToken;
     this.bearerToken = bearerToken;
+    this.oAuth2 = oAuth2;
   }
 
   /**
@@ -247,6 +254,7 @@ export class Papr {
       xAPIKey: this.xAPIKey,
       xSessionToken: this.xSessionToken,
       bearerToken: this.bearerToken,
+      oAuth2: this.oAuth2,
       ...options,
     });
     client.oAuth2AuthState = this.oAuth2AuthState;
