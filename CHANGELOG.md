@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.13.1 (2025-07-17)
+
+Full Changelog: [v1.13.0...v1.13.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.13.0...v1.13.1)
+
+### Chores
+
+* **ts:** reorder package.json imports ([974b42b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/974b42b2f0ddc54fc5826daab130c8e5cf278675))
+
 ## 1.13.0 (2025-07-15)
 
 Full Changelog: [v1.12.0...v1.13.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.12.0...v1.13.0)
