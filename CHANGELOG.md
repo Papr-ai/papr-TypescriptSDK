@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.14.0 (2025-07-30)
+
+Full Changelog: [v1.13.0...v1.14.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.13.0...v1.14.0)
+
+### Features
+
+* **api:** update via SDK Studio ([6942d34](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6942d34e52e246a5f144a36b8032bdbf18c32647))
+
+
+### Chores
+
+* **internal:** remove redundant imports config ([5c08e9e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5c08e9eb094cc87ec561fd64abcd77318c9e9468))
+* **ts:** reorder package.json imports ([974b42b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/974b42b2f0ddc54fc5826daab130c8e5cf278675))
+
 ## 1.13.0 (2025-07-15)
 
 Full Changelog: [v1.12.0...v1.13.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.12.0...v1.13.0)
