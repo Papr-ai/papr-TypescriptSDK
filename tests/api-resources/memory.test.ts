@@ -233,6 +233,8 @@ describe('resource memory', () => {
       batch_size: 10,
       external_user_id: 'external_user_abcde',
       user_id: 'internal_user_id_12345',
+      webhook_secret: 'webhook_secret',
+      webhook_url: 'webhook_url',
     });
   });
 
