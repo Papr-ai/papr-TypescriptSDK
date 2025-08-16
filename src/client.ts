@@ -801,9 +801,11 @@ export class Papr {
   memory: API.Memory = new API.Memory(this);
   feedback: API.Feedback = new API.Feedback(this);
 }
+
 Papr.User = User;
 Papr.Memory = Memory;
 Papr.Feedback = Feedback;
+
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
 
