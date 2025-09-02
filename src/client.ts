@@ -34,7 +34,6 @@ import {
   Memory,
   MemoryAddBatchParams,
   MemoryAddParams,
-  MemoryDeleteAllParams,
   MemoryDeleteParams,
   MemoryDeleteResponse,
   MemoryMetadata,
@@ -847,7 +846,6 @@ export declare namespace Papr {
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,
     type MemoryAddBatchParams as MemoryAddBatchParams,
-    type MemoryDeleteAllParams as MemoryDeleteAllParams,
     type MemorySearchParams as MemorySearchParams,
   };
 
