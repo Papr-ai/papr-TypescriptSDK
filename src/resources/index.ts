@@ -26,7 +26,6 @@ export {
   type MemoryDeleteParams,
   type MemoryAddParams,
   type MemoryAddBatchParams,
-  type MemoryDeleteAllParams,
   type MemorySearchParams,
 } from './memory';
 export {
