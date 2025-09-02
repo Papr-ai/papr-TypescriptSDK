@@ -24,15 +24,18 @@ import {
   FeedbackResponse,
   FeedbackSubmitBatchParams,
   FeedbackSubmitParams,
+  ParsePointer,
 } from './resources/feedback';
 import {
   AddMemory,
   AddMemoryResponse,
+  BatchMemoryResponse,
   ContextItem,
+  HTTPValidationError,
   Memory,
   MemoryAddBatchParams,
-  MemoryAddBatchResponse,
   MemoryAddParams,
+  MemoryDeleteAllParams,
   MemoryDeleteParams,
   MemoryDeleteResponse,
   MemoryMetadata,
@@ -272,6 +275,7 @@ export class Papr {
       await this.bearerAuth(opts),
       await this.xSessionTokenAuth(opts),
       await this.xAPIKeyAuth(opts),
+      await this.oAuth2Auth(opts),
     ]);
   }
 
@@ -291,6 +295,10 @@ export class Papr {
 
   protected async xAPIKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     return buildHeaders([{ 'X-API-Key': this.xAPIKey }]);
+  }
+
+  protected async oAuth2Auth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    return undefined;
   }
 
   /**
@@ -451,7 +459,7 @@ export class Papr {
     const response = await this.fetchWithTimeout(url, req, timeout, controller).catch(castToError);
     const headersTime = Date.now();
 
-    if (response instanceof Error) {
+    if (response instanceof globalThis.Error) {
       const retryMessage = `retrying, ${retriesRemaining} attempts remaining`;
       if (options.signal?.aborted) {
         throw new Errors.APIUserAbortError();
@@ -758,7 +766,7 @@ export class Papr {
         // Preserve legacy string encoding behavior for now
         headers.values.has('content-type')) ||
       // `Blob` is superset of `File`
-      body instanceof Blob ||
+      ((globalThis as any).Blob && body instanceof (globalThis as any).Blob) ||
       // `FormData` -> `multipart/form-data`
       body instanceof FormData ||
       // `URLSearchParams` -> `application/x-www-form-urlencoded`
@@ -801,9 +809,11 @@ export class Papr {
   memory: API.Memory = new API.Memory(this);
   feedback: API.Feedback = new API.Feedback(this);
 }
+
 Papr.User = User;
 Papr.Memory = Memory;
 Papr.Feedback = Feedback;
+
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
 
@@ -825,18 +835,20 @@ export declare namespace Papr {
     Memory as Memory,
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
+    type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
+    type HTTPValidationError as HTTPValidationError,
     type MemoryMetadata as MemoryMetadata,
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
     type SearchResponse as SearchResponse,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
-    type MemoryAddBatchResponse as MemoryAddBatchResponse,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,
     type MemoryAddBatchParams as MemoryAddBatchParams,
+    type MemoryDeleteAllParams as MemoryDeleteAllParams,
     type MemorySearchParams as MemorySearchParams,
   };
 
@@ -846,6 +858,7 @@ export declare namespace Papr {
     type BatchResponse as BatchResponse,
     type FeedbackRequest as FeedbackRequest,
     type FeedbackResponse as FeedbackResponse,
+    type ParsePointer as ParsePointer,
     type FeedbackSubmitParams as FeedbackSubmitParams,
     type FeedbackSubmitBatchParams as FeedbackSubmitBatchParams,
   };

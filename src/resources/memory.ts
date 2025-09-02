@@ -110,7 +110,7 @@ export class Memory extends APIResource {
    *
    * @example
    * ```ts
-   * const response = await client.memory.addBatch({
+   * const batchMemoryResponse = await client.memory.addBatch({
    *   memories: [
    *     {
    *       content:
@@ -125,9 +125,44 @@ export class Memory extends APIResource {
    * });
    * ```
    */
-  addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<MemoryAddBatchResponse> {
+  addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<BatchMemoryResponse> {
     const { skip_background_processing, ...body } = params;
     return this._client.post('/v1/memory/batch', { query: { skip_background_processing }, body, ...options });
+  }
+
+  /**
+   * Delete all memory items for a user.
+   *
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
+   *
+   *     **User Resolution**:
+   *     - If only API key is provided: deletes memories for the developer
+   *     - If user_id or external_user_id is provided: resolves and deletes memories for that user
+   *     - Uses the same user resolution logic as other endpoints
+   *
+   *     **Required Headers**:
+   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+   *
+   *     **WARNING**: This operation cannot be undone. All memories for the resolved user will be permanently deleted.
+   *
+   * @example
+   * ```ts
+   * const batchMemoryResponse = await client.memory.deleteAll();
+   * ```
+   */
+  deleteAll(
+    params: MemoryDeleteAllParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<BatchMemoryResponse> {
+    const { external_user_id, skip_parse, user_id } = params ?? {};
+    return this._client.delete('/v1/memory/all', {
+      query: { external_user_id, skip_parse, user_id },
+      ...options,
+    });
   }
 
   /**
@@ -280,6 +315,67 @@ export namespace AddMemoryResponse {
   }
 }
 
+export interface BatchMemoryResponse {
+  /**
+   * HTTP status code for the batch operation
+   */
+  code?: number;
+
+  /**
+   * Additional error details or context
+   */
+  details?: unknown;
+
+  /**
+   * Batch-level error message, if any
+   */
+  error?: string | null;
+
+  /**
+   * List of errors for failed items
+   */
+  errors?: Array<BatchMemoryResponse.Error>;
+
+  /**
+   * Human-readable status message
+   */
+  message?: string | null;
+
+  /**
+   * 'success', 'partial', or 'error'
+   */
+  status?: string;
+
+  /**
+   * List of successful add responses
+   */
+  successful?: Array<AddMemoryResponse>;
+
+  total_content_size?: number;
+
+  total_failed?: number;
+
+  total_processed?: number;
+
+  total_storage_size?: number;
+
+  total_successful?: number;
+}
+
+export namespace BatchMemoryResponse {
+  export interface Error {
+    error: string;
+
+    index: number;
+
+    code?: number | null;
+
+    details?: unknown;
+
+    status?: string | null;
+  }
+}
+
 /**
  * Context item for memory request
  */
@@ -287,6 +383,20 @@ export interface ContextItem {
   content: string;
 
   role: 'user' | 'assistant';
+}
+
+export interface HTTPValidationError {
+  detail?: Array<HTTPValidationError.Detail>;
+}
+
+export namespace HTTPValidationError {
+  export interface Detail {
+    loc: Array<string | number>;
+
+    msg: string;
+
+    type: string;
+  }
 }
 
 /**
@@ -1116,67 +1226,6 @@ export namespace MemoryDeleteResponse {
   }
 }
 
-export interface MemoryAddBatchResponse {
-  /**
-   * HTTP status code for the batch operation
-   */
-  code?: number;
-
-  /**
-   * Additional error details or context
-   */
-  details?: unknown;
-
-  /**
-   * Batch-level error message, if any
-   */
-  error?: string | null;
-
-  /**
-   * List of errors for failed items
-   */
-  errors?: Array<MemoryAddBatchResponse.Error>;
-
-  /**
-   * Human-readable status message
-   */
-  message?: string | null;
-
-  /**
-   * 'success', 'partial', or 'error'
-   */
-  status?: string;
-
-  /**
-   * List of successful add responses
-   */
-  successful?: Array<AddMemoryResponse>;
-
-  total_content_size?: number;
-
-  total_failed?: number;
-
-  total_processed?: number;
-
-  total_storage_size?: number;
-
-  total_successful?: number;
-}
-
-export namespace MemoryAddBatchResponse {
-  export interface Error {
-    error: string;
-
-    index: number;
-
-    code?: number | null;
-
-    details?: unknown;
-
-    status?: string | null;
-  }
-}
-
 export interface MemoryUpdateParams {
   /**
    * The new content of the memory item
@@ -1285,6 +1334,24 @@ export interface MemoryAddBatchParams {
   webhook_url?: string | null;
 }
 
+export interface MemoryDeleteAllParams {
+  /**
+   * Optional external user ID to resolve and delete memories for
+   */
+  external_user_id?: string | null;
+
+  /**
+   * Skip Parse Server deletion
+   */
+  skip_parse?: boolean;
+
+  /**
+   * Optional user ID to delete memories for (if not provided, uses authenticated
+   * user)
+   */
+  user_id?: string | null;
+}
+
 export interface MemorySearchParams {
   /**
    * Body param: Detailed search query describing what you're looking for. For best
@@ -1362,18 +1429,20 @@ export declare namespace Memory {
   export {
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
+    type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
+    type HTTPValidationError as HTTPValidationError,
     type MemoryMetadata as MemoryMetadata,
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
     type SearchResponse as SearchResponse,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
-    type MemoryAddBatchResponse as MemoryAddBatchResponse,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,
     type MemoryAddBatchParams as MemoryAddBatchParams,
+    type MemoryDeleteAllParams as MemoryDeleteAllParams,
     type MemorySearchParams as MemorySearchParams,
   };
 }
