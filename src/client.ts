@@ -272,6 +272,7 @@ export class Papr {
       await this.bearerAuth(opts),
       await this.xSessionTokenAuth(opts),
       await this.xAPIKeyAuth(opts),
+      await this.oAuth2Auth(opts),
     ]);
   }
 
@@ -291,6 +292,10 @@ export class Papr {
 
   protected async xAPIKeyAuth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
     return buildHeaders([{ 'X-API-Key': this.xAPIKey }]);
+  }
+
+  protected async oAuth2Auth(opts: FinalRequestOptions): Promise<NullableHeaders | undefined> {
+    return undefined;
   }
 
   /**
