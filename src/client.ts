@@ -16,6 +16,7 @@ import * as Errors from './core/error';
 import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
+import { Callback, CallbackProcessResponse } from './resources/callback';
 import {
   BatchRequest,
   BatchResponse,
@@ -24,7 +25,11 @@ import {
   FeedbackResponse,
   FeedbackSubmitBatchParams,
   FeedbackSubmitParams,
+  ParsePointer,
 } from './resources/feedback';
+import { Login, LoginInitiateResponse } from './resources/login';
+import { Logout, LogoutLogoutResponse } from './resources/logout';
+import { Me, MeRetrieveResponse } from './resources/me';
 import {
   AddMemory,
   AddMemoryResponse,
@@ -34,6 +39,7 @@ import {
   Memory,
   MemoryAddBatchParams,
   MemoryAddParams,
+  MemoryDeleteAllParams,
   MemoryDeleteParams,
   MemoryDeleteResponse,
   MemoryMetadata,
@@ -44,6 +50,7 @@ import {
   RelationshipItem,
   SearchResponse,
 } from './resources/memory';
+import { Token, TokenCreateResponse } from './resources/token';
 import {
   User,
   UserCreateBatchParams,
@@ -806,11 +813,21 @@ export class Papr {
   user: API.User = new API.User(this);
   memory: API.Memory = new API.Memory(this);
   feedback: API.Feedback = new API.Feedback(this);
+  login: API.Login = new API.Login(this);
+  callback: API.Callback = new API.Callback(this);
+  token: API.Token = new API.Token(this);
+  me: API.Me = new API.Me(this);
+  logout: API.Logout = new API.Logout(this);
 }
 
 Papr.User = User;
 Papr.Memory = Memory;
 Papr.Feedback = Feedback;
+Papr.Login = Login;
+Papr.Callback = Callback;
+Papr.Token = Token;
+Papr.Me = Me;
+Papr.Logout = Logout;
 
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
@@ -846,6 +863,7 @@ export declare namespace Papr {
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,
     type MemoryAddBatchParams as MemoryAddBatchParams,
+    type MemoryDeleteAllParams as MemoryDeleteAllParams,
     type MemorySearchParams as MemorySearchParams,
   };
 
@@ -855,7 +873,18 @@ export declare namespace Papr {
     type BatchResponse as BatchResponse,
     type FeedbackRequest as FeedbackRequest,
     type FeedbackResponse as FeedbackResponse,
+    type ParsePointer as ParsePointer,
     type FeedbackSubmitParams as FeedbackSubmitParams,
     type FeedbackSubmitBatchParams as FeedbackSubmitBatchParams,
   };
+
+  export { Login as Login, type LoginInitiateResponse as LoginInitiateResponse };
+
+  export { Callback as Callback, type CallbackProcessResponse as CallbackProcessResponse };
+
+  export { Token as Token, type TokenCreateResponse as TokenCreateResponse };
+
+  export { Me as Me, type MeRetrieveResponse as MeRetrieveResponse };
+
+  export { Logout as Logout, type LogoutLogoutResponse as LogoutLogoutResponse };
 }

@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as FeedbackAPI from './feedback';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -221,7 +222,7 @@ export namespace FeedbackRequest {
     /**
      * A pointer to a Parse object
      */
-    assistantMessage?: FeedbackData.AssistantMessage | null;
+    assistantMessage?: FeedbackAPI.ParsePointer | null;
 
     citedMemoryIds?: Array<string> | null;
 
@@ -240,31 +241,7 @@ export namespace FeedbackRequest {
     /**
      * A pointer to a Parse object
      */
-    userMessage?: FeedbackData.UserMessage | null;
-  }
-
-  export namespace FeedbackData {
-    /**
-     * A pointer to a Parse object
-     */
-    export interface AssistantMessage {
-      className: string;
-
-      objectId: string;
-
-      __type?: string;
-    }
-
-    /**
-     * A pointer to a Parse object
-     */
-    export interface UserMessage {
-      className: string;
-
-      objectId: string;
-
-      __type?: string;
-    }
+    userMessage?: FeedbackAPI.ParsePointer | null;
   }
 }
 
@@ -301,6 +278,17 @@ export interface FeedbackResponse {
    * Unique feedback ID
    */
   feedback_id?: string | null;
+}
+
+/**
+ * A pointer to a Parse object
+ */
+export interface ParsePointer {
+  className: string;
+
+  objectId: string;
+
+  __type?: string;
 }
 
 export interface FeedbackSubmitParams {
@@ -353,7 +341,7 @@ export namespace FeedbackSubmitParams {
     /**
      * A pointer to a Parse object
      */
-    assistantMessage?: FeedbackData.AssistantMessage | null;
+    assistantMessage?: FeedbackAPI.ParsePointer | null;
 
     citedMemoryIds?: Array<string> | null;
 
@@ -372,31 +360,7 @@ export namespace FeedbackSubmitParams {
     /**
      * A pointer to a Parse object
      */
-    userMessage?: FeedbackData.UserMessage | null;
-  }
-
-  export namespace FeedbackData {
-    /**
-     * A pointer to a Parse object
-     */
-    export interface AssistantMessage {
-      className: string;
-
-      objectId: string;
-
-      __type?: string;
-    }
-
-    /**
-     * A pointer to a Parse object
-     */
-    export interface UserMessage {
-      className: string;
-
-      objectId: string;
-
-      __type?: string;
-    }
+    userMessage?: FeedbackAPI.ParsePointer | null;
   }
 }
 
@@ -418,6 +382,7 @@ export declare namespace Feedback {
     type BatchResponse as BatchResponse,
     type FeedbackRequest as FeedbackRequest,
     type FeedbackResponse as FeedbackResponse,
+    type ParsePointer as ParsePointer,
     type FeedbackSubmitParams as FeedbackSubmitParams,
     type FeedbackSubmitBatchParams as FeedbackSubmitBatchParams,
   };
