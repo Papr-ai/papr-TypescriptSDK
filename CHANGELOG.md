@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.15.0 (2025-09-02)
+
+Full Changelog: [v1.14.0...v1.15.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.14.0...v1.15.0)
+
+### Features
+
+* **api:** update via SDK Studio ([7755b76](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7755b76c46a2f758297e615233c835345fb1dfc5))
+* **api:** update via SDK Studio ([fd98085](https://github.com/Papr-ai/papr-TypescriptSDK/commit/fd980854f3b55e3cef8cfba67f3a8f379a31b5f4))
+* **api:** update via SDK Studio ([7cf9c22](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7cf9c22f7587575790548497411c6c17122236f6))
+* **api:** update via SDK Studio ([682022a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/682022a04ef371cfe2327a5256564d52fd8ed4f7))
+* **api:** update via SDK Studio ([53bda75](https://github.com/Papr-ai/papr-TypescriptSDK/commit/53bda758416d8db78e47cc82ed1ba348964cb665))
+* **mcp:** add code execution tool ([79487be](https://github.com/Papr-ai/papr-TypescriptSDK/commit/79487be38dc68db14b3281e2c06de34cc2ba2306))
+
+
+### Chores
+
+* add package to package.json ([86fd1db](https://github.com/Papr-ai/papr-TypescriptSDK/commit/86fd1db031a08deedd394bbbd23d99468feef1c8))
+* **client:** qualify global Blob ([47f3805](https://github.com/Papr-ai/papr-TypescriptSDK/commit/47f3805f46776dcacaaed6ece8df8f68e8e22921))
+* **deps:** update dependency @types/node to v20.17.58 ([f38fc2a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f38fc2a9731f2f3f455d727960814c23e14f72ff))
+* **internal:** codegen related update ([256ba0f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/256ba0f44c6f819fd4e8acf4d21261a084a3413b))
+* **internal:** formatting change ([abe818f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/abe818f38f309fd37be4e1b395c47c76a57e91a7))
+* **internal:** move publish config ([6b4f05d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6b4f05dabbb0b85674f7fe9a50339f7e0ede2176))
+* **internal:** update comment in script ([618f4a3](https://github.com/Papr-ai/papr-TypescriptSDK/commit/618f4a3c1ef1cb2385359e49c8f984d8bea3b84e))
+* **internal:** update global Error reference ([bafa5b9](https://github.com/Papr-ai/papr-TypescriptSDK/commit/bafa5b9739ac37fb68f338576d72cc06e9e63dab))
+* update @stainless-api/prism-cli to v5.15.0 ([f3f71e3](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f3f71e3b2627a9ac6216e168b4eabab7cc6b8249))
+* update CI script ([28ed56d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/28ed56d44731091d7c45e71904db29471efcc073))
+
 ## 1.14.0 (2025-07-30)
 
 Full Changelog: [v1.13.0...v1.14.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.13.0...v1.14.0)
