@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.16.0 (2025-09-04)
+
+Full Changelog: [v1.15.0...v1.16.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.15.0...v1.16.0)
+
+### Features
+
+* **api:** update via SDK Studio ([26b6ed4](https://github.com/Papr-ai/papr-TypescriptSDK/commit/26b6ed4b25afe48bc34ed119fade458eb132ac35))
+
 ## 1.15.0 (2025-09-02)
 
 Full Changelog: [v1.14.0...v1.15.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.14.0...v1.15.0)
