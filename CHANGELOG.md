@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.16.1 (2025-09-06)
+
+Full Changelog: [v1.16.0...v1.16.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.16.0...v1.16.1)
+
+### Chores
+
+* ci build action ([42bfe1b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/42bfe1bf71c04e7812a896bc7e2ea295e1e07185))
+
 ## 1.16.0 (2025-09-04)
 
 Full Changelog: [v1.15.0...v1.16.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.15.0...v1.16.0)
