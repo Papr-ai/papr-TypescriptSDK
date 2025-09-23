@@ -135,7 +135,10 @@ describe('resource memory', () => {
         {
           content: 'Meeting notes from the product planning session',
           type: 'text',
-          context: [{ content: 'content', role: 'user' }],
+          context: [
+            { content: "Let's discuss the Q2 product roadmap", role: 'user' },
+            { content: "I'll help you plan the roadmap. What are your key objectives?", role: 'assistant' },
+          ],
           metadata: {
             assistantMessage: 'assistantMessage',
             conversationId: 'conversationId',
@@ -172,10 +175,10 @@ describe('resource memory', () => {
           },
           relationships_json: [
             {
-              relation_type: 'relation_type',
-              metadata: { foo: 'bar' },
-              related_item_id: 'related_item_id',
-              related_item_type: 'related_item_type',
+              relation_type: 'follows',
+              metadata: { relevance: 'bar' },
+              related_item_id: 'previous_memory_item_id',
+              related_item_type: 'TextMemoryItem',
               relationship_type: 'previous_memory_item_id',
             },
           ],
@@ -183,7 +186,10 @@ describe('resource memory', () => {
         {
           content: 'Follow-up tasks from the planning meeting',
           type: 'text',
-          context: [{ content: 'content', role: 'user' }],
+          context: [
+            { content: "Let's discuss the Q2 product roadmap", role: 'user' },
+            { content: "I'll help you plan the roadmap. What are your key objectives?", role: 'assistant' },
+          ],
           metadata: {
             assistantMessage: 'assistantMessage',
             conversationId: 'conversationId',
@@ -220,10 +226,10 @@ describe('resource memory', () => {
           },
           relationships_json: [
             {
-              relation_type: 'relation_type',
-              metadata: { foo: 'bar' },
-              related_item_id: 'related_item_id',
-              related_item_type: 'related_item_type',
+              relation_type: 'follows',
+              metadata: { relevance: 'bar' },
+              related_item_id: 'previous_memory_item_id',
+              related_item_type: 'TextMemoryItem',
               relationship_type: 'previous_memory_item_id',
             },
           ],
