@@ -1,0 +1,276 @@
+// File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
+
+import { Metadata, asTextContentResult } from '@papr/memory-mcp/tools/types';
+
+import { Tool } from '@modelcontextprotocol/sdk/types.js';
+import Papr from '@papr/memory';
+
+export const metadata: Metadata = {
+  resource: 'memory',
+  operation: 'write',
+  tags: [],
+  httpMethod: 'post',
+  httpPath: '/v1/memory/search',
+  operationId: 'search_memory',
+};
+
+export const tool: Tool = {
+  name: 'search_memory',
+  description:
+    'Search through memories with authentication required.\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Recommended Headers**:\n    ```\n    Accept-Encoding: gzip\n    ```\n    \n    The API supports response compression for improved performance. Responses larger than 1KB will be automatically compressed when this header is present.\n    \n    **HIGHLY RECOMMENDED SETTINGS FOR BEST RESULTS:**\n    - Set `enable_agentic_graph: true` for intelligent, context-aware search that can understand ambiguous references\n    - Use `max_memories: 15-20` for comprehensive memory coverage\n    - Use `max_nodes: 10-15` for comprehensive graph entity relationships\n    \n    **Agentic Graph Benefits:**\n    When enabled, the system can understand vague references by first identifying specific entities from your memory graph, then performing targeted searches. For example:\n    - "customer feedback" → identifies your customers first, then finds their specific feedback\n    - "project issues" → identifies your projects first, then finds related issues\n    - "team meeting notes" → identifies your team members first, then finds meeting notes\n    \n    **User Resolution Precedence:**\n    - If both user_id and external_user_id are provided, user_id takes precedence.\n    - If only external_user_id is provided, it will be resolved to the internal user.\n    - If neither is provided, the authenticated user is used.',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      query: {
+        type: 'string',
+        title: 'Query',
+        description:
+          "Detailed search query describing what you're looking for. For best results, write 2-3 sentences that include specific details, context, and time frame. Examples: 'Find recurring customer complaints about API performance from the last month. Focus on issues where customers specifically mentioned timeout errors or slow response times in their conversations.' 'What are the main issues and blockers in my current projects? Focus on technical challenges and timeline impacts.' 'Find insights about team collaboration and communication patterns from recent meetings and discussions.'",
+      },
+      max_memories: {
+        type: 'integer',
+        title: 'Max Memories',
+        description:
+          'HIGHLY RECOMMENDED: Maximum number of memories to return. Use at least 15-20 for comprehensive results. Lower values (5-10) may miss relevant information. Default is 20 for optimal coverage.',
+      },
+      max_nodes: {
+        type: 'integer',
+        title: 'Max Nodes',
+        description:
+          'HIGHLY RECOMMENDED: Maximum number of neo nodes to return. Use at least 10-15 for comprehensive graph results. Lower values may miss important entity relationships. Default is 15 for optimal coverage.',
+      },
+      enable_agentic_graph: {
+        type: 'boolean',
+        title: 'Enable Agentic Graph',
+        description:
+          "HIGHLY RECOMMENDED: Enable agentic graph search for intelligent, context-aware results. When enabled, the system can understand ambiguous references by first identifying specific entities from your memory graph, then performing targeted searches. Examples: 'customer feedback' → identifies your customers first, then finds their specific feedback; 'project issues' → identifies your projects first, then finds related issues; 'team meeting notes' → identifies team members first, then finds meeting notes. This provides much more relevant and comprehensive results. Set to false only if you need faster, simpler keyword-based search.",
+      },
+      external_user_id: {
+        type: 'string',
+        title: 'External User Id',
+        description:
+          'Optional external user ID to filter search results by a specific external user. If both user_id and external_user_id are provided, user_id takes precedence.',
+      },
+      metadata: {
+        $ref: '#/$defs/memory_metadata',
+      },
+      rank_results: {
+        type: 'boolean',
+        title: 'Rank Results',
+        description:
+          "Whether to enable additional ranking of search results. Default is false because results are already ranked when using an LLM for search (recommended approach). Only enable this if you're not using an LLM in your search pipeline and need additional result ranking.",
+      },
+      user_id: {
+        type: 'string',
+        title: 'User Id',
+        description:
+          'Optional internal user ID to filter search results by a specific user. If not provided, results are not filtered by user. If both user_id and external_user_id are provided, user_id takes precedence.',
+      },
+      'Accept-Encoding': {
+        type: 'string',
+      },
+    },
+    required: ['query'],
+    $defs: {
+      memory_metadata: {
+        type: 'object',
+        title: 'MemoryMetadata',
+        description: 'Metadata for memory request',
+        properties: {
+          assistantMessage: {
+            type: 'string',
+            title: 'Assistantmessage',
+          },
+          conversationId: {
+            type: 'string',
+            title: 'Conversationid',
+          },
+          createdAt: {
+            type: 'string',
+            title: 'Createdat',
+            description: 'ISO datetime when the memory was created',
+          },
+          customMetadata: {
+            type: 'object',
+            title: 'Custommetadata',
+            description:
+              'Optional object for arbitrary custom metadata fields. Only string, number, boolean, or list of strings allowed. Nested dicts are not allowed.',
+            additionalProperties: true,
+          },
+          'emoji tags': {
+            type: 'array',
+            title: 'Emoji Tags',
+            items: {
+              type: 'string',
+            },
+          },
+          'emotion tags': {
+            type: 'array',
+            title: 'Emotion Tags',
+            items: {
+              type: 'string',
+            },
+          },
+          external_user_id: {
+            type: 'string',
+            title: 'External User Id',
+          },
+          external_user_read_access: {
+            type: 'array',
+            title: 'External User Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          external_user_write_access: {
+            type: 'array',
+            title: 'External User Write Access',
+            items: {
+              type: 'string',
+            },
+          },
+          goalClassificationScores: {
+            type: 'array',
+            title: 'Goalclassificationscores',
+            items: {
+              type: 'number',
+            },
+          },
+          hierarchical_structures: {
+            type: 'string',
+            title: 'Hierarchical Structures',
+            description: 'Hierarchical structures to enable navigation from broad topics to specific ones',
+          },
+          location: {
+            type: 'string',
+            title: 'Location',
+          },
+          pageId: {
+            type: 'string',
+            title: 'Pageid',
+          },
+          post: {
+            type: 'string',
+            title: 'Post',
+          },
+          relatedGoals: {
+            type: 'array',
+            title: 'Relatedgoals',
+            items: {
+              type: 'string',
+            },
+          },
+          relatedSteps: {
+            type: 'array',
+            title: 'Relatedsteps',
+            items: {
+              type: 'string',
+            },
+          },
+          relatedUseCases: {
+            type: 'array',
+            title: 'Relatedusecases',
+            items: {
+              type: 'string',
+            },
+          },
+          role_read_access: {
+            type: 'array',
+            title: 'Role Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          role_write_access: {
+            type: 'array',
+            title: 'Role Write Access',
+            items: {
+              type: 'string',
+            },
+          },
+          sessionId: {
+            type: 'string',
+            title: 'Sessionid',
+          },
+          sourceType: {
+            type: 'string',
+            title: 'Sourcetype',
+          },
+          sourceUrl: {
+            type: 'string',
+            title: 'Sourceurl',
+          },
+          stepClassificationScores: {
+            type: 'array',
+            title: 'Stepclassificationscores',
+            items: {
+              type: 'number',
+            },
+          },
+          topics: {
+            type: 'array',
+            title: 'Topics',
+            items: {
+              type: 'string',
+            },
+          },
+          useCaseClassificationScores: {
+            type: 'array',
+            title: 'Usecaseclassificationscores',
+            items: {
+              type: 'number',
+            },
+          },
+          user_id: {
+            type: 'string',
+            title: 'User Id',
+          },
+          user_read_access: {
+            type: 'array',
+            title: 'User Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          user_write_access: {
+            type: 'array',
+            title: 'User Write Access',
+            items: {
+              type: 'string',
+            },
+          },
+          userMessage: {
+            type: 'string',
+            title: 'Usermessage',
+          },
+          workspace_id: {
+            type: 'string',
+            title: 'Workspace Id',
+          },
+          workspace_read_access: {
+            type: 'array',
+            title: 'Workspace Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          workspace_write_access: {
+            type: 'array',
+            title: 'Workspace Write Access',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
+  },
+  annotations: {},
+};
+
+export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
+  const body = args as any;
+  return asTextContentResult(await client.memory.search(body));
+};
+
+export default { metadata, tool, handler };
