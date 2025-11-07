@@ -189,6 +189,18 @@ export interface FeedbackRequest {
   external_user_id?: string | null;
 
   /**
+   * Optional namespace ID for multi-tenant feedback scoping. When provided, feedback
+   * is scoped to this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Optional organization ID for multi-tenant feedback scoping. When provided,
+   * feedback is scoped to this organization.
+   */
+  organization_id?: string | null;
+
+  /**
    * Internal user ID (if not provided, will be resolved from authentication)
    */
   user_id?: string | null;
@@ -306,6 +318,18 @@ export interface FeedbackSubmitParams {
    * External user ID for developer API keys acting on behalf of end users
    */
   external_user_id?: string | null;
+
+  /**
+   * Optional namespace ID for multi-tenant feedback scoping. When provided, feedback
+   * is scoped to this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Optional organization ID for multi-tenant feedback scoping. When provided,
+   * feedback is scoped to this organization.
+   */
+  organization_id?: string | null;
 
   /**
    * Internal user ID (if not provided, will be resolved from authentication)

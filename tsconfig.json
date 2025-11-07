@@ -7,10 +7,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "baseUrl": "./",
     "paths": {
-      "@papr/memory/*": ["src/*"],
-      "@papr/memory": ["src/index.ts"]
+      "@papr/memory/*": ["./src/*"],
+      "@papr/memory": ["./src/index.ts"]
     },
     "noEmit": true,
 

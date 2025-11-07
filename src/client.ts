@@ -17,6 +17,13 @@ import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
 import {
+  Document,
+  DocumentCancelProcessingResponse,
+  DocumentGetStatusResponse,
+  DocumentUploadParams,
+  DocumentUploadResponse,
+} from './resources/document';
+import {
   BatchRequest,
   BatchResponse,
   Feedback,
@@ -26,12 +33,16 @@ import {
   FeedbackSubmitParams,
   ParsePointer,
 } from './resources/feedback';
+import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
 import {
   AddMemory,
   AddMemoryResponse,
+  AutoGraphGeneration,
   BatchMemoryResponse,
   ContextItem,
+  GraphGeneration,
   HTTPValidationError,
+  ManualGraphGeneration,
   Memory,
   MemoryAddBatchParams,
   MemoryAddParams,
@@ -47,6 +58,19 @@ import {
   SearchResponse,
 } from './resources/memory';
 import {
+  SchemaActivateParams,
+  SchemaActivateResponse,
+  SchemaCreateParams,
+  SchemaCreateResponse,
+  SchemaListParams,
+  SchemaListResponse,
+  SchemaRetrieveResponse,
+  SchemaUpdateParams,
+  SchemaUpdateResponse,
+  Schemas,
+  UserGraphSchemaOutput,
+} from './resources/schemas';
+import {
   User,
   UserCreateBatchParams,
   UserCreateBatchResponse,
@@ -57,7 +81,6 @@ import {
   UserListResponse,
   UserResponse,
   UserType,
-  UserUpdateParams,
 } from './resources/user';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
@@ -803,11 +826,17 @@ export class Papr {
   user: API.User = new API.User(this);
   memory: API.Memory = new API.Memory(this);
   feedback: API.Feedback = new API.Feedback(this);
+  document: API.Document = new API.Document(this);
+  schemas: API.Schemas = new API.Schemas(this);
+  graphql: API.Graphql = new API.Graphql(this);
 }
 
 Papr.User = User;
 Papr.Memory = Memory;
 Papr.Feedback = Feedback;
+Papr.Document = Document;
+Papr.Schemas = Schemas;
+Papr.Graphql = Graphql;
 
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
@@ -820,7 +849,6 @@ export declare namespace Papr {
     type UserDeleteResponse as UserDeleteResponse,
     type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
-    type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
@@ -830,9 +858,12 @@ export declare namespace Papr {
     Memory as Memory,
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
+    type AutoGraphGeneration as AutoGraphGeneration,
     type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
+    type GraphGeneration as GraphGeneration,
     type HTTPValidationError as HTTPValidationError,
+    type ManualGraphGeneration as ManualGraphGeneration,
     type MemoryMetadata as MemoryMetadata,
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
@@ -857,4 +888,34 @@ export declare namespace Papr {
     type FeedbackSubmitParams as FeedbackSubmitParams,
     type FeedbackSubmitBatchParams as FeedbackSubmitBatchParams,
   };
+
+  export {
+    Document as Document,
+    type DocumentCancelProcessingResponse as DocumentCancelProcessingResponse,
+    type DocumentGetStatusResponse as DocumentGetStatusResponse,
+    type DocumentUploadResponse as DocumentUploadResponse,
+    type DocumentUploadParams as DocumentUploadParams,
+  };
+
+  export {
+    Schemas as Schemas,
+    type UserGraphSchemaOutput as UserGraphSchemaOutput,
+    type SchemaCreateResponse as SchemaCreateResponse,
+    type SchemaRetrieveResponse as SchemaRetrieveResponse,
+    type SchemaUpdateResponse as SchemaUpdateResponse,
+    type SchemaListResponse as SchemaListResponse,
+    type SchemaActivateResponse as SchemaActivateResponse,
+    type SchemaCreateParams as SchemaCreateParams,
+    type SchemaUpdateParams as SchemaUpdateParams,
+    type SchemaListParams as SchemaListParams,
+    type SchemaActivateParams as SchemaActivateParams,
+  };
+
+  export {
+    Graphql as Graphql,
+    type GraphqlPlaygroundResponse as GraphqlPlaygroundResponse,
+    type GraphqlQueryResponse as GraphqlQueryResponse,
+  };
+
+  export type AddMemoryItem = API.AddMemoryItem;
 }

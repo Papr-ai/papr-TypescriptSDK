@@ -2,6 +2,7 @@
 
 import { APIResource } from '../core/resource';
 import * as MemoryAPI from './memory';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
@@ -76,14 +77,22 @@ export class Memory extends APIResource {
    *     - Content-Type: application/json
    *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
    *
+   *     **Role-Based Memory Categories**:
+   *     - **User memories**: preference, task, goal, facts, context
+   *     - **Assistant memories**: skills, learning
+   *
+   *     **New Metadata Fields**:
+   *     - `metadata.role`: Optional field to specify who generated the memory (user or assistant)
+   *     - `metadata.category`: Optional field for memory categorization based on role
+   *     - Both fields are stored within metadata at the same level as topics, location, etc.
+   *
    *     The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
    *
    * @example
    * ```ts
    * const addMemoryResponse = await client.memory.add({
    *   content:
-   *     'Meeting notes from the product planning session',
-   *   type: 'text',
+   *     'Meeting with John Smith from Acme Corp about the Q4 project timeline',
    * });
    * ```
    */
@@ -115,11 +124,9 @@ export class Memory extends APIResource {
    *     {
    *       content:
    *         'Meeting notes from the product planning session',
-   *       type: 'text',
    *     },
    *     {
    *       content: 'Follow-up tasks from the planning meeting',
-   *       type: 'text',
    *     },
    *   ],
    * });
@@ -195,6 +202,19 @@ export class Memory extends APIResource {
    *     - API Key in `X-API-Key` header
    *     - Session token in `X-Session-Token` header
    *
+   *     **Custom Schema Support**:
+   *     This endpoint supports both system-defined and custom user-defined node types:
+   *     - **System nodes**: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code
+   *     - **Custom nodes**: Defined by developers via UserGraphSchema (e.g., Developer, Product, Customer, Function)
+   *
+   *     When custom schema nodes are returned:
+   *     - Each custom node includes a `schema_id` field referencing the UserGraphSchema
+   *     - The response includes a `schemas_used` array listing all schema IDs used
+   *     - Use `GET /v1/schemas/{schema_id}` to retrieve full schema definitions including:
+   *       - Node type definitions and properties
+   *       - Relationship type definitions and constraints
+   *       - Validation rules and requirements
+   *
    *     **Recommended Headers**:
    *     ```
    *     Accept-Encoding: gzip
@@ -212,6 +232,12 @@ export class Memory extends APIResource {
    *     - "customer feedback" → identifies your customers first, then finds their specific feedback
    *     - "project issues" → identifies your projects first, then finds related issues
    *     - "team meeting notes" → identifies your team members first, then finds meeting notes
+   *     - "code functions" → identifies your functions first, then finds related code
+   *
+   *     **Role-Based Memory Filtering:**
+   *     Filter memories by role and category using metadata fields:
+   *     - `metadata.role`: Filter by "user" or "assistant"
+   *     - `metadata.category`: Filter by category (user: preference, task, goal, facts, context | assistant: skills, learning)
    *
    *     **User Resolution Precedence:**
    *     - If both user_id and external_user_id are provided, user_id takes precedence.
@@ -250,14 +276,14 @@ export interface AddMemory {
   content: string;
 
   /**
-   * Valid memory types
-   */
-  type: MemoryType;
-
-  /**
    * Context can be conversation history or any relevant context for a memory item
    */
   context?: Array<ContextItem> | null;
+
+  /**
+   * Graph generation configuration
+   */
+  graph_generation?: GraphGeneration | null;
 
   /**
    * Metadata for memory request
@@ -265,9 +291,26 @@ export interface AddMemory {
   metadata?: MemoryMetadata | null;
 
   /**
+   * Optional namespace ID for multi-tenant memory scoping. When provided, memory is
+   * associated with this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Optional organization ID for multi-tenant memory scoping. When provided, memory
+   * is associated with this organization.
+   */
+  organization_id?: string | null;
+
+  /**
    * Array of relationships that we can use in Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
+
+  /**
+   * Memory item type; defaults to 'text' if omitted
+   */
+  type?: MemoryType;
 }
 
 /**
@@ -282,7 +325,7 @@ export interface AddMemoryResponse {
   /**
    * List of memory items if successful
    */
-  data?: Array<AddMemoryResponse.Data> | null;
+  data?: Array<Shared.AddMemoryItem> | null;
 
   /**
    * Additional error details or context
@@ -300,18 +343,46 @@ export interface AddMemoryResponse {
   status?: string;
 }
 
-export namespace AddMemoryResponse {
+/**
+ * AI-powered graph generation with optional guidance
+ */
+export interface AutoGraphGeneration {
   /**
-   * Response model for a single memory item in add_memory response
+   * Override specific property values in AI-generated nodes with match conditions
    */
-  export interface Data {
-    createdAt: string;
+  property_overrides?: Array<AutoGraphGeneration.PropertyOverride> | null;
 
-    memoryId: string;
+  /**
+   * Force AI to use this specific schema instead of auto-selecting
+   */
+  schema_id?: string | null;
 
-    objectId: string;
+  /**
+   * Limit AI to system + one user schema for consistency
+   */
+  simple_schema_mode?: boolean;
+}
 
-    memoryChunkIds?: Array<string>;
+export namespace AutoGraphGeneration {
+  /**
+   * Property override rule with optional match conditions
+   */
+  export interface PropertyOverride {
+    /**
+     * Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')
+     */
+    nodeLabel: string;
+
+    /**
+     * Properties to set/override on matching nodes
+     */
+    set: { [key: string]: unknown };
+
+    /**
+     * Optional conditions that must be met for override to apply. If not provided,
+     * applies to all nodes of this type
+     */
+    match?: { [key: string]: unknown } | null;
   }
 }
 
@@ -385,6 +456,26 @@ export interface ContextItem {
   role: 'user' | 'assistant';
 }
 
+/**
+ * Graph generation configuration
+ */
+export interface GraphGeneration {
+  /**
+   * AI-powered graph generation with optional guidance
+   */
+  auto?: AutoGraphGeneration | null;
+
+  /**
+   * Complete manual control over graph structure
+   */
+  manual?: ManualGraphGeneration | null;
+
+  /**
+   * Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)
+   */
+  mode?: 'auto' | 'manual';
+}
+
 export interface HTTPValidationError {
   detail?: Array<HTTPValidationError.Detail>;
 }
@@ -400,10 +491,107 @@ export namespace HTTPValidationError {
 }
 
 /**
+ * Complete manual control over graph structure
+ */
+export interface ManualGraphGeneration {
+  /**
+   * Exact nodes to create
+   */
+  nodes: Array<ManualGraphGeneration.Node>;
+
+  /**
+   * Exact relationships to create
+   */
+  relationships?: Array<ManualGraphGeneration.Relationship>;
+}
+
+export namespace ManualGraphGeneration {
+  /**
+   * Developer-specified node for graph override.
+   *
+   * IMPORTANT:
+   *
+   * - 'id' is REQUIRED (relationships reference nodes by these IDs)
+   * - 'label' must match a node type from your registered UserGraphSchema
+   * - 'properties' must include ALL required fields from your schema definition
+   *
+   * 📋 Schema Management:
+   *
+   * - Register schemas: POST /v1/schemas
+   * - View your schemas: GET /v1/schemas
+   */
+  export interface Node {
+    /**
+     * **REQUIRED**: Unique identifier for this node. Must be unique within this
+     * request. Relationships reference this via source_node_id/target_node_id.
+     * Example: 'person_john_123', 'finding_cve_2024_1234'
+     */
+    id: string;
+
+    /**
+     * **REQUIRED**: Node type from your UserGraphSchema. View available types at GET
+     * /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight,
+     * Meeting, Opportunity, Code
+     */
+    label: string;
+
+    /**
+     * **REQUIRED**: Node properties matching your UserGraphSchema definition. Must
+     * include: (1) All required properties from your schema, (2) unique_identifiers if
+     * defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema
+     * requirements at GET /v1/schemas
+     */
+    properties: { [key: string]: unknown };
+  }
+
+  /**
+   * Developer-specified relationship for graph override.
+   *
+   * IMPORTANT:
+   *
+   * - source_node_id MUST exactly match a node 'id' from the 'nodes' array
+   * - target_node_id MUST exactly match a node 'id' from the 'nodes' array
+   * - relationship_type MUST exist in your registered UserGraphSchema
+   */
+  export interface Relationship {
+    /**
+     * **REQUIRED**: Relationship type from your UserGraphSchema. View available types
+     * at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT,
+     * DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY
+     */
+    relationship_type: string;
+
+    /**
+     * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
+     * array of this request
+     */
+    source_node_id: string;
+
+    /**
+     * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
+     * array of this request
+     */
+    target_node_id: string;
+
+    /**
+     * Optional relationship properties (e.g., {'since': '2024-01-01', 'role':
+     * 'manager'})
+     */
+    properties?: { [key: string]: unknown } | null;
+  }
+}
+
+/**
  * Metadata for memory request
  */
 export interface MemoryMetadata {
   assistantMessage?: string | null;
+
+  /**
+   * Memory category based on role. For users: preference, task, goal, fact, context.
+   * For assistants: skills, learning, task, goal, fact, context.
+   */
+  category?: 'preference' | 'task' | 'goal' | 'fact' | 'context' | 'skills' | 'learning' | null;
 
   conversationId?: string | null;
 
@@ -437,6 +625,10 @@ export interface MemoryMetadata {
 
   location?: string | null;
 
+  namespace_id?: string | null;
+
+  organization_id?: string | null;
+
   pageId?: string | null;
 
   post?: string | null;
@@ -446,6 +638,11 @@ export interface MemoryMetadata {
   relatedSteps?: Array<string> | null;
 
   relatedUseCases?: Array<string> | null;
+
+  /**
+   * Role of the message sender
+   */
+  role?: 'user' | 'assistant' | null;
 
   role_read_access?: Array<string> | null;
 
@@ -460,6 +657,11 @@ export interface MemoryMetadata {
   stepClassificationScores?: Array<number> | null;
 
   topics?: Array<string> | null;
+
+  /**
+   * Upload ID for document processing workflows
+   */
+  upload_id?: string | null;
 
   useCaseClassificationScores?: Array<number> | null;
 
@@ -547,6 +749,12 @@ export namespace SearchResponse {
     memories: Array<Data.Memory>;
 
     nodes: Array<Data.Node>;
+
+    /**
+     * List of UserGraphSchema IDs used in this response. Use GET /v1/schemas/{id} to
+     * get full schema definitions.
+     */
+    schemas_used?: Array<string> | null;
   }
 
   export namespace Data {
@@ -563,6 +771,11 @@ export namespace SearchResponse {
       type: string;
 
       user_id: string;
+
+      /**
+       * Memory category based on role
+       */
+      category?: string | null;
 
       context?: Array<MemoryAPI.ContextItem> | null;
 
@@ -590,9 +803,24 @@ export namespace SearchResponse {
 
       metadata?: string | { [key: string]: unknown } | null;
 
+      /**
+       * Namespace ID this memory belongs to
+       */
+      namespace_id?: string | null;
+
+      /**
+       * Organization ID that owns this memory
+       */
+      organization_id?: string | null;
+
       page?: string | null;
 
       page_number?: number | null;
+
+      /**
+       * Role that generated this memory (user or assistant)
+       */
+      role?: string | null;
 
       role_read_access?: Array<string> | null;
 
@@ -632,487 +860,25 @@ export namespace SearchResponse {
     }
 
     /**
-     * Public-facing node structure matching our internal representation
+     * Public-facing node structure - supports both system and custom schema nodes
      */
     export interface Node {
-      label:
-        | 'Memory'
-        | 'Person'
-        | 'Company'
-        | 'Project'
-        | 'Task'
-        | 'Insight'
-        | 'Meeting'
-        | 'Opportunity'
-        | 'Code';
+      /**
+       * Node type label - can be system type (Memory, Person, etc.) or custom type from
+       * UserGraphSchema
+       */
+      label: string;
 
       /**
-       * Memory node properties
+       * Node properties - structure depends on node type and schema
        */
-      properties:
-        | Node.PaprMemoryNodeProperties
-        | Node.PersonNodeProperties
-        | Node.CompanyNodeProperties
-        | Node.ProjectNodeProperties
-        | Node.TaskNodeProperties
-        | Node.InsightNodeProperties
-        | Node.MeetingNodeProperties
-        | Node.OpportunityNodeProperties
-        | Node.CodeNodeProperties;
-    }
-
-    export namespace Node {
-      /**
-       * Memory node properties
-       */
-      export interface PaprMemoryNodeProperties {
-        id: string;
-
-        content: string;
-
-        current_step: string;
-
-        emotion_tags: Array<string>;
-
-        steps: Array<string>;
-
-        topics: Array<string>;
-
-        type: string;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        emoji_tags?: Array<string> | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        hierarchical_structures?: string | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        title?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
+      properties: { [key: string]: unknown };
 
       /**
-       * Person node properties
+       * Reference to UserGraphSchema ID for custom nodes. Use GET
+       * /v1/schemas/{schema_id} to get full schema definition. Null for system nodes.
        */
-      export interface PersonNodeProperties {
-        id: string;
-
-        description: string;
-
-        name: string;
-
-        role: string;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Company node properties
-       */
-      export interface CompanyNodeProperties {
-        id: string;
-
-        description: string;
-
-        name: string;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Project node properties
-       */
-      export interface ProjectNodeProperties {
-        id: string;
-
-        description: string;
-
-        name: string;
-
-        type: string;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Task node properties
-       */
-      export interface TaskNodeProperties {
-        id: string;
-
-        description: string;
-
-        status: 'new' | 'in_progress' | 'completed';
-
-        title: string;
-
-        type: 'task' | 'subtask' | 'bug' | 'feature_request' | 'epic' | 'support_ticket';
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        /**
-         * Due date for the task in ISO 8601 format
-         */
-        date?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        priority?: 'low' | 'medium' | 'high' | 'urgent' | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Insight node properties
-       */
-      export interface InsightNodeProperties {
-        id: string;
-
-        description: string;
-
-        source: string;
-
-        title: string;
-
-        type:
-          | 'customer_insight'
-          | 'product_insight'
-          | 'market_insight'
-          | 'competitive_insight'
-          | 'technical_insight'
-          | 'other';
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Meeting node properties
-       */
-      export interface MeetingNodeProperties {
-        id: string;
-
-        action_items: Array<string>;
-
-        agenda: string;
-
-        date: string;
-
-        outcome: string;
-
-        participants: Array<string>;
-
-        summary: string;
-
-        time: string;
-
-        title: string;
-
-        type: string;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Opportunity node properties
-       */
-      export interface OpportunityNodeProperties {
-        id: string;
-
-        close_date: string;
-
-        description: string;
-
-        next_steps: Array<string>;
-
-        probability: number;
-
-        stage: 'prospect' | 'lead' | 'opportunity' | 'won' | 'lost';
-
-        title: string;
-
-        value: number;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
-
-      /**
-       * Code node properties
-       */
-      export interface CodeNodeProperties {
-        id: string;
-
-        author: string;
-
-        language: string;
-
-        name: string;
-
-        conversationId?: string | null;
-
-        createdAt?: string | null;
-
-        external_user_read_access?: Array<string> | null;
-
-        external_user_write_access?: Array<string> | null;
-
-        pageId?: string | null;
-
-        role_read_access?: Array<string> | null;
-
-        role_write_access?: Array<string> | null;
-
-        sourceType?: string | null;
-
-        sourceUrl?: string | null;
-
-        updatedAt?: string | null;
-
-        user_id?: string | null;
-
-        user_read_access?: Array<string> | null;
-
-        user_write_access?: Array<string> | null;
-
-        workspace_id?: string | null;
-
-        workspace_read_access?: Array<string> | null;
-
-        workspace_write_access?: Array<string> | null;
-      }
+      schema_id?: string | null;
     }
   }
 }
@@ -1243,6 +1009,18 @@ export interface MemoryUpdateParams {
   metadata?: MemoryMetadata | null;
 
   /**
+   * Optional namespace ID for multi-tenant memory scoping. When provided, update is
+   * scoped to memories within this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Optional organization ID for multi-tenant memory scoping. When provided, update
+   * is scoped to memories within this organization.
+   */
+  organization_id?: string | null;
+
+  /**
    * Updated relationships for Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
@@ -1267,11 +1045,6 @@ export interface MemoryAddParams {
   content: string;
 
   /**
-   * Body param: Valid memory types
-   */
-  type: MemoryType;
-
-  /**
    * Query param: If True, skips adding background tasks for processing
    */
   skip_background_processing?: boolean;
@@ -1283,14 +1056,36 @@ export interface MemoryAddParams {
   context?: Array<ContextItem> | null;
 
   /**
+   * Body param: Graph generation configuration
+   */
+  graph_generation?: GraphGeneration | null;
+
+  /**
    * Body param: Metadata for memory request
    */
   metadata?: MemoryMetadata | null;
 
   /**
+   * Body param: Optional namespace ID for multi-tenant memory scoping. When
+   * provided, memory is associated with this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Body param: Optional organization ID for multi-tenant memory scoping. When
+   * provided, memory is associated with this organization.
+   */
+  organization_id?: string | null;
+
+  /**
    * Body param: Array of relationships that we can use in Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
+
+  /**
+   * Body param: Memory item type; defaults to 'text' if omitted
+   */
+  type?: MemoryType;
 }
 
 export interface MemoryAddBatchParams {
@@ -1316,6 +1111,23 @@ export interface MemoryAddBatchParams {
   external_user_id?: string | null;
 
   /**
+   * Body param: Graph generation configuration
+   */
+  graph_generation?: GraphGeneration | null;
+
+  /**
+   * Body param: Optional namespace ID for multi-tenant batch memory scoping. When
+   * provided, all memories in the batch are associated with this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Body param: Optional organization ID for multi-tenant batch memory scoping. When
+   * provided, all memories in the batch are associated with this organization.
+   */
+  organization_id?: string | null;
+
+  /**
    * Body param: Internal user ID for all memories in the batch. If not provided,
    * developer's user ID will be used.
    */
@@ -1332,6 +1144,8 @@ export interface MemoryAddBatchParams {
    * The webhook will receive a POST request with batch completion details.
    */
   webhook_url?: string | null;
+
+  [k: string]: unknown;
 }
 
 export interface MemoryDeleteAllParams {
@@ -1405,12 +1219,44 @@ export interface MemorySearchParams {
   metadata?: MemoryMetadata | null;
 
   /**
+   * Body param: Optional namespace ID for multi-tenant search scoping. When
+   * provided, search is scoped to memories within this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Body param: Optional organization ID for multi-tenant search scoping. When
+   * provided, search is scoped to memories within this organization.
+   */
+  organization_id?: string | null;
+
+  /**
    * Body param: Whether to enable additional ranking of search results. Default is
    * false because results are already ranked when using an LLM for search
    * (recommended approach). Only enable this if you're not using an LLM in your
    * search pipeline and need additional result ranking.
    */
   rank_results?: boolean;
+
+  /**
+   * Body param: Optional user-defined schema ID to use for this search. If provided,
+   * this schema (plus system schema) will be used for query generation. If not
+   * provided, system will automatically select relevant schema based on query
+   * content.
+   */
+  schema_id?: string | null;
+
+  /**
+   * Body param: Complete search override specification provided by developer
+   */
+  search_override?: MemorySearchParams.SearchOverride | null;
+
+  /**
+   * Body param: If true, uses simple schema mode: system schema + ONE most relevant
+   * user schema. This ensures better consistency between add/search operations and
+   * reduces query complexity. Recommended for production use.
+   */
+  simple_schema_mode?: boolean;
 
   /**
    * Body param: Optional internal user ID to filter search results by a specific
@@ -1425,13 +1271,93 @@ export interface MemorySearchParams {
   'Accept-Encoding'?: string;
 }
 
+export namespace MemorySearchParams {
+  /**
+   * Complete search override specification provided by developer
+   */
+  export interface SearchOverride {
+    /**
+     * Graph pattern to search for (source)-[relationship]->(target)
+     */
+    pattern: SearchOverride.Pattern;
+
+    /**
+     * Property filters to apply to the search pattern
+     */
+    filters?: Array<SearchOverride.Filter>;
+
+    /**
+     * Specific properties to return. If not specified, returns all properties.
+     */
+    return_properties?: Array<string> | null;
+  }
+
+  export namespace SearchOverride {
+    /**
+     * Graph pattern to search for (source)-[relationship]->(target)
+     */
+    export interface Pattern {
+      /**
+       * Relationship type (e.g., 'ASSOCIATED_WITH', 'WORKS_FOR'). Must match schema
+       * relationship types.
+       */
+      relationship_type: string;
+
+      /**
+       * Source node label (e.g., 'Memory', 'Person', 'Company'). Must match schema node
+       * types.
+       */
+      source_label: string;
+
+      /**
+       * Target node label (e.g., 'Person', 'Company', 'Project'). Must match schema node
+       * types.
+       */
+      target_label: string;
+
+      /**
+       * Relationship direction: '->' (outgoing), '<-' (incoming), or '-' (bidirectional)
+       */
+      direction?: string;
+    }
+
+    /**
+     * Property filters for search override
+     */
+    export interface Filter {
+      /**
+       * Node type to filter (e.g., 'Person', 'Memory', 'Company')
+       */
+      node_type: string;
+
+      /**
+       * Filter operator: 'CONTAINS', 'EQUALS', 'STARTS_WITH', 'IN'
+       */
+      operator: string;
+
+      /**
+       * Property name to filter on (e.g., 'name', 'content', 'role')
+       */
+      property_name: string;
+
+      /**
+       * Filter value(s). Use list for 'IN' operator.
+       */
+      value: string | Array<string> | number | boolean;
+    }
+  }
+}
+
 export declare namespace Memory {
   export {
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
+    type AutoGraphGeneration as AutoGraphGeneration,
     type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
+    type GraphGeneration as GraphGeneration,
     type HTTPValidationError as HTTPValidationError,
+    type ManualGraphGeneration as ManualGraphGeneration,
     type MemoryMetadata as MemoryMetadata,
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
