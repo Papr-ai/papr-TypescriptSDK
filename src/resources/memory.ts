@@ -2,6 +2,7 @@
 
 import { APIResource } from '../core/resource';
 import * as MemoryAPI from './memory';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { buildHeaders } from '../internal/headers';
 import { RequestOptions } from '../internal/request-options';
@@ -288,7 +289,7 @@ export interface AddMemory {
   /**
    * Graph generation configuration
    */
-  graph_generation?: AddMemory.GraphGeneration | null;
+  graph_generation?: GraphGeneration | null;
 
   /**
    * Metadata for memory request
@@ -318,164 +319,6 @@ export interface AddMemory {
   type?: MemoryType;
 }
 
-export namespace AddMemory {
-  /**
-   * Graph generation configuration
-   */
-  export interface GraphGeneration {
-    /**
-     * AI-powered graph generation with optional guidance
-     */
-    auto?: GraphGeneration.Auto | null;
-
-    /**
-     * Complete manual control over graph structure
-     */
-    manual?: GraphGeneration.Manual | null;
-
-    /**
-     * Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)
-     */
-    mode?: 'auto' | 'manual';
-  }
-
-  export namespace GraphGeneration {
-    /**
-     * AI-powered graph generation with optional guidance
-     */
-    export interface Auto {
-      /**
-       * Override specific property values in AI-generated nodes with match conditions
-       */
-      property_overrides?: Array<Auto.PropertyOverride> | null;
-
-      /**
-       * Force AI to use this specific schema instead of auto-selecting
-       */
-      schema_id?: string | null;
-
-      /**
-       * Limit AI to system + one user schema for consistency
-       */
-      simple_schema_mode?: boolean;
-    }
-
-    export namespace Auto {
-      /**
-       * Property override rule with optional match conditions
-       */
-      export interface PropertyOverride {
-        /**
-         * Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')
-         */
-        nodeLabel: string;
-
-        /**
-         * Properties to set/override on matching nodes
-         */
-        set: { [key: string]: unknown };
-
-        /**
-         * Optional conditions that must be met for override to apply. If not provided,
-         * applies to all nodes of this type
-         */
-        match?: { [key: string]: unknown } | null;
-      }
-    }
-
-    /**
-     * Complete manual control over graph structure
-     */
-    export interface Manual {
-      /**
-       * Exact nodes to create
-       */
-      nodes: Array<Manual.Node>;
-
-      /**
-       * Exact relationships to create
-       */
-      relationships?: Array<Manual.Relationship>;
-    }
-
-    export namespace Manual {
-      /**
-       * Developer-specified node for graph override.
-       *
-       * IMPORTANT:
-       *
-       * - 'id' is REQUIRED (relationships reference nodes by these IDs)
-       * - 'label' must match a node type from your registered UserGraphSchema
-       * - 'properties' must include ALL required fields from your schema definition
-       *
-       * 📋 Schema Management:
-       *
-       * - Register schemas: POST /v1/schemas
-       * - View your schemas: GET /v1/schemas
-       */
-      export interface Node {
-        /**
-         * **REQUIRED**: Unique identifier for this node. Must be unique within this
-         * request. Relationships reference this via source_node_id/target_node_id.
-         * Example: 'person_john_123', 'finding_cve_2024_1234'
-         */
-        id: string;
-
-        /**
-         * **REQUIRED**: Node type from your UserGraphSchema. View available types at GET
-         * /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight,
-         * Meeting, Opportunity, Code
-         */
-        label: string;
-
-        /**
-         * **REQUIRED**: Node properties matching your UserGraphSchema definition. Must
-         * include: (1) All required properties from your schema, (2) unique_identifiers if
-         * defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema
-         * requirements at GET /v1/schemas
-         */
-        properties: { [key: string]: unknown };
-      }
-
-      /**
-       * Developer-specified relationship for graph override.
-       *
-       * IMPORTANT:
-       *
-       * - source_node_id MUST exactly match a node 'id' from the 'nodes' array
-       * - target_node_id MUST exactly match a node 'id' from the 'nodes' array
-       * - relationship_type MUST exist in your registered UserGraphSchema
-       */
-      export interface Relationship {
-        /**
-         * **REQUIRED**: Relationship type from your UserGraphSchema. View available types
-         * at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT,
-         * DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY
-         */
-        relationship_type: string;
-
-        /**
-         * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
-         * array of this request
-         */
-        source_node_id: string;
-
-        /**
-         * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
-         * array of this request
-         */
-        target_node_id: string;
-
-        /**
-         * Optional relationship properties (e.g., {'since': '2024-01-01', 'role':
-         * 'manager'})
-         */
-        properties?: { [key: string]: unknown } | null;
-      }
-    }
-  }
-}
-
 /**
  * Unified response model for add_memory API endpoint (success or error).
  */
@@ -488,7 +331,7 @@ export interface AddMemoryResponse {
   /**
    * List of memory items if successful
    */
-  data?: Array<AddMemoryResponse.Data> | null;
+  data?: Array<Shared.AddMemoryItem> | null;
 
   /**
    * Additional error details or context
@@ -506,18 +349,46 @@ export interface AddMemoryResponse {
   status?: string;
 }
 
-export namespace AddMemoryResponse {
+/**
+ * AI-powered graph generation with optional guidance
+ */
+export interface AutoGraphGeneration {
   /**
-   * Response model for a single memory item in add_memory response
+   * Override specific property values in AI-generated nodes with match conditions
    */
-  export interface Data {
-    createdAt: string;
+  property_overrides?: Array<AutoGraphGeneration.PropertyOverride> | null;
 
-    memoryId: string;
+  /**
+   * Force AI to use this specific schema instead of auto-selecting
+   */
+  schema_id?: string | null;
 
-    objectId: string;
+  /**
+   * Limit AI to system + one user schema for consistency
+   */
+  simple_schema_mode?: boolean;
+}
 
-    memoryChunkIds?: Array<string>;
+export namespace AutoGraphGeneration {
+  /**
+   * Property override rule with optional match conditions
+   */
+  export interface PropertyOverride {
+    /**
+     * Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')
+     */
+    nodeLabel: string;
+
+    /**
+     * Properties to set/override on matching nodes
+     */
+    set: { [key: string]: unknown };
+
+    /**
+     * Optional conditions that must be met for override to apply. If not provided,
+     * applies to all nodes of this type
+     */
+    match?: { [key: string]: unknown } | null;
   }
 }
 
@@ -591,6 +462,26 @@ export interface ContextItem {
   role: 'user' | 'assistant';
 }
 
+/**
+ * Graph generation configuration
+ */
+export interface GraphGeneration {
+  /**
+   * AI-powered graph generation with optional guidance
+   */
+  auto?: AutoGraphGeneration | null;
+
+  /**
+   * Complete manual control over graph structure
+   */
+  manual?: ManualGraphGeneration | null;
+
+  /**
+   * Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)
+   */
+  mode?: 'auto' | 'manual';
+}
+
 export interface HTTPValidationError {
   detail?: Array<HTTPValidationError.Detail>;
 }
@@ -602,6 +493,97 @@ export namespace HTTPValidationError {
     msg: string;
 
     type: string;
+  }
+}
+
+/**
+ * Complete manual control over graph structure
+ */
+export interface ManualGraphGeneration {
+  /**
+   * Exact nodes to create
+   */
+  nodes: Array<ManualGraphGeneration.Node>;
+
+  /**
+   * Exact relationships to create
+   */
+  relationships?: Array<ManualGraphGeneration.Relationship>;
+}
+
+export namespace ManualGraphGeneration {
+  /**
+   * Developer-specified node for graph override.
+   *
+   * IMPORTANT:
+   *
+   * - 'id' is REQUIRED (relationships reference nodes by these IDs)
+   * - 'label' must match a node type from your registered UserGraphSchema
+   * - 'properties' must include ALL required fields from your schema definition
+   *
+   * 📋 Schema Management:
+   *
+   * - Register schemas: POST /v1/schemas
+   * - View your schemas: GET /v1/schemas
+   */
+  export interface Node {
+    /**
+     * **REQUIRED**: Unique identifier for this node. Must be unique within this
+     * request. Relationships reference this via source_node_id/target_node_id.
+     * Example: 'person_john_123', 'finding_cve_2024_1234'
+     */
+    id: string;
+
+    /**
+     * **REQUIRED**: Node type from your UserGraphSchema. View available types at GET
+     * /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight,
+     * Meeting, Opportunity, Code
+     */
+    label: string;
+
+    /**
+     * **REQUIRED**: Node properties matching your UserGraphSchema definition. Must
+     * include: (1) All required properties from your schema, (2) unique_identifiers if
+     * defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema
+     * requirements at GET /v1/schemas
+     */
+    properties: { [key: string]: unknown };
+  }
+
+  /**
+   * Developer-specified relationship for graph override.
+   *
+   * IMPORTANT:
+   *
+   * - source_node_id MUST exactly match a node 'id' from the 'nodes' array
+   * - target_node_id MUST exactly match a node 'id' from the 'nodes' array
+   * - relationship_type MUST exist in your registered UserGraphSchema
+   */
+  export interface Relationship {
+    /**
+     * **REQUIRED**: Relationship type from your UserGraphSchema. View available types
+     * at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT,
+     * DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY
+     */
+    relationship_type: string;
+
+    /**
+     * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
+     * array of this request
+     */
+    source_node_id: string;
+
+    /**
+     * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
+     * array of this request
+     */
+    target_node_id: string;
+
+    /**
+     * Optional relationship properties (e.g., {'since': '2024-01-01', 'role':
+     * 'manager'})
+     */
+    properties?: { [key: string]: unknown } | null;
   }
 }
 
@@ -1082,7 +1064,7 @@ export interface MemoryAddParams {
   /**
    * Body param: Graph generation configuration
    */
-  graph_generation?: MemoryAddParams.GraphGeneration | null;
+  graph_generation?: GraphGeneration | null;
 
   /**
    * Body param: Metadata for memory request
@@ -1112,164 +1094,6 @@ export interface MemoryAddParams {
   type?: MemoryType;
 }
 
-export namespace MemoryAddParams {
-  /**
-   * Graph generation configuration
-   */
-  export interface GraphGeneration {
-    /**
-     * AI-powered graph generation with optional guidance
-     */
-    auto?: GraphGeneration.Auto | null;
-
-    /**
-     * Complete manual control over graph structure
-     */
-    manual?: GraphGeneration.Manual | null;
-
-    /**
-     * Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)
-     */
-    mode?: 'auto' | 'manual';
-  }
-
-  export namespace GraphGeneration {
-    /**
-     * AI-powered graph generation with optional guidance
-     */
-    export interface Auto {
-      /**
-       * Override specific property values in AI-generated nodes with match conditions
-       */
-      property_overrides?: Array<Auto.PropertyOverride> | null;
-
-      /**
-       * Force AI to use this specific schema instead of auto-selecting
-       */
-      schema_id?: string | null;
-
-      /**
-       * Limit AI to system + one user schema for consistency
-       */
-      simple_schema_mode?: boolean;
-    }
-
-    export namespace Auto {
-      /**
-       * Property override rule with optional match conditions
-       */
-      export interface PropertyOverride {
-        /**
-         * Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')
-         */
-        nodeLabel: string;
-
-        /**
-         * Properties to set/override on matching nodes
-         */
-        set: { [key: string]: unknown };
-
-        /**
-         * Optional conditions that must be met for override to apply. If not provided,
-         * applies to all nodes of this type
-         */
-        match?: { [key: string]: unknown } | null;
-      }
-    }
-
-    /**
-     * Complete manual control over graph structure
-     */
-    export interface Manual {
-      /**
-       * Exact nodes to create
-       */
-      nodes: Array<Manual.Node>;
-
-      /**
-       * Exact relationships to create
-       */
-      relationships?: Array<Manual.Relationship>;
-    }
-
-    export namespace Manual {
-      /**
-       * Developer-specified node for graph override.
-       *
-       * IMPORTANT:
-       *
-       * - 'id' is REQUIRED (relationships reference nodes by these IDs)
-       * - 'label' must match a node type from your registered UserGraphSchema
-       * - 'properties' must include ALL required fields from your schema definition
-       *
-       * 📋 Schema Management:
-       *
-       * - Register schemas: POST /v1/schemas
-       * - View your schemas: GET /v1/schemas
-       */
-      export interface Node {
-        /**
-         * **REQUIRED**: Unique identifier for this node. Must be unique within this
-         * request. Relationships reference this via source_node_id/target_node_id.
-         * Example: 'person_john_123', 'finding_cve_2024_1234'
-         */
-        id: string;
-
-        /**
-         * **REQUIRED**: Node type from your UserGraphSchema. View available types at GET
-         * /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight,
-         * Meeting, Opportunity, Code
-         */
-        label: string;
-
-        /**
-         * **REQUIRED**: Node properties matching your UserGraphSchema definition. Must
-         * include: (1) All required properties from your schema, (2) unique_identifiers if
-         * defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema
-         * requirements at GET /v1/schemas
-         */
-        properties: { [key: string]: unknown };
-      }
-
-      /**
-       * Developer-specified relationship for graph override.
-       *
-       * IMPORTANT:
-       *
-       * - source_node_id MUST exactly match a node 'id' from the 'nodes' array
-       * - target_node_id MUST exactly match a node 'id' from the 'nodes' array
-       * - relationship_type MUST exist in your registered UserGraphSchema
-       */
-      export interface Relationship {
-        /**
-         * **REQUIRED**: Relationship type from your UserGraphSchema. View available types
-         * at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT,
-         * DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY
-         */
-        relationship_type: string;
-
-        /**
-         * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
-         * array of this request
-         */
-        source_node_id: string;
-
-        /**
-         * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
-         * array of this request
-         */
-        target_node_id: string;
-
-        /**
-         * Optional relationship properties (e.g., {'since': '2024-01-01', 'role':
-         * 'manager'})
-         */
-        properties?: { [key: string]: unknown } | null;
-      }
-    }
-  }
-}
-
 export interface MemoryAddBatchParams {
   /**
    * Body param: List of memory items to add in batch
@@ -1295,7 +1119,7 @@ export interface MemoryAddBatchParams {
   /**
    * Body param: Graph generation configuration
    */
-  graph_generation?: MemoryAddBatchParams.GraphGeneration | null;
+  graph_generation?: GraphGeneration | null;
 
   /**
    * Body param: Optional namespace ID for multi-tenant batch memory scoping. When
@@ -1328,164 +1152,6 @@ export interface MemoryAddBatchParams {
   webhook_url?: string | null;
 
   [k: string]: unknown;
-}
-
-export namespace MemoryAddBatchParams {
-  /**
-   * Graph generation configuration
-   */
-  export interface GraphGeneration {
-    /**
-     * AI-powered graph generation with optional guidance
-     */
-    auto?: GraphGeneration.Auto | null;
-
-    /**
-     * Complete manual control over graph structure
-     */
-    manual?: GraphGeneration.Manual | null;
-
-    /**
-     * Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)
-     */
-    mode?: 'auto' | 'manual';
-  }
-
-  export namespace GraphGeneration {
-    /**
-     * AI-powered graph generation with optional guidance
-     */
-    export interface Auto {
-      /**
-       * Override specific property values in AI-generated nodes with match conditions
-       */
-      property_overrides?: Array<Auto.PropertyOverride> | null;
-
-      /**
-       * Force AI to use this specific schema instead of auto-selecting
-       */
-      schema_id?: string | null;
-
-      /**
-       * Limit AI to system + one user schema for consistency
-       */
-      simple_schema_mode?: boolean;
-    }
-
-    export namespace Auto {
-      /**
-       * Property override rule with optional match conditions
-       */
-      export interface PropertyOverride {
-        /**
-         * Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')
-         */
-        nodeLabel: string;
-
-        /**
-         * Properties to set/override on matching nodes
-         */
-        set: { [key: string]: unknown };
-
-        /**
-         * Optional conditions that must be met for override to apply. If not provided,
-         * applies to all nodes of this type
-         */
-        match?: { [key: string]: unknown } | null;
-      }
-    }
-
-    /**
-     * Complete manual control over graph structure
-     */
-    export interface Manual {
-      /**
-       * Exact nodes to create
-       */
-      nodes: Array<Manual.Node>;
-
-      /**
-       * Exact relationships to create
-       */
-      relationships?: Array<Manual.Relationship>;
-    }
-
-    export namespace Manual {
-      /**
-       * Developer-specified node for graph override.
-       *
-       * IMPORTANT:
-       *
-       * - 'id' is REQUIRED (relationships reference nodes by these IDs)
-       * - 'label' must match a node type from your registered UserGraphSchema
-       * - 'properties' must include ALL required fields from your schema definition
-       *
-       * 📋 Schema Management:
-       *
-       * - Register schemas: POST /v1/schemas
-       * - View your schemas: GET /v1/schemas
-       */
-      export interface Node {
-        /**
-         * **REQUIRED**: Unique identifier for this node. Must be unique within this
-         * request. Relationships reference this via source_node_id/target_node_id.
-         * Example: 'person_john_123', 'finding_cve_2024_1234'
-         */
-        id: string;
-
-        /**
-         * **REQUIRED**: Node type from your UserGraphSchema. View available types at GET
-         * /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight,
-         * Meeting, Opportunity, Code
-         */
-        label: string;
-
-        /**
-         * **REQUIRED**: Node properties matching your UserGraphSchema definition. Must
-         * include: (1) All required properties from your schema, (2) unique_identifiers if
-         * defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema
-         * requirements at GET /v1/schemas
-         */
-        properties: { [key: string]: unknown };
-      }
-
-      /**
-       * Developer-specified relationship for graph override.
-       *
-       * IMPORTANT:
-       *
-       * - source_node_id MUST exactly match a node 'id' from the 'nodes' array
-       * - target_node_id MUST exactly match a node 'id' from the 'nodes' array
-       * - relationship_type MUST exist in your registered UserGraphSchema
-       */
-      export interface Relationship {
-        /**
-         * **REQUIRED**: Relationship type from your UserGraphSchema. View available types
-         * at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT,
-         * DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY
-         */
-        relationship_type: string;
-
-        /**
-         * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
-         * array of this request
-         */
-        source_node_id: string;
-
-        /**
-         * **REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes'
-         * array of this request
-         */
-        target_node_id: string;
-
-        /**
-         * Optional relationship properties (e.g., {'since': '2024-01-01', 'role':
-         * 'manager'})
-         */
-        properties?: { [key: string]: unknown } | null;
-      }
-    }
-  }
 }
 
 export interface MemoryDeleteAllParams {
@@ -1699,9 +1365,12 @@ export declare namespace Memory {
   export {
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
+    type AutoGraphGeneration as AutoGraphGeneration,
     type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
+    type GraphGeneration as GraphGeneration,
     type HTTPValidationError as HTTPValidationError,
+    type ManualGraphGeneration as ManualGraphGeneration,
     type MemoryMetadata as MemoryMetadata,
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,

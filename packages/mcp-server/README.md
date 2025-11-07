@@ -27,7 +27,7 @@ For clients with a configuration JSON, it might look something like this:
   "mcpServers": {
     "papr_memory_api": {
       "command": "npx",
-      "args": ["-y", "@papr/memory-mcp", "--client=claude", "--tools=all"],
+      "args": ["-y", "@papr/memory-mcp", "--client=claude", "--tools=dynamic"],
       "env": {
         "PAPR_MEMORY_API_KEY": "My X API Key",
         "PAPR_MEMORY_Session_Token": "My X Session Token",
@@ -434,3 +434,209 @@ The following tools are available in this MCP server.
       **Required Headers**:
       - Content-Type: application/json
       - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+
+### Resource `document`:
+
+- `cancel_processing_document` (`write`): Cancel document processing
+- `get_status_document` (`read`): Get processing status for an uploaded document
+- `upload_document` (`write`): Upload and process documents using the pluggable architecture.
+
+      **Authentication Required**: Bearer token or API key
+
+      **Supported Providers**: TensorLake.ai, Reducto AI, Gemini Vision (fallback)
+
+      **Features**:
+      - Multi-tenant organization/namespace scoping
+      - Temporal workflow for durable execution
+      - Real-time WebSocket status updates
+      - Integration with Parse Server (Post/PostSocial/PageVersion)
+      - Automatic fallback between providers
+
+### Resource `schemas`:
+
+- `create_schemas` (`write`): Create a new user-defined graph schema.
+      This endpoint allows users to define custom node types and relationships for their knowledge graph.
+      The schema will be validated and stored for use in future memory extractions.
+
+      **Features:**
+      - Define custom node types with properties and validation rules
+      - Define custom relationship types with constraints
+      - Automatic validation against system schemas
+      - Support for different scopes (personal, workspace, organization)
+      - **Enum support**: Use `enum_values` to restrict property values to a predefined list (max 10 values)
+      - **Auto-indexing**: Required properties are automatically indexed in Neo4j for optimal query performance
+
+      **Property Types & Validation:**
+      - `string`: Text values with optional `enum_values`, `min_length`, `max_length`, `pattern`
+      - `integer`: Whole numbers with optional `min_value`, `max_value`
+      - `float`: Decimal numbers with optional `min_value`, `max_value`
+      - `boolean`: True/false values
+      - `datetime`: ISO 8601 timestamp strings
+      - `array`: Lists of values
+      - `object`: Complex nested objects
+
+      **Enum Values:**
+      - Add `enum_values` to any string property to restrict values to a predefined list
+      - Maximum 10 enum values allowed per property
+      - Use with `default` to set a default enum value
+      - Example: `"enum_values": ["small", "medium", "large"]`
+
+      **When to Use Enums:**
+      - Limited, well-defined options (≤10 values): sizes, statuses, categories, priorities
+      - Controlled vocabularies: "active/inactive", "high/medium/low", "bronze/silver/gold"
+      - When you want exact matching and no variations
+
+      **When to Avoid Enums:**
+      - Open-ended text fields: names, titles, descriptions, addresses
+      - Large sets of options (>10): countries, cities, product models
+      - When you want semantic similarity matching for entity resolution
+      - Dynamic or frequently changing value sets
+
+      **Unique Identifiers & Entity Resolution:**
+      - Properties marked as `unique_identifiers` are used for entity deduplication and merging
+      - **With enum_values**: Exact matching is used - entities with the same enum value are considered identical
+      - **Without enum_values**: Semantic similarity matching is used - entities with similar meanings are automatically merged
+      - Example: A "name" unique_identifier without enums will merge "Apple Inc" and "Apple Inc." as the same entity
+      - Example: A "sku" unique_identifier with enums will only merge entities with exactly matching SKU codes
+      - Use enums for unique_identifiers when you have a limited, predefined set of values (≤10 options)
+      - Avoid enums for unique_identifiers when you have broad, open-ended values or >10 possible options
+      - **Best practices**: Use enums for controlled vocabularies (status codes, categories), avoid for open text (company names, product titles)
+      - **In the example above**: "name" uses semantic similarity (open-ended), "sku" uses exact matching (controlled set)
+
+      **LLM-Friendly Descriptions:**
+      - Write detailed property descriptions that guide the LLM on expected formats and usage
+      - Include examples of typical values (e.g., "Product name, typically 2-4 words like 'iPhone 15 Pro'")
+      - Specify data formats and constraints clearly (e.g., "Price in USD as decimal number")
+      - For enums, explain when to use each option (e.g., "use 'new' for brand new items")
+
+      **Authentication Required**:
+      One of the following authentication methods must be used:
+      - Bearer token in `Authorization` header
+      - API Key in `X-API-Key` header
+      - Session token in `X-Session-Token` header
+
+      **Required Headers**:
+      - Content-Type: application/json
+      - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+- `retrieve_schemas` (`read`): Get a specific schema by ID.
+      Returns the complete schema definition including node types, relationship types,
+      and metadata. User must have read access to the schema.
+- `update_schemas` (`write`): Update an existing schema.
+      Allows modification of schema properties, node types, and relationship types.
+      User must have write access to the schema. Updates create a new version
+      while preserving the existing data.
+- `list_schemas` (`read`): List all schemas accessible to the authenticated user.
+      Returns schemas that the user owns or has read access to, including:
+      - Personal schemas created by the user
+      - Workspace schemas shared within the user's workspace
+      - Organization schemas available to the user's organization
+
+      **Authentication Required**:
+      One of the following authentication methods must be used:
+      - Bearer token in `Authorization` header
+      - API Key in `X-API-Key` header
+      - Session token in `X-Session-Token` header
+- `delete_schemas` (`write`): Delete a schema.
+      Soft deletes the schema by marking it as archived. The schema data and
+      associated graph nodes/relationships are preserved for data integrity.
+      User must have write access to the schema.
+- `activate_schemas` (`write`): Activate or deactivate a schema.
+      Active schemas are used for memory extraction and graph generation.
+      Multiple schemas can be active simultaneously and will be merged during
+      the extraction process.
+
+### Resource `messages`:
+
+- `store_messages` (`write`): Store a chat message and queue it for AI analysis and memory creation.
+      **Authentication Required**: Bearer token, API key, or session token
+
+      **Processing Control**:
+      - Set `process_messages: true` (default) to enable full AI analysis and memory creation
+      - Set `process_messages: false` to store messages only without processing into memories
+
+      **Processing Flow** (when process_messages=true):
+      1. Message is immediately stored in PostMessage class
+      2. Background processing analyzes the message for memory-worthiness
+      3. If worthy, creates a memory with appropriate role-based categorization
+      4. Links the message to the created memory
+
+      **Role-Based Categories**:
+      - **User messages**: preference, task, goal, facts, context
+      - **Assistant messages**: skills, learning
+
+      **Session Management**:
+      - `sessionId` is required to group related messages
+      - Use the same `sessionId` for an entire conversation
+      - Retrieve conversation history using GET /messages/sessions/{sessionId}
+
+### Resource `messages.sessions`:
+
+- `process_messages_messages_sessions` (`write`): Process all stored messages in a session that were previously stored with process_messages=false.
+      **Authentication Required**: Bearer token, API key, or session token
+
+      This endpoint allows you to retroactively process messages that were initially stored
+      without processing. Useful for:
+      - Processing messages after deciding you want them as memories
+      - Batch processing large conversation sessions
+      - Re-processing sessions with updated AI models
+
+      **Processing Behavior**:
+      - Only processes messages with status 'stored_only' or 'pending'
+      - Uses the same smart batch analysis (every 15 messages)
+      - Respects existing memory creation pipeline
+- `retrieve_history_messages_sessions` (`read`): Retrieve message history for a specific conversation session.
+      **Authentication Required**: Bearer token, API key, or session token
+
+      **Pagination**:
+      - Use `limit` and `skip` parameters for pagination
+      - Messages are returned in chronological order (oldest first)
+      - `total_count` indicates total messages in the session
+
+      **Access Control**:
+      - Only returns messages for the authenticated user
+      - Workspace scoping is applied if available
+- `retrieve_status_messages_sessions` (`read`): Get processing status for messages in a session.
+      **Authentication Required**: Bearer token, API key, or session token
+
+      **Status Information**:
+      - Total messages in session
+      - Processing status breakdown (queued, analyzing, completed, failed)
+      - Any messages with processing errors
+
+### Resource `graphql`:
+
+- `playground_graphql` (`read`): GraphQL Playground (development only)
+- `query_graphql` (`write`): GraphQL endpoint for querying PAPR Memory using GraphQL.
+
+      This endpoint proxies GraphQL queries to Neo4j's hosted GraphQL endpoint,
+      automatically applying multi-tenant authorization filters based on user_id and workspace_id.
+
+      **Authentication Required**:
+      One of the following authentication methods must be used:
+      - Bearer token in `Authorization` header
+      - API Key in `X-API-Key` header
+      - Session token in `X-Session-Token` header
+
+      **Request Body**:
+      ```json
+      {
+        "query": "query { project(id: \"proj_123\") { name tasks { title } } }",
+        "variables": {},
+        "operationName": "GetProject"
+      }
+      ```
+
+      **Example Query**:
+      ```graphql
+      query GetProjectTasks($projectId: ID!) {
+        project(id: $projectId) {
+          name
+          tasks {
+            title
+            status
+          }
+        }
+      }
+      ```
+
+      All queries are automatically filtered by user_id and workspace_id for security.
