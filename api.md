@@ -17,7 +17,6 @@ Types:
 Methods:
 
 - <code title="post /v1/user">client.user.<a href="./src/resources/user.ts">create</a>({ ...params }) -> UserResponse</code>
-- <code title="put /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">update</a>(userID, { ...params }) -> UserResponse</code>
 - <code title="get /v1/user">client.user.<a href="./src/resources/user.ts">list</a>({ ...params }) -> UserListResponse</code>
 - <code title="delete /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">delete</a>(userID, { ...params }) -> UserDeleteResponse</code>
 - <code title="post /v1/user/batch">client.user.<a href="./src/resources/user.ts">createBatch</a>({ ...params }) -> UserCreateBatchResponse</code>
@@ -91,7 +90,6 @@ Types:
 - <code><a href="./src/resources/schemas.ts">SchemaRetrieveResponse</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaUpdateResponse</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaListResponse</a></code>
-- <code><a href="./src/resources/schemas.ts">SchemaDeleteResponse</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaActivateResponse</a></code>
 
 Methods:
@@ -100,7 +98,6 @@ Methods:
 - <code title="get /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">retrieve</a>(schemaID) -> SchemaRetrieveResponse</code>
 - <code title="put /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">update</a>(schemaID, { ...params }) -> SchemaUpdateResponse</code>
 - <code title="get /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">list</a>({ ...params }) -> SchemaListResponse</code>
-- <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> unknown</code>
 - <code title="post /v1/schemas/{schema_id}/activate">client.schemas.<a href="./src/resources/schemas.ts">activate</a>(schemaID, { ...params }) -> unknown</code>
 
 # Graphql

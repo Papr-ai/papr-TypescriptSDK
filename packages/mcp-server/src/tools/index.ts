@@ -5,7 +5,6 @@ import { Metadata, Endpoint, HandlerFunction } from './types';
 export { Metadata, Endpoint, HandlerFunction };
 
 import create_user from './user/create-user';
-import update_user from './user/update-user';
 import list_user from './user/list-user';
 import delete_user from './user/delete-user';
 import create_batch_user from './user/create-batch-user';
@@ -27,7 +26,6 @@ import create_schemas from './schemas/create-schemas';
 import retrieve_schemas from './schemas/retrieve-schemas';
 import update_schemas from './schemas/update-schemas';
 import list_schemas from './schemas/list-schemas';
-import delete_schemas from './schemas/delete-schemas';
 import activate_schemas from './schemas/activate-schemas';
 import playground_graphql from './graphql/playground-graphql';
 import query_graphql from './graphql/query-graphql';
@@ -39,7 +37,6 @@ function addEndpoint(endpoint: Endpoint) {
 }
 
 addEndpoint(create_user);
-addEndpoint(update_user);
 addEndpoint(list_user);
 addEndpoint(delete_user);
 addEndpoint(create_batch_user);
@@ -61,7 +58,6 @@ addEndpoint(create_schemas);
 addEndpoint(retrieve_schemas);
 addEndpoint(update_schemas);
 addEndpoint(list_schemas);
-addEndpoint(delete_schemas);
 addEndpoint(activate_schemas);
 addEndpoint(playground_graphql);
 addEndpoint(query_graphql);

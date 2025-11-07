@@ -62,7 +62,6 @@ import {
   SchemaActivateResponse,
   SchemaCreateParams,
   SchemaCreateResponse,
-  SchemaDeleteResponse,
   SchemaListParams,
   SchemaListResponse,
   SchemaRetrieveResponse,
@@ -82,7 +81,6 @@ import {
   UserListResponse,
   UserResponse,
   UserType,
-  UserUpdateParams,
 } from './resources/user';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
@@ -851,7 +849,6 @@ export declare namespace Papr {
     type UserDeleteResponse as UserDeleteResponse,
     type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
-    type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
@@ -907,7 +904,6 @@ export declare namespace Papr {
     type SchemaRetrieveResponse as SchemaRetrieveResponse,
     type SchemaUpdateResponse as SchemaUpdateResponse,
     type SchemaListResponse as SchemaListResponse,
-    type SchemaDeleteResponse as SchemaDeleteResponse,
     type SchemaActivateResponse as SchemaActivateResponse,
     type SchemaCreateParams as SchemaCreateParams,
     type SchemaUpdateParams as SchemaUpdateParams,

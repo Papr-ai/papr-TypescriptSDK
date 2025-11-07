@@ -125,17 +125,6 @@ export class Schemas extends APIResource {
   }
 
   /**
-   * Delete a schema.
-   *
-   *     Soft deletes the schema by marking it as archived. The schema data and
-   *     associated graph nodes/relationships are preserved for data integrity.
-   *     User must have write access to the schema.
-   */
-  delete(schemaID: string, options?: RequestOptions): APIPromise<unknown> {
-    return this._client.delete(path`/v1/schemas/${schemaID}`, options);
-  }
-
-  /**
    * Activate or deactivate a schema.
    *
    *     Active schemas are used for memory extraction and graph generation.
@@ -371,8 +360,6 @@ export interface SchemaListResponse {
   total?: number;
 }
 
-export type SchemaDeleteResponse = unknown;
-
 export type SchemaActivateResponse = unknown;
 
 export interface SchemaCreateParams {
@@ -558,7 +545,6 @@ export declare namespace Schemas {
     type SchemaRetrieveResponse as SchemaRetrieveResponse,
     type SchemaUpdateResponse as SchemaUpdateResponse,
     type SchemaListResponse as SchemaListResponse,
-    type SchemaDeleteResponse as SchemaDeleteResponse,
     type SchemaActivateResponse as SchemaActivateResponse,
     type SchemaCreateParams as SchemaCreateParams,
     type SchemaUpdateParams as SchemaUpdateParams,

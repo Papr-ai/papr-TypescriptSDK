@@ -22,18 +22,6 @@ export class User extends APIResource {
   }
 
   /**
-   * Update user details by user_id (\_User.objectId) and developer association
-   *
-   * @example
-   * ```ts
-   * const userResponse = await client.user.update('user_id');
-   * ```
-   */
-  update(userID: string, body: UserUpdateParams, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.put(path`/v1/user/${userID}`, { body, ...options });
-  }
-
-  /**
    * List users for a developer
    *
    * @example
@@ -217,16 +205,6 @@ export interface UserCreateParams {
   type?: UserType;
 }
 
-export interface UserUpdateParams {
-  email?: string | null;
-
-  external_id?: string | null;
-
-  metadata?: { [key: string]: unknown } | null;
-
-  type?: UserType | null;
-}
-
 export interface UserListParams {
   email?: string | null;
 
@@ -271,7 +249,6 @@ export declare namespace User {
     type UserDeleteResponse as UserDeleteResponse,
     type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
-    type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
