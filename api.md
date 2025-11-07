@@ -103,10 +103,6 @@ Methods:
 - <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> unknown</code>
 - <code title="post /v1/schemas/{schema_id}/activate">client.schemas.<a href="./src/resources/schemas.ts">activate</a>(schemaID, { ...params }) -> unknown</code>
 
-# Messages
-
-## Sessions
-
 # Graphql
 
 Types:

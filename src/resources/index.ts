@@ -42,7 +42,6 @@ export {
   type MemoryDeleteAllParams,
   type MemorySearchParams,
 } from './memory';
-export { Messages } from './messages/messages';
 export {
   Schemas,
   type UserGraphSchemaOutput,

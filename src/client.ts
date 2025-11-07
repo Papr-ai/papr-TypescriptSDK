@@ -84,7 +84,6 @@ import {
   UserType,
   UserUpdateParams,
 } from './resources/user';
-import { Messages } from './resources/messages/messages';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -831,7 +830,6 @@ export class Papr {
   feedback: API.Feedback = new API.Feedback(this);
   document: API.Document = new API.Document(this);
   schemas: API.Schemas = new API.Schemas(this);
-  messages: API.Messages = new API.Messages(this);
   graphql: API.Graphql = new API.Graphql(this);
 }
 
@@ -840,7 +838,6 @@ Papr.Memory = Memory;
 Papr.Feedback = Feedback;
 Papr.Document = Document;
 Papr.Schemas = Schemas;
-Papr.Messages = Messages;
 Papr.Graphql = Graphql;
 
 export declare namespace Papr {
@@ -917,8 +914,6 @@ export declare namespace Papr {
     type SchemaListParams as SchemaListParams,
     type SchemaActivateParams as SchemaActivateParams,
   };
-
-  export { Messages as Messages };
 
   export {
     Graphql as Graphql,
