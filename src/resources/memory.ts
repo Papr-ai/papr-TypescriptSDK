@@ -253,15 +253,9 @@ export class Memory extends APIResource {
    * ```
    */
   search(params: MemorySearchParams, options?: RequestOptions): APIPromise<SearchResponse> {
-    const {
-      query_enable_agentic_graph,
-      max_memories,
-      max_nodes,
-      'Accept-Encoding': acceptEncoding,
-      ...body
-    } = params;
+    const { max_memories, max_nodes, 'Accept-Encoding': acceptEncoding, ...body } = params;
     return this._client.post('/v1/memory/search', {
-      query: { enable_agentic_graph: query_enable_agentic_graph, max_memories, max_nodes },
+      query: { max_memories, max_nodes },
       body,
       ...options,
       headers: buildHeaders([
@@ -1186,13 +1180,6 @@ export interface MemorySearchParams {
   query: string;
 
   /**
-   * Query param: HIGHLY RECOMMENDED: Enable agentic graph search for intelligent,
-   * context-aware results. Can be set via URL parameter or JSON body. URL parameter
-   * takes precedence if both are provided.
-   */
-  query_enable_agentic_graph?: boolean | null;
-
-  /**
    * Query param: HIGHLY RECOMMENDED: Maximum number of memories to return. Use at
    * least 15-20 for comprehensive results. Lower values (5-10) may miss relevant
    * information. Default is 20 for optimal coverage.
@@ -1217,7 +1204,7 @@ export interface MemorySearchParams {
    * more relevant and comprehensive results. Set to false only if you need faster,
    * simpler keyword-based search.
    */
-  body_enable_agentic_graph?: boolean;
+  enable_agentic_graph?: boolean;
 
   /**
    * Body param: Optional external user ID to filter search results by a specific
