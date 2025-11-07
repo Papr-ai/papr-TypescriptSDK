@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.17.0 (2025-11-07)
+
+Full Changelog: [v1.16.0...v1.17.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.16.0...v1.17.0)
+
+### Features
+
+* **api:** manual updates ([df2c840](https://github.com/Papr-ai/papr-TypescriptSDK/commit/df2c840f0fbe7427f702157974e8e7e4ca04f25e))
+* **api:** manual updates ([7052183](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7052183157e7c5484dbc97c849d0993f6bf42410))
+* **api:** manual updates ([e3b863c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e3b863c3f25ef08c344ae70a214693d7809f11de))
+* **api:** manual updates ([235eee5](https://github.com/Papr-ai/papr-TypescriptSDK/commit/235eee5cf6e3a811af118bd5616a064b8231be86))
+* **api:** manual updates ([6d11bab](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6d11bab56f36a417db7cff9add2ad35883e7dd61))
+* **api:** manual updates ([34f3de3](https://github.com/Papr-ai/papr-TypescriptSDK/commit/34f3de35f414489ef10eeea99f8a602a61c19046))
+
+
+### Bug Fixes
+
+* coerce nullable values to undefined ([9237c90](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9237c90454f3c91a6d344d5664b7fb3138b094d2))
+* **mcpb:** pin @anthropic-ai/mcpb version ([61aa12f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/61aa12f1471b12fd455c29d24f43e0fe228d536a))
+
+
+### Performance Improvements
+
+* faster formatting ([b787bf3](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b787bf3ad71688a34c469a46e99e29dc9ac554db))
+
+
+### Chores
+
+* ci build action ([42bfe1b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/42bfe1bf71c04e7812a896bc7e2ea295e1e07185))
+* configure new SDK language ([9bcd15c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9bcd15c6bb9af5187f20328bd5432291491370f9))
+* do not install brew dependencies in ./scripts/bootstrap by default ([0d349a8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0d349a806d75bceb01ba1f9830a697f0e0e28d10))
+* extract some types in mcp docs ([01b1dec](https://github.com/Papr-ai/papr-TypescriptSDK/commit/01b1dec88ce2257333c1a942bf3e331b421b1b04))
+* improve example values ([f0db786](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f0db7869cbb2811580963c7825cebf572a185671))
+* **internal:** codegen related update ([69950d7](https://github.com/Papr-ai/papr-TypescriptSDK/commit/69950d72ec5b64376bbc4b11de8b5c05b40b07fe))
+* **internal:** fix incremental formatting in some cases ([3fee2be](https://github.com/Papr-ai/papr-TypescriptSDK/commit/3fee2be866020851a4dc3159c90d727071fd9cec))
+* **internal:** ignore .eslintcache ([93c6b6a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/93c6b6abb3fab016cd95944c6901c94288c34c60))
+* **internal:** remove .eslintcache ([45bb446](https://github.com/Papr-ai/papr-TypescriptSDK/commit/45bb4469bc3cf07b684b59f91511202051313c08))
+* **internal:** remove deprecated `compilerOptions.baseUrl` from tsconfig.json ([b115779](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b115779984400ac31d93af9cbce37ff310ead680))
+* **internal:** use npm pack for build uploads ([687c88d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/687c88d93142d103c8d1eb66dbca24a9092f2b01))
+* **jsdoc:** fix [@link](https://github.com/link) annotations to refer only to parts of the package‘s public interface ([7188e8e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7188e8e3335ce7d66878759758433c843142f13c))
+
 ## 1.16.0 (2025-09-04)
 
 Full Changelog: [v1.15.0...v1.16.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.15.0...v1.16.0)
