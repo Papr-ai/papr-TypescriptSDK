@@ -105,27 +105,7 @@ Methods:
 
 # Messages
 
-Types:
-
-- <code><a href="./src/resources/messages/messages.ts">MessageStoreResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/messages">client.messages.<a href="./src/resources/messages/messages.ts">store</a>({ ...params }) -> MessageStoreResponse</code>
-
 ## Sessions
-
-Types:
-
-- <code><a href="./src/resources/messages/sessions.ts">SessionProcessMessagesResponse</a></code>
-- <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveHistoryResponse</a></code>
-- <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveStatusResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/messages/sessions/{sessionId}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">processMessages</a>(sessionID) -> unknown</code>
-- <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>
-- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> unknown</code>
 
 # Graphql
 

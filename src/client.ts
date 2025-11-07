@@ -84,7 +84,7 @@ import {
   UserType,
   UserUpdateParams,
 } from './resources/user';
-import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
+import { Messages } from './resources/messages/messages';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -918,11 +918,7 @@ export declare namespace Papr {
     type SchemaActivateParams as SchemaActivateParams,
   };
 
-  export {
-    Messages as Messages,
-    type MessageStoreResponse as MessageStoreResponse,
-    type MessageStoreParams as MessageStoreParams,
-  };
+  export { Messages as Messages };
 
   export {
     Graphql as Graphql,
