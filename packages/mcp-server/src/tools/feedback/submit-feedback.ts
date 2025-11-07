@@ -103,6 +103,18 @@ export const tool: Tool = {
         title: 'External User Id',
         description: 'External user ID for developer API keys acting on behalf of end users',
       },
+      namespace_id: {
+        type: 'string',
+        title: 'Namespace Id',
+        description:
+          'Optional namespace ID for multi-tenant feedback scoping. When provided, feedback is scoped to this namespace.',
+      },
+      organization_id: {
+        type: 'string',
+        title: 'Organization Id',
+        description:
+          'Optional organization ID for multi-tenant feedback scoping. When provided, feedback is scoped to this organization.',
+      },
       user_id: {
         type: 'string',
         title: 'User Id',

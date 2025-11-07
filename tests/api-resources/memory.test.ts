@@ -43,8 +43,7 @@ describe('resource memory', () => {
   // Prism tests are disabled
   test.skip('add: only required params', async () => {
     const responsePromise = client.memory.add({
-      content: 'Meeting notes from the product planning session',
-      type: 'text',
+      content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -58,17 +57,36 @@ describe('resource memory', () => {
   // Prism tests are disabled
   test.skip('add: required and optional params', async () => {
     const response = await client.memory.add({
-      content: 'Meeting notes from the product planning session',
-      type: 'text',
+      content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
       skip_background_processing: true,
       context: [
-        { content: "Let's discuss the Q2 product roadmap", role: 'user' },
-        { content: "I'll help you plan the roadmap. What are your key objectives?", role: 'assistant' },
+        { content: "Let's discuss the Q4 project timeline with John", role: 'user' },
+        {
+          content: "I'll help you prepare for the timeline discussion. What are your key milestones?",
+          role: 'assistant',
+        },
       ],
+      graph_generation: {
+        auto: {
+          property_overrides: [
+            { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+          ],
+          schema_id: 'schema_id',
+          simple_schema_mode: true,
+        },
+        manual: {
+          nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+          relationships: [
+            { relationship_type: 'x', source_node_id: 'x', target_node_id: 'x', properties: { foo: 'bar' } },
+          ],
+        },
+        mode: 'auto',
+      },
       metadata: {
         assistantMessage: 'assistantMessage',
+        category: 'preference',
         conversationId: 'conv-123',
-        createdAt: '2024-03-21T10:00:00Z',
+        createdAt: '2024-10-04T10:00:00Z',
         customMetadata: { foo: 'string' },
         'emoji tags': ['string'],
         'emotion tags': ['string'],
@@ -76,20 +94,24 @@ describe('resource memory', () => {
         external_user_read_access: ['external_user_123', 'external_user_789'],
         external_user_write_access: ['external_user_123'],
         goalClassificationScores: [0],
-        hierarchical_structures: 'Business/Planning/Product',
+        hierarchical_structures: 'Business/Meetings/Project Planning',
         location: 'Conference Room A',
+        namespace_id: 'namespace_id',
+        organization_id: 'organization_id',
         pageId: 'pageId',
         post: 'post',
         relatedGoals: ['string'],
         relatedSteps: ['string'],
         relatedUseCases: ['string'],
+        role: 'user',
         role_read_access: ['string'],
         role_write_access: ['string'],
         sessionId: 'sessionId',
         sourceType: 'sourceType',
-        sourceUrl: 'https://meeting-notes.example.com/123',
+        sourceUrl: 'https://calendar.example.com/meeting/123',
         stepClassificationScores: [0],
-        topics: ['string'],
+        topics: ['product', 'planning'],
+        upload_id: 'upload_id',
         useCaseClassificationScores: [0],
         user_id: 'user_id',
         user_read_access: ['string'],
@@ -99,15 +121,18 @@ describe('resource memory', () => {
         workspace_read_access: ['string'],
         workspace_write_access: ['string'],
       },
+      namespace_id: 'namespace_id',
+      organization_id: 'organization_id',
       relationships_json: [
         {
-          relation_type: 'follows',
-          metadata: { relevance: 'bar' },
-          related_item_id: 'previous_memory_item_id',
-          related_item_type: 'TextMemoryItem',
+          relation_type: 'relation_type',
+          metadata: { foo: 'bar' },
+          related_item_id: 'related_item_id',
+          related_item_type: 'related_item_type',
           relationship_type: 'previous_memory_item_id',
         },
       ],
+      type: 'text',
     });
   });
 
@@ -115,8 +140,8 @@ describe('resource memory', () => {
   test.skip('addBatch: only required params', async () => {
     const responsePromise = client.memory.addBatch({
       memories: [
-        { content: 'Meeting notes from the product planning session', type: 'text' },
-        { content: 'Follow-up tasks from the planning meeting', type: 'text' },
+        { content: 'Meeting notes from the product planning session' },
+        { content: 'Follow-up tasks from the planning meeting' },
       ],
     });
     const rawResponse = await responsePromise.asResponse();
@@ -134,13 +159,37 @@ describe('resource memory', () => {
       memories: [
         {
           content: 'Meeting notes from the product planning session',
-          type: 'text',
           context: [
-            { content: "Let's discuss the Q2 product roadmap", role: 'user' },
-            { content: "I'll help you plan the roadmap. What are your key objectives?", role: 'assistant' },
+            { content: "Let's discuss the Q4 project timeline with John", role: 'user' },
+            {
+              content: "I'll help you prepare for the timeline discussion. What are your key milestones?",
+              role: 'assistant',
+            },
           ],
+          graph_generation: {
+            auto: {
+              property_overrides: [
+                { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+              ],
+              schema_id: 'schema_id',
+              simple_schema_mode: true,
+            },
+            manual: {
+              nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+              relationships: [
+                {
+                  relationship_type: 'x',
+                  source_node_id: 'x',
+                  target_node_id: 'x',
+                  properties: { foo: 'bar' },
+                },
+              ],
+            },
+            mode: 'auto',
+          },
           metadata: {
             assistantMessage: 'assistantMessage',
+            category: 'preference',
             conversationId: 'conversationId',
             createdAt: '2024-03-21T10:00:00Z',
             customMetadata: { foo: 'string' },
@@ -152,11 +201,14 @@ describe('resource memory', () => {
             goalClassificationScores: [0],
             hierarchical_structures: 'hierarchical_structures',
             location: 'location',
+            namespace_id: 'namespace_id',
+            organization_id: 'organization_id',
             pageId: 'pageId',
             post: 'post',
             relatedGoals: ['string'],
             relatedSteps: ['string'],
             relatedUseCases: ['string'],
+            role: 'user',
             role_read_access: ['string'],
             role_write_access: ['string'],
             sessionId: 'sessionId',
@@ -164,6 +216,7 @@ describe('resource memory', () => {
             sourceUrl: 'sourceUrl',
             stepClassificationScores: [0],
             topics: ['string'],
+            upload_id: 'upload_id',
             useCaseClassificationScores: [0],
             user_id: 'user_id',
             user_read_access: ['string'],
@@ -173,25 +226,52 @@ describe('resource memory', () => {
             workspace_read_access: ['string'],
             workspace_write_access: ['string'],
           },
+          namespace_id: 'namespace_id',
+          organization_id: 'organization_id',
           relationships_json: [
             {
-              relation_type: 'follows',
-              metadata: { relevance: 'bar' },
-              related_item_id: 'previous_memory_item_id',
-              related_item_type: 'TextMemoryItem',
+              relation_type: 'relation_type',
+              metadata: { foo: 'bar' },
+              related_item_id: 'related_item_id',
+              related_item_type: 'related_item_type',
               relationship_type: 'previous_memory_item_id',
             },
           ],
+          type: 'text',
         },
         {
           content: 'Follow-up tasks from the planning meeting',
-          type: 'text',
           context: [
-            { content: "Let's discuss the Q2 product roadmap", role: 'user' },
-            { content: "I'll help you plan the roadmap. What are your key objectives?", role: 'assistant' },
+            { content: "Let's discuss the Q4 project timeline with John", role: 'user' },
+            {
+              content: "I'll help you prepare for the timeline discussion. What are your key milestones?",
+              role: 'assistant',
+            },
           ],
+          graph_generation: {
+            auto: {
+              property_overrides: [
+                { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+              ],
+              schema_id: 'schema_id',
+              simple_schema_mode: true,
+            },
+            manual: {
+              nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+              relationships: [
+                {
+                  relationship_type: 'x',
+                  source_node_id: 'x',
+                  target_node_id: 'x',
+                  properties: { foo: 'bar' },
+                },
+              ],
+            },
+            mode: 'auto',
+          },
           metadata: {
             assistantMessage: 'assistantMessage',
+            category: 'preference',
             conversationId: 'conversationId',
             createdAt: '2024-03-21T11:00:00Z',
             customMetadata: { foo: 'string' },
@@ -203,11 +283,14 @@ describe('resource memory', () => {
             goalClassificationScores: [0],
             hierarchical_structures: 'hierarchical_structures',
             location: 'location',
+            namespace_id: 'namespace_id',
+            organization_id: 'organization_id',
             pageId: 'pageId',
             post: 'post',
             relatedGoals: ['string'],
             relatedSteps: ['string'],
             relatedUseCases: ['string'],
+            role: 'user',
             role_read_access: ['string'],
             role_write_access: ['string'],
             sessionId: 'sessionId',
@@ -215,6 +298,7 @@ describe('resource memory', () => {
             sourceUrl: 'sourceUrl',
             stepClassificationScores: [0],
             topics: ['string'],
+            upload_id: 'upload_id',
             useCaseClassificationScores: [0],
             user_id: 'user_id',
             user_read_access: ['string'],
@@ -224,20 +308,41 @@ describe('resource memory', () => {
             workspace_read_access: ['string'],
             workspace_write_access: ['string'],
           },
+          namespace_id: 'namespace_id',
+          organization_id: 'organization_id',
           relationships_json: [
             {
-              relation_type: 'follows',
-              metadata: { relevance: 'bar' },
-              related_item_id: 'previous_memory_item_id',
-              related_item_type: 'TextMemoryItem',
+              relation_type: 'relation_type',
+              metadata: { foo: 'bar' },
+              related_item_id: 'related_item_id',
+              related_item_type: 'related_item_type',
               relationship_type: 'previous_memory_item_id',
             },
           ],
+          type: 'text',
         },
       ],
       skip_background_processing: true,
       batch_size: 10,
       external_user_id: 'external_user_abcde',
+      graph_generation: {
+        auto: {
+          property_overrides: [
+            { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+          ],
+          schema_id: 'schema_id',
+          simple_schema_mode: true,
+        },
+        manual: {
+          nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+          relationships: [
+            { relationship_type: 'x', source_node_id: 'x', target_node_id: 'x', properties: { foo: 'bar' } },
+          ],
+        },
+        mode: 'auto',
+      },
+      namespace_id: 'namespace_id',
+      organization_id: 'organization_id',
       user_id: 'internal_user_id_12345',
       webhook_secret: 'webhook_secret',
       webhook_url: 'webhook_url',
@@ -299,15 +404,17 @@ describe('resource memory', () => {
     const response = await client.memory.search({
       query:
         "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
+      query_enable_agentic_graph: true,
       max_memories: 10,
       max_nodes: 10,
-      enable_agentic_graph: true,
-      external_user_id: 'external_abc',
+      body_enable_agentic_graph: false,
+      external_user_id: 'external_user_123',
       metadata: {
         assistantMessage: 'assistantMessage',
+        category: 'preference',
         conversationId: 'conversationId',
         createdAt: 'createdAt',
-        customMetadata: { priority: 'high' },
+        customMetadata: { foo: 'string' },
         'emoji tags': ['string'],
         'emotion tags': ['string'],
         external_user_id: 'external_user_id',
@@ -315,12 +422,15 @@ describe('resource memory', () => {
         external_user_write_access: ['string'],
         goalClassificationScores: [0],
         hierarchical_structures: 'hierarchical_structures',
-        location: 'US',
+        location: 'location',
+        namespace_id: 'namespace_id',
+        organization_id: 'organization_id',
         pageId: 'pageId',
         post: 'post',
         relatedGoals: ['string'],
         relatedSteps: ['string'],
         relatedUseCases: ['string'],
+        role: 'user',
         role_read_access: ['string'],
         role_write_access: ['string'],
         sessionId: 'sessionId',
@@ -328,6 +438,7 @@ describe('resource memory', () => {
         sourceUrl: 'sourceUrl',
         stepClassificationScores: [0],
         topics: ['string'],
+        upload_id: 'upload_id',
         useCaseClassificationScores: [0],
         user_id: 'user_id',
         user_read_access: ['string'],
@@ -337,8 +448,25 @@ describe('resource memory', () => {
         workspace_read_access: ['string'],
         workspace_write_access: ['string'],
       },
-      rank_results: false,
-      user_id: 'user123',
+      namespace_id: 'namespace_id',
+      organization_id: 'organization_id',
+      rank_results: true,
+      schema_id: 'schema_id',
+      search_override: {
+        pattern: {
+          relationship_type: 'ASSOCIATED_WITH',
+          source_label: 'Memory',
+          target_label: 'Person',
+          direction: '->',
+        },
+        filters: [
+          { node_type: 'Person', operator: 'CONTAINS', property_name: 'name', value: 'John' },
+          { node_type: 'Memory', operator: 'IN', property_name: 'topics', value: ['project', 'meeting'] },
+        ],
+        return_properties: ['name', 'content', 'createdAt'],
+      },
+      simple_schema_mode: true,
+      user_id: 'user_id',
       'Accept-Encoding': 'Accept-Encoding',
     });
   });

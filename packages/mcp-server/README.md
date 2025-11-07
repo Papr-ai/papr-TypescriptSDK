@@ -38,12 +38,36 @@ For clients with a configuration JSON, it might look something like this:
 }
 ```
 
+### Cursor
+
+If you use Cursor, you can install the MCP server by using the button below. You will need to set your environment variables
+in Cursor's `mcp.json`, which can be found in Cursor Settings > Tools & MCP > New MCP Server.
+
+[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en-US/install-mcp?name=@papr/memory-mcp&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBwYXByL21lbW9yeS1tY3AiXSwiZW52Ijp7IlBBUFJfTUVNT1JZX0FQSV9LRVkiOiJTZXQgeW91ciBQQVBSX01FTU9SWV9BUElfS0VZIGhlcmUuIiwiUEFQUl9NRU1PUllfU2Vzc2lvbl9Ub2tlbiI6IlNldCB5b3VyIFBBUFJfTUVNT1JZX1Nlc3Npb25fVG9rZW4gaGVyZS4iLCJQQVBSX01FTU9SWV9CRUFSRVJfVE9LRU4iOiJTZXQgeW91ciBQQVBSX01FTU9SWV9CRUFSRVJfVE9LRU4gaGVyZS4ifX0)
+
+### VS Code
+
+If you use MCP, you can install the MCP server by clicking the link below. You will need to set your environment variables
+in VS Code's `mcp.json`, which can be found via Command Palette > MCP: Open User Configuration.
+
+[Open VS Code](https://vscode.stainless.com/mcp/%7B%22name%22%3A%22%40papr%2Fmemory-mcp%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22%40papr%2Fmemory-mcp%22%5D%2C%22env%22%3A%7B%22PAPR_MEMORY_API_KEY%22%3A%22Set%20your%20PAPR_MEMORY_API_KEY%20here.%22%2C%22PAPR_MEMORY_Session_Token%22%3A%22Set%20your%20PAPR_MEMORY_Session_Token%20here.%22%2C%22PAPR_MEMORY_BEARER_TOKEN%22%3A%22Set%20your%20PAPR_MEMORY_BEARER_TOKEN%20here.%22%7D%7D)
+
+### Claude Code
+
+If you use Claude Code, you can install the MCP server by running the command below in your terminal. You will need to set your
+environment variables in Claude Code's `.claude.json`, which can be found in your home directory.
+
+```
+claude mcp add --transport stdio papr_memory_api --env PAPR_MEMORY_API_KEY="Your PAPR_MEMORY_API_KEY here." PAPR_MEMORY_Session_Token="Your PAPR_MEMORY_Session_Token here." PAPR_MEMORY_BEARER_TOKEN="Your PAPR_MEMORY_BEARER_TOKEN here." -- npx -y @papr/memory-mcp
+```
+
 ## Exposing endpoints to your MCP Client
 
-There are two ways to expose endpoints as tools in the MCP server:
+There are three ways to expose endpoints as tools in the MCP server:
 
 1. Exposing one tool per endpoint, and filtering as necessary
 2. Exposing a set of tools to dynamically discover and invoke endpoints from the API
+3. Exposing a docs search tool and a code execution tool, allowing the client to write code to be executed against the TypeScript client
 
 ### Filtering endpoints and tools
 
@@ -77,6 +101,18 @@ See more information with `--help`.
 All of these command-line options can be repeated, combined together, and have corresponding exclusion versions (e.g. `--no-tool`).
 
 Use `--list` to see the list of available tools, or see below.
+
+### Code execution
+
+If you specify `--tools=code` to the MCP server, it will expose just two tools:
+
+- `search_docs` - Searches the API documentation and returns a list of markdown results
+- `execute` - Runs code against the TypeScript client
+
+This allows the LLM to implement more complex logic by chaining together many API calls without loading
+intermediary results into its context window.
+
+The code execution itself happens in a Deno sandbox that has network access only to the base URL for the API.
 
 ### Specifying the MCP Client
 
@@ -253,6 +289,15 @@ The following tools are available in this MCP server.
       - Content-Type: application/json
       - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
 
+      **Role-Based Memory Categories**:
+      - **User memories**: preference, task, goal, facts, context
+      - **Assistant memories**: skills, learning
+
+      **New Metadata Fields**:
+      - `metadata.role`: Optional field to specify who generated the memory (user or assistant)
+      - `metadata.category`: Optional field for memory categorization based on role
+      - Both fields are stored within metadata at the same level as topics, location, etc.
+
       The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
 - `add_batch_memory` (`write`): Add multiple memory items in a batch with size validation and background processing.
       **Authentication Required**:
@@ -298,6 +343,19 @@ The following tools are available in this MCP server.
       - API Key in `X-API-Key` header
       - Session token in `X-Session-Token` header
 
+      **Custom Schema Support**:
+      This endpoint supports both system-defined and custom user-defined node types:
+      - **System nodes**: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code
+      - **Custom nodes**: Defined by developers via UserGraphSchema (e.g., Developer, Product, Customer, Function)
+
+      When custom schema nodes are returned:
+      - Each custom node includes a `schema_id` field referencing the UserGraphSchema
+      - The response includes a `schemas_used` array listing all schema IDs used
+      - Use `GET /v1/schemas/{schema_id}` to retrieve full schema definitions including:
+        - Node type definitions and properties
+        - Relationship type definitions and constraints
+        - Validation rules and requirements
+
       **Recommended Headers**:
       ```
       Accept-Encoding: gzip
@@ -315,6 +373,12 @@ The following tools are available in this MCP server.
       - "customer feedback" → identifies your customers first, then finds their specific feedback
       - "project issues" → identifies your projects first, then finds related issues
       - "team meeting notes" → identifies your team members first, then finds meeting notes
+      - "code functions" → identifies your functions first, then finds related code
+
+      **Role-Based Memory Filtering:**
+      Filter memories by role and category using metadata fields:
+      - `metadata.role`: Filter by "user" or "assistant"
+      - `metadata.category`: Filter by category (user: preference, task, goal, facts, context | assistant: skills, learning)
 
       **User Resolution Precedence:**
       - If both user_id and external_user_id are provided, user_id takes precedence.
