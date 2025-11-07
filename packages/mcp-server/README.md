@@ -249,7 +249,6 @@ The following tools are available in this MCP server.
 ### Resource `user`:
 
 - `create_user` (`write`): Create a new user or link existing user to developer
-- `update_user` (`write`): Update user details by user_id (\_User.objectId) and developer association
 - `list_user` (`read`): List users for a developer
 - `delete_user` (`write`): Delete user association with developer and the user itself by , assume external user_id is provided, and resolve to internal user_id (\_User.objectId)
 - `create_batch_user` (`write`): Create multiple users or link existing users to developer, and add each to the developer's workspace (if one exists).
@@ -536,10 +535,6 @@ The following tools are available in this MCP server.
       - Bearer token in `Authorization` header
       - API Key in `X-API-Key` header
       - Session token in `X-Session-Token` header
-- `delete_schemas` (`write`): Delete a schema.
-      Soft deletes the schema by marking it as archived. The schema data and
-      associated graph nodes/relationships are preserved for data integrity.
-      User must have write access to the schema.
 - `activate_schemas` (`write`): Activate or deactivate a schema.
       Active schemas are used for memory extraction and graph generation.
       Multiple schemas can be active simultaneously and will be merged during
