@@ -42,7 +42,7 @@ export {
   type MemoryDeleteAllParams,
   type MemorySearchParams,
 } from './memory';
-export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
+export { Messages } from './messages/messages';
 export {
   Schemas,
   type UserGraphSchemaOutput,

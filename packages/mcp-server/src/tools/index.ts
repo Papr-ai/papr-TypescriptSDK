@@ -29,10 +29,6 @@ import update_schemas from './schemas/update-schemas';
 import list_schemas from './schemas/list-schemas';
 import delete_schemas from './schemas/delete-schemas';
 import activate_schemas from './schemas/activate-schemas';
-import store_messages from './messages/store-messages';
-import process_messages_messages_sessions from './messages/sessions/process-messages-messages-sessions';
-import retrieve_history_messages_sessions from './messages/sessions/retrieve-history-messages-sessions';
-import retrieve_status_messages_sessions from './messages/sessions/retrieve-status-messages-sessions';
 import playground_graphql from './graphql/playground-graphql';
 import query_graphql from './graphql/query-graphql';
 
@@ -67,10 +63,6 @@ addEndpoint(update_schemas);
 addEndpoint(list_schemas);
 addEndpoint(delete_schemas);
 addEndpoint(activate_schemas);
-addEndpoint(store_messages);
-addEndpoint(process_messages_messages_sessions);
-addEndpoint(retrieve_history_messages_sessions);
-addEndpoint(retrieve_status_messages_sessions);
 addEndpoint(playground_graphql);
 addEndpoint(query_graphql);
 
