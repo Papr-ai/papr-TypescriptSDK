@@ -1,3 +1,9 @@
+# Shared
+
+Types:
+
+- <code><a href="./src/resources/shared.ts">AddMemoryItem</a></code>
+
 # User
 
 Types:
@@ -23,9 +29,12 @@ Types:
 
 - <code><a href="./src/resources/memory.ts">AddMemory</a></code>
 - <code><a href="./src/resources/memory.ts">AddMemoryResponse</a></code>
+- <code><a href="./src/resources/memory.ts">AutoGraphGeneration</a></code>
 - <code><a href="./src/resources/memory.ts">BatchMemoryResponse</a></code>
 - <code><a href="./src/resources/memory.ts">ContextItem</a></code>
+- <code><a href="./src/resources/memory.ts">GraphGeneration</a></code>
 - <code><a href="./src/resources/memory.ts">HTTPValidationError</a></code>
+- <code><a href="./src/resources/memory.ts">ManualGraphGeneration</a></code>
 - <code><a href="./src/resources/memory.ts">MemoryMetadata</a></code>
 - <code><a href="./src/resources/memory.ts">MemoryType</a></code>
 - <code><a href="./src/resources/memory.ts">RelationshipItem</a></code>
@@ -58,3 +67,74 @@ Methods:
 - <code title="get /v1/feedback/{feedback_id}">client.feedback.<a href="./src/resources/feedback.ts">getByID</a>(feedbackID) -> FeedbackResponse</code>
 - <code title="post /v1/feedback">client.feedback.<a href="./src/resources/feedback.ts">submit</a>({ ...params }) -> FeedbackResponse</code>
 - <code title="post /v1/feedback/batch">client.feedback.<a href="./src/resources/feedback.ts">submitBatch</a>({ ...params }) -> BatchResponse</code>
+
+# Document
+
+Types:
+
+- <code><a href="./src/resources/document.ts">DocumentCancelProcessingResponse</a></code>
+- <code><a href="./src/resources/document.ts">DocumentGetStatusResponse</a></code>
+- <code><a href="./src/resources/document.ts">DocumentUploadResponse</a></code>
+
+Methods:
+
+- <code title="delete /v1/document/{upload_id}">client.document.<a href="./src/resources/document.ts">cancelProcessing</a>(uploadID) -> DocumentCancelProcessingResponse</code>
+- <code title="get /v1/document/status/{upload_id}">client.document.<a href="./src/resources/document.ts">getStatus</a>(uploadID) -> DocumentGetStatusResponse</code>
+- <code title="post /v1/document">client.document.<a href="./src/resources/document.ts">upload</a>({ ...params }) -> DocumentUploadResponse</code>
+
+# Schemas
+
+Types:
+
+- <code><a href="./src/resources/schemas.ts">UserGraphSchemaOutput</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaCreateResponse</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaRetrieveResponse</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaUpdateResponse</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaListResponse</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaDeleteResponse</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaActivateResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">create</a>({ ...params }) -> SchemaCreateResponse</code>
+- <code title="get /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">retrieve</a>(schemaID) -> SchemaRetrieveResponse</code>
+- <code title="put /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">update</a>(schemaID, { ...params }) -> SchemaUpdateResponse</code>
+- <code title="get /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">list</a>({ ...params }) -> SchemaListResponse</code>
+- <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> unknown</code>
+- <code title="post /v1/schemas/{schema_id}/activate">client.schemas.<a href="./src/resources/schemas.ts">activate</a>(schemaID, { ...params }) -> unknown</code>
+
+# Messages
+
+Types:
+
+- <code><a href="./src/resources/messages/messages.ts">MessageStoreResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/messages">client.messages.<a href="./src/resources/messages/messages.ts">store</a>({ ...params }) -> MessageStoreResponse</code>
+
+## Sessions
+
+Types:
+
+- <code><a href="./src/resources/messages/sessions.ts">SessionProcessMessagesResponse</a></code>
+- <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveHistoryResponse</a></code>
+- <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveStatusResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/messages/sessions/{sessionId}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">processMessages</a>(sessionID) -> unknown</code>
+- <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>
+- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> unknown</code>
+
+# Graphql
+
+Types:
+
+- <code><a href="./src/resources/graphql.ts">GraphqlPlaygroundResponse</a></code>
+- <code><a href="./src/resources/graphql.ts">GraphqlQueryResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">playground</a>() -> unknown</code>
+- <code title="post /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">query</a>() -> unknown</code>

@@ -1,5 +1,13 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
+export * from './shared';
+export {
+  Document,
+  type DocumentCancelProcessingResponse,
+  type DocumentGetStatusResponse,
+  type DocumentUploadResponse,
+  type DocumentUploadParams,
+} from './document';
 export {
   Feedback,
   type BatchRequest,
@@ -10,13 +18,17 @@ export {
   type FeedbackSubmitParams,
   type FeedbackSubmitBatchParams,
 } from './feedback';
+export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
 export {
   Memory,
   type AddMemory,
   type AddMemoryResponse,
+  type AutoGraphGeneration,
   type BatchMemoryResponse,
   type ContextItem,
+  type GraphGeneration,
   type HTTPValidationError,
+  type ManualGraphGeneration,
   type MemoryMetadata,
   type MemoryType,
   type RelationshipItem,
@@ -30,6 +42,21 @@ export {
   type MemoryDeleteAllParams,
   type MemorySearchParams,
 } from './memory';
+export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
+export {
+  Schemas,
+  type UserGraphSchemaOutput,
+  type SchemaCreateResponse,
+  type SchemaRetrieveResponse,
+  type SchemaUpdateResponse,
+  type SchemaListResponse,
+  type SchemaDeleteResponse,
+  type SchemaActivateResponse,
+  type SchemaCreateParams,
+  type SchemaUpdateParams,
+  type SchemaListParams,
+  type SchemaActivateParams,
+} from './schemas';
 export {
   User,
   type UserResponse,
