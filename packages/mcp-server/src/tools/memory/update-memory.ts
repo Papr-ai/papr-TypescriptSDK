@@ -41,6 +41,18 @@ export const tool: Tool = {
       metadata: {
         $ref: '#/$defs/memory_metadata',
       },
+      namespace_id: {
+        type: 'string',
+        title: 'Namespace Id',
+        description:
+          'Optional namespace ID for multi-tenant memory scoping. When provided, update is scoped to memories within this namespace.',
+      },
+      organization_id: {
+        type: 'string',
+        title: 'Organization Id',
+        description:
+          'Optional organization ID for multi-tenant memory scoping. When provided, update is scoped to memories within this organization.',
+      },
       relationships_json: {
         type: 'array',
         title: 'Relationships Json',
@@ -80,6 +92,13 @@ export const tool: Tool = {
           assistantMessage: {
             type: 'string',
             title: 'Assistantmessage',
+          },
+          category: {
+            type: 'string',
+            title: 'Category',
+            description:
+              'Memory category based on role. For users: preference, task, goal, fact, context. For assistants: skills, learning, task, goal, fact, context.',
+            enum: ['preference', 'task', 'goal', 'fact', 'context', 'skills', 'learning'],
           },
           conversationId: {
             type: 'string',
@@ -145,6 +164,14 @@ export const tool: Tool = {
             type: 'string',
             title: 'Location',
           },
+          namespace_id: {
+            type: 'string',
+            title: 'Namespace Id',
+          },
+          organization_id: {
+            type: 'string',
+            title: 'Organization Id',
+          },
           pageId: {
             type: 'string',
             title: 'Pageid',
@@ -173,6 +200,12 @@ export const tool: Tool = {
             items: {
               type: 'string',
             },
+          },
+          role: {
+            type: 'string',
+            title: 'MessageRole',
+            description: 'Role of the message sender',
+            enum: ['user', 'assistant'],
           },
           role_read_access: {
             type: 'array',
@@ -213,6 +246,11 @@ export const tool: Tool = {
             items: {
               type: 'string',
             },
+          },
+          upload_id: {
+            type: 'string',
+            title: 'Upload Id',
+            description: 'Upload ID for document processing workflows',
           },
           useCaseClassificationScores: {
             type: 'array',

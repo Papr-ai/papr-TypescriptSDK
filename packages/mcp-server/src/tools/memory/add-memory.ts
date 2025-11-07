@@ -1,6 +1,5 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { maybeFilter } from '@papr/memory-mcp/filtering';
 import { Metadata, asTextContentResult } from '@papr/memory-mcp/tools/types';
 
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
 export const tool: Tool = {
   name: 'add_memory',
   description:
-    "When using this tool, always use the `jq_filter` parameter to reduce the response size and improve performance.\n\nOnly omit if you're sure you don't need the data.\n\nAdd a new memory item to the system with size validation and background processing.\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Required Headers**:\n    - Content-Type: application/json\n    - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')\n    \n    The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).\n\n# Response Schema\n```json\n{\n  $ref: '#/$defs/add_memory_response',\n  $defs: {\n    add_memory_response: {\n      type: 'object',\n      title: 'AddMemoryResponse',\n      description: 'Unified response model for add_memory API endpoint (success or error).',\n      properties: {\n        code: {\n          type: 'integer',\n          title: 'Code',\n          description: 'HTTP status code'\n        },\n        data: {\n          type: 'array',\n          title: 'Data',\n          description: 'List of memory items if successful',\n          items: {\n            type: 'object',\n            title: 'AddMemoryItem',\n            description: 'Response model for a single memory item in add_memory response',\n            properties: {\n              createdAt: {\n                type: 'string',\n                title: 'Createdat',\n                format: 'date-time'\n              },\n              memoryId: {\n                type: 'string',\n                title: 'Memoryid'\n              },\n              objectId: {\n                type: 'string',\n                title: 'Objectid'\n              },\n              memoryChunkIds: {\n                type: 'array',\n                title: 'Memorychunkids',\n                items: {\n                  type: 'string'\n                }\n              }\n            },\n            required: [              'createdAt',\n              'memoryId',\n              'objectId'\n            ]\n          }\n        },\n        details: {\n          type: 'object',\n          title: 'Details',\n          description: 'Additional error details or context',\n          additionalProperties: true\n        },\n        error: {\n          type: 'string',\n          title: 'Error',\n          description: 'Error message if failed'\n        },\n        status: {\n          type: 'string',\n          title: 'Status',\n          description: '\\'success\\' or \\'error\\''\n        }\n      }\n    }\n  }\n}\n```",
+    "Add a new memory item to the system with size validation and background processing.\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Required Headers**:\n    - Content-Type: application/json\n    - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')\n    \n    **Role-Based Memory Categories**:\n    - **User memories**: preference, task, goal, facts, context\n    - **Assistant memories**: skills, learning\n    \n    **New Metadata Fields**:\n    - `metadata.role`: Optional field to specify who generated the memory (user or assistant)\n    - `metadata.category`: Optional field for memory categorization based on role\n    - Both fields are stored within metadata at the same level as topics, location, etc.\n    \n    The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).",
   inputSchema: {
     type: 'object',
     properties: {
@@ -26,9 +25,6 @@ export const tool: Tool = {
         type: 'string',
         title: 'Content',
         description: 'The content of the memory item you want to add to memory',
-      },
-      type: {
-        $ref: '#/$defs/memory_type',
       },
       skip_background_processing: {
         type: 'boolean',
@@ -43,8 +39,161 @@ export const tool: Tool = {
           $ref: '#/$defs/context_item',
         },
       },
+      graph_generation: {
+        type: 'object',
+        title: 'GraphGeneration',
+        description: 'Graph generation configuration',
+        properties: {
+          auto: {
+            type: 'object',
+            title: 'AutoGraphGeneration',
+            description: 'AI-powered graph generation with optional guidance',
+            properties: {
+              property_overrides: {
+                type: 'array',
+                title: 'Property Overrides',
+                description: 'Override specific property values in AI-generated nodes with match conditions',
+                items: {
+                  type: 'object',
+                  title: 'PropertyOverrideRule',
+                  description: 'Property override rule with optional match conditions',
+                  properties: {
+                    nodeLabel: {
+                      type: 'string',
+                      title: 'Nodelabel',
+                      description: "Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')",
+                    },
+                    set: {
+                      type: 'object',
+                      title: 'Set',
+                      description: 'Properties to set/override on matching nodes',
+                      additionalProperties: true,
+                    },
+                    match: {
+                      type: 'object',
+                      title: 'Match',
+                      description:
+                        'Optional conditions that must be met for override to apply. If not provided, applies to all nodes of this type',
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['nodeLabel', 'set'],
+                },
+              },
+              schema_id: {
+                type: 'string',
+                title: 'Schema Id',
+                description: 'Force AI to use this specific schema instead of auto-selecting',
+              },
+              simple_schema_mode: {
+                type: 'boolean',
+                title: 'Simple Schema Mode',
+                description: 'Limit AI to system + one user schema for consistency',
+              },
+            },
+          },
+          manual: {
+            type: 'object',
+            title: 'ManualGraphGeneration',
+            description: 'Complete manual control over graph structure',
+            properties: {
+              nodes: {
+                type: 'array',
+                title: 'Nodes',
+                description: 'Exact nodes to create',
+                items: {
+                  type: 'object',
+                  title: 'GraphOverrideNode',
+                  description:
+                    "Developer-specified node for graph override.\n\nIMPORTANT:\n- 'id' is REQUIRED (relationships reference nodes by these IDs)\n- 'label' must match a node type from your registered UserGraphSchema\n- 'properties' must include ALL required fields from your schema definition\n\n📋 Schema Management:\n- Register schemas: POST /v1/schemas\n- View your schemas: GET /v1/schemas",
+                  properties: {
+                    id: {
+                      type: 'string',
+                      title: 'Id',
+                      description:
+                        "**REQUIRED**: Unique identifier for this node. Must be unique within this request. Relationships reference this via source_node_id/target_node_id. Example: 'person_john_123', 'finding_cve_2024_1234'",
+                    },
+                    label: {
+                      type: 'string',
+                      title: 'Label',
+                      description:
+                        '**REQUIRED**: Node type from your UserGraphSchema. View available types at GET /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code',
+                    },
+                    properties: {
+                      type: 'object',
+                      title: 'Properties',
+                      description:
+                        "**REQUIRED**: Node properties matching your UserGraphSchema definition. Must include: (1) All required properties from your schema, (2) unique_identifiers if defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema requirements at GET /v1/schemas",
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['id', 'label', 'properties'],
+                },
+              },
+              relationships: {
+                type: 'array',
+                title: 'Relationships',
+                description: 'Exact relationships to create',
+                items: {
+                  type: 'object',
+                  title: 'GraphOverrideRelationship',
+                  description:
+                    "Developer-specified relationship for graph override.\n\nIMPORTANT:\n- source_node_id MUST exactly match a node 'id' from the 'nodes' array\n- target_node_id MUST exactly match a node 'id' from the 'nodes' array\n- relationship_type MUST exist in your registered UserGraphSchema",
+                  properties: {
+                    relationship_type: {
+                      type: 'string',
+                      title: 'Relationship Type',
+                      description:
+                        '**REQUIRED**: Relationship type from your UserGraphSchema. View available types at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT, DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY',
+                    },
+                    source_node_id: {
+                      type: 'string',
+                      title: 'Source Node Id',
+                      description:
+                        "**REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes' array of this request",
+                    },
+                    target_node_id: {
+                      type: 'string',
+                      title: 'Target Node Id',
+                      description:
+                        "**REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes' array of this request",
+                    },
+                    properties: {
+                      type: 'object',
+                      title: 'Properties',
+                      description:
+                        "Optional relationship properties (e.g., {'since': '2024-01-01', 'role': 'manager'})",
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['relationship_type', 'source_node_id', 'target_node_id'],
+                },
+              },
+            },
+            required: ['nodes'],
+          },
+          mode: {
+            type: 'string',
+            title: 'GraphGenerationMode',
+            description: "Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)",
+            enum: ['auto', 'manual'],
+          },
+        },
+      },
       metadata: {
         $ref: '#/$defs/memory_metadata',
+      },
+      namespace_id: {
+        type: 'string',
+        title: 'Namespace Id',
+        description:
+          'Optional namespace ID for multi-tenant memory scoping. When provided, memory is associated with this namespace.',
+      },
+      organization_id: {
+        type: 'string',
+        title: 'Organization Id',
+        description:
+          'Optional organization ID for multi-tenant memory scoping. When provided, memory is associated with this organization.',
       },
       relationships_json: {
         type: 'array',
@@ -54,21 +203,12 @@ export const tool: Tool = {
           $ref: '#/$defs/relationship_item',
         },
       },
-      jq_filter: {
-        type: 'string',
-        title: 'jq Filter',
-        description:
-          'A jq filter to apply to the response to include certain fields. Consult the output schema in the tool description to see the fields that are available.\n\nFor example: to include only the `name` field in every object of a results array, you can provide ".results[].name".\n\nFor more information, see the [jq documentation](https://jqlang.org/manual/).',
+      type: {
+        $ref: '#/$defs/memory_type',
       },
     },
-    required: ['content', 'type'],
+    required: ['content'],
     $defs: {
-      memory_type: {
-        type: 'string',
-        title: 'MemoryType',
-        description: 'Valid memory types',
-        enum: ['text', 'code_snippet', 'document'],
-      },
       context_item: {
         type: 'object',
         title: 'ContextItem',
@@ -94,6 +234,13 @@ export const tool: Tool = {
           assistantMessage: {
             type: 'string',
             title: 'Assistantmessage',
+          },
+          category: {
+            type: 'string',
+            title: 'Category',
+            description:
+              'Memory category based on role. For users: preference, task, goal, fact, context. For assistants: skills, learning, task, goal, fact, context.',
+            enum: ['preference', 'task', 'goal', 'fact', 'context', 'skills', 'learning'],
           },
           conversationId: {
             type: 'string',
@@ -159,6 +306,14 @@ export const tool: Tool = {
             type: 'string',
             title: 'Location',
           },
+          namespace_id: {
+            type: 'string',
+            title: 'Namespace Id',
+          },
+          organization_id: {
+            type: 'string',
+            title: 'Organization Id',
+          },
           pageId: {
             type: 'string',
             title: 'Pageid',
@@ -187,6 +342,12 @@ export const tool: Tool = {
             items: {
               type: 'string',
             },
+          },
+          role: {
+            type: 'string',
+            title: 'MessageRole',
+            description: 'Role of the message sender',
+            enum: ['user', 'assistant'],
           },
           role_read_access: {
             type: 'array',
@@ -227,6 +388,11 @@ export const tool: Tool = {
             items: {
               type: 'string',
             },
+          },
+          upload_id: {
+            type: 'string',
+            title: 'Upload Id',
+            description: 'Upload ID for document processing workflows',
           },
           useCaseClassificationScores: {
             type: 'array',
@@ -309,14 +475,20 @@ export const tool: Tool = {
         },
         required: ['relation_type'],
       },
+      memory_type: {
+        type: 'string',
+        title: 'MemoryType',
+        description: 'Valid memory types',
+        enum: ['text', 'code_snippet', 'document'],
+      },
     },
   },
   annotations: {},
 };
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
-  const { jq_filter, ...body } = args as any;
-  return asTextContentResult(await maybeFilter(jq_filter, await client.memory.add(body)));
+  const body = args as any;
+  return asTextContentResult(await client.memory.add(body));
 };
 
 export default { metadata, tool, handler };

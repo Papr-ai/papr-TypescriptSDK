@@ -53,6 +53,8 @@ describe('resource feedback', () => {
       },
       search_id: 'abc123def456',
       external_user_id: 'dev_api_key_123',
+      namespace_id: 'namespace_id',
+      organization_id: 'organization_id',
       user_id: 'abc123def456',
     });
   });
@@ -93,6 +95,8 @@ describe('resource feedback', () => {
           },
           search_id: 'abc123def456',
           external_user_id: 'dev_api_key_123',
+          namespace_id: 'namespace_id',
+          organization_id: 'organization_id',
           user_id: 'abc123def456',
         },
       ],

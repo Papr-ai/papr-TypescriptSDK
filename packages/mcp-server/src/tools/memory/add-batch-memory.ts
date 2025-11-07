@@ -45,6 +45,159 @@ export const tool: Tool = {
         description:
           'External user ID for all memories in the batch. If provided and user_id is not, will be resolved to internal user ID.',
       },
+      graph_generation: {
+        type: 'object',
+        title: 'GraphGeneration',
+        description: 'Graph generation configuration',
+        properties: {
+          auto: {
+            type: 'object',
+            title: 'AutoGraphGeneration',
+            description: 'AI-powered graph generation with optional guidance',
+            properties: {
+              property_overrides: {
+                type: 'array',
+                title: 'Property Overrides',
+                description: 'Override specific property values in AI-generated nodes with match conditions',
+                items: {
+                  type: 'object',
+                  title: 'PropertyOverrideRule',
+                  description: 'Property override rule with optional match conditions',
+                  properties: {
+                    nodeLabel: {
+                      type: 'string',
+                      title: 'Nodelabel',
+                      description: "Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')",
+                    },
+                    set: {
+                      type: 'object',
+                      title: 'Set',
+                      description: 'Properties to set/override on matching nodes',
+                      additionalProperties: true,
+                    },
+                    match: {
+                      type: 'object',
+                      title: 'Match',
+                      description:
+                        'Optional conditions that must be met for override to apply. If not provided, applies to all nodes of this type',
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['nodeLabel', 'set'],
+                },
+              },
+              schema_id: {
+                type: 'string',
+                title: 'Schema Id',
+                description: 'Force AI to use this specific schema instead of auto-selecting',
+              },
+              simple_schema_mode: {
+                type: 'boolean',
+                title: 'Simple Schema Mode',
+                description: 'Limit AI to system + one user schema for consistency',
+              },
+            },
+          },
+          manual: {
+            type: 'object',
+            title: 'ManualGraphGeneration',
+            description: 'Complete manual control over graph structure',
+            properties: {
+              nodes: {
+                type: 'array',
+                title: 'Nodes',
+                description: 'Exact nodes to create',
+                items: {
+                  type: 'object',
+                  title: 'GraphOverrideNode',
+                  description:
+                    "Developer-specified node for graph override.\n\nIMPORTANT:\n- 'id' is REQUIRED (relationships reference nodes by these IDs)\n- 'label' must match a node type from your registered UserGraphSchema\n- 'properties' must include ALL required fields from your schema definition\n\n📋 Schema Management:\n- Register schemas: POST /v1/schemas\n- View your schemas: GET /v1/schemas",
+                  properties: {
+                    id: {
+                      type: 'string',
+                      title: 'Id',
+                      description:
+                        "**REQUIRED**: Unique identifier for this node. Must be unique within this request. Relationships reference this via source_node_id/target_node_id. Example: 'person_john_123', 'finding_cve_2024_1234'",
+                    },
+                    label: {
+                      type: 'string',
+                      title: 'Label',
+                      description:
+                        '**REQUIRED**: Node type from your UserGraphSchema. View available types at GET /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code',
+                    },
+                    properties: {
+                      type: 'object',
+                      title: 'Properties',
+                      description:
+                        "**REQUIRED**: Node properties matching your UserGraphSchema definition. Must include: (1) All required properties from your schema, (2) unique_identifiers if defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema requirements at GET /v1/schemas",
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['id', 'label', 'properties'],
+                },
+              },
+              relationships: {
+                type: 'array',
+                title: 'Relationships',
+                description: 'Exact relationships to create',
+                items: {
+                  type: 'object',
+                  title: 'GraphOverrideRelationship',
+                  description:
+                    "Developer-specified relationship for graph override.\n\nIMPORTANT:\n- source_node_id MUST exactly match a node 'id' from the 'nodes' array\n- target_node_id MUST exactly match a node 'id' from the 'nodes' array\n- relationship_type MUST exist in your registered UserGraphSchema",
+                  properties: {
+                    relationship_type: {
+                      type: 'string',
+                      title: 'Relationship Type',
+                      description:
+                        '**REQUIRED**: Relationship type from your UserGraphSchema. View available types at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT, DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY',
+                    },
+                    source_node_id: {
+                      type: 'string',
+                      title: 'Source Node Id',
+                      description:
+                        "**REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes' array of this request",
+                    },
+                    target_node_id: {
+                      type: 'string',
+                      title: 'Target Node Id',
+                      description:
+                        "**REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes' array of this request",
+                    },
+                    properties: {
+                      type: 'object',
+                      title: 'Properties',
+                      description:
+                        "Optional relationship properties (e.g., {'since': '2024-01-01', 'role': 'manager'})",
+                      additionalProperties: true,
+                    },
+                  },
+                  required: ['relationship_type', 'source_node_id', 'target_node_id'],
+                },
+              },
+            },
+            required: ['nodes'],
+          },
+          mode: {
+            type: 'string',
+            title: 'GraphGenerationMode',
+            description: "Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)",
+            enum: ['auto', 'manual'],
+          },
+        },
+      },
+      namespace_id: {
+        type: 'string',
+        title: 'Namespace Id',
+        description:
+          'Optional namespace ID for multi-tenant batch memory scoping. When provided, all memories in the batch are associated with this namespace.',
+      },
+      organization_id: {
+        type: 'string',
+        title: 'Organization Id',
+        description:
+          'Optional organization ID for multi-tenant batch memory scoping. When provided, all memories in the batch are associated with this organization.',
+      },
       user_id: {
         type: 'string',
         title: 'User Id',
@@ -76,9 +229,6 @@ export const tool: Tool = {
             title: 'Content',
             description: 'The content of the memory item you want to add to memory',
           },
-          type: {
-            $ref: '#/$defs/memory_type',
-          },
           context: {
             type: 'array',
             title: 'Context',
@@ -87,8 +237,162 @@ export const tool: Tool = {
               $ref: '#/$defs/context_item',
             },
           },
+          graph_generation: {
+            type: 'object',
+            title: 'GraphGeneration',
+            description: 'Graph generation configuration',
+            properties: {
+              auto: {
+                type: 'object',
+                title: 'AutoGraphGeneration',
+                description: 'AI-powered graph generation with optional guidance',
+                properties: {
+                  property_overrides: {
+                    type: 'array',
+                    title: 'Property Overrides',
+                    description:
+                      'Override specific property values in AI-generated nodes with match conditions',
+                    items: {
+                      type: 'object',
+                      title: 'PropertyOverrideRule',
+                      description: 'Property override rule with optional match conditions',
+                      properties: {
+                        nodeLabel: {
+                          type: 'string',
+                          title: 'Nodelabel',
+                          description: "Node type to apply overrides to (e.g., 'User', 'SecurityBehavior')",
+                        },
+                        set: {
+                          type: 'object',
+                          title: 'Set',
+                          description: 'Properties to set/override on matching nodes',
+                          additionalProperties: true,
+                        },
+                        match: {
+                          type: 'object',
+                          title: 'Match',
+                          description:
+                            'Optional conditions that must be met for override to apply. If not provided, applies to all nodes of this type',
+                          additionalProperties: true,
+                        },
+                      },
+                      required: ['nodeLabel', 'set'],
+                    },
+                  },
+                  schema_id: {
+                    type: 'string',
+                    title: 'Schema Id',
+                    description: 'Force AI to use this specific schema instead of auto-selecting',
+                  },
+                  simple_schema_mode: {
+                    type: 'boolean',
+                    title: 'Simple Schema Mode',
+                    description: 'Limit AI to system + one user schema for consistency',
+                  },
+                },
+              },
+              manual: {
+                type: 'object',
+                title: 'ManualGraphGeneration',
+                description: 'Complete manual control over graph structure',
+                properties: {
+                  nodes: {
+                    type: 'array',
+                    title: 'Nodes',
+                    description: 'Exact nodes to create',
+                    items: {
+                      type: 'object',
+                      title: 'GraphOverrideNode',
+                      description:
+                        "Developer-specified node for graph override.\n\nIMPORTANT:\n- 'id' is REQUIRED (relationships reference nodes by these IDs)\n- 'label' must match a node type from your registered UserGraphSchema\n- 'properties' must include ALL required fields from your schema definition\n\n📋 Schema Management:\n- Register schemas: POST /v1/schemas\n- View your schemas: GET /v1/schemas",
+                      properties: {
+                        id: {
+                          type: 'string',
+                          title: 'Id',
+                          description:
+                            "**REQUIRED**: Unique identifier for this node. Must be unique within this request. Relationships reference this via source_node_id/target_node_id. Example: 'person_john_123', 'finding_cve_2024_1234'",
+                        },
+                        label: {
+                          type: 'string',
+                          title: 'Label',
+                          description:
+                            '**REQUIRED**: Node type from your UserGraphSchema. View available types at GET /v1/schemas. System types: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code',
+                        },
+                        properties: {
+                          type: 'object',
+                          title: 'Properties',
+                          description:
+                            "**REQUIRED**: Node properties matching your UserGraphSchema definition. Must include: (1) All required properties from your schema, (2) unique_identifiers if defined (e.g., 'email' for Person) to enable MERGE deduplication. View schema requirements at GET /v1/schemas",
+                          additionalProperties: true,
+                        },
+                      },
+                      required: ['id', 'label', 'properties'],
+                    },
+                  },
+                  relationships: {
+                    type: 'array',
+                    title: 'Relationships',
+                    description: 'Exact relationships to create',
+                    items: {
+                      type: 'object',
+                      title: 'GraphOverrideRelationship',
+                      description:
+                        "Developer-specified relationship for graph override.\n\nIMPORTANT:\n- source_node_id MUST exactly match a node 'id' from the 'nodes' array\n- target_node_id MUST exactly match a node 'id' from the 'nodes' array\n- relationship_type MUST exist in your registered UserGraphSchema",
+                      properties: {
+                        relationship_type: {
+                          type: 'string',
+                          title: 'Relationship Type',
+                          description:
+                            '**REQUIRED**: Relationship type from your UserGraphSchema. View available types at GET /v1/schemas. System types: WORKS_FOR, WORKS_ON, HAS_PARTICIPANT, DISCUSSES, MENTIONS, RELATES_TO, CREATED_BY',
+                        },
+                        source_node_id: {
+                          type: 'string',
+                          title: 'Source Node Id',
+                          description:
+                            "**REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes' array of this request",
+                        },
+                        target_node_id: {
+                          type: 'string',
+                          title: 'Target Node Id',
+                          description:
+                            "**REQUIRED**: Must exactly match the 'id' field of a node defined in the 'nodes' array of this request",
+                        },
+                        properties: {
+                          type: 'object',
+                          title: 'Properties',
+                          description:
+                            "Optional relationship properties (e.g., {'since': '2024-01-01', 'role': 'manager'})",
+                          additionalProperties: true,
+                        },
+                      },
+                      required: ['relationship_type', 'source_node_id', 'target_node_id'],
+                    },
+                  },
+                },
+                required: ['nodes'],
+              },
+              mode: {
+                type: 'string',
+                title: 'GraphGenerationMode',
+                description: "Graph generation mode: 'auto' (AI-powered) or 'manual' (exact specification)",
+                enum: ['auto', 'manual'],
+              },
+            },
+          },
           metadata: {
             $ref: '#/$defs/memory_metadata',
+          },
+          namespace_id: {
+            type: 'string',
+            title: 'Namespace Id',
+            description:
+              'Optional namespace ID for multi-tenant memory scoping. When provided, memory is associated with this namespace.',
+          },
+          organization_id: {
+            type: 'string',
+            title: 'Organization Id',
+            description:
+              'Optional organization ID for multi-tenant memory scoping. When provided, memory is associated with this organization.',
           },
           relationships_json: {
             type: 'array',
@@ -98,14 +402,11 @@ export const tool: Tool = {
               $ref: '#/$defs/relationship_item',
             },
           },
+          type: {
+            $ref: '#/$defs/memory_type',
+          },
         },
-        required: ['content', 'type'],
-      },
-      memory_type: {
-        type: 'string',
-        title: 'MemoryType',
-        description: 'Valid memory types',
-        enum: ['text', 'code_snippet', 'document'],
+        required: ['content'],
       },
       context_item: {
         type: 'object',
@@ -132,6 +433,13 @@ export const tool: Tool = {
           assistantMessage: {
             type: 'string',
             title: 'Assistantmessage',
+          },
+          category: {
+            type: 'string',
+            title: 'Category',
+            description:
+              'Memory category based on role. For users: preference, task, goal, fact, context. For assistants: skills, learning, task, goal, fact, context.',
+            enum: ['preference', 'task', 'goal', 'fact', 'context', 'skills', 'learning'],
           },
           conversationId: {
             type: 'string',
@@ -197,6 +505,14 @@ export const tool: Tool = {
             type: 'string',
             title: 'Location',
           },
+          namespace_id: {
+            type: 'string',
+            title: 'Namespace Id',
+          },
+          organization_id: {
+            type: 'string',
+            title: 'Organization Id',
+          },
           pageId: {
             type: 'string',
             title: 'Pageid',
@@ -225,6 +541,12 @@ export const tool: Tool = {
             items: {
               type: 'string',
             },
+          },
+          role: {
+            type: 'string',
+            title: 'MessageRole',
+            description: 'Role of the message sender',
+            enum: ['user', 'assistant'],
           },
           role_read_access: {
             type: 'array',
@@ -265,6 +587,11 @@ export const tool: Tool = {
             items: {
               type: 'string',
             },
+          },
+          upload_id: {
+            type: 'string',
+            title: 'Upload Id',
+            description: 'Upload ID for document processing workflows',
           },
           useCaseClassificationScores: {
             type: 'array',
@@ -346,6 +673,12 @@ export const tool: Tool = {
           },
         },
         required: ['relation_type'],
+      },
+      memory_type: {
+        type: 'string',
+        title: 'MemoryType',
+        description: 'Valid memory types',
+        enum: ['text', 'code_snippet', 'document'],
       },
     },
   },
