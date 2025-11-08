@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.18.0 (2025-11-08)
+
+Full Changelog: [v1.17.0...v1.18.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.17.0...v1.18.0)
+
+### Features
+
+* **api:** manual updates ([f141afe](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f141afed79c4b6543268d26b506af8e93bc3adfc))
+
+
+### Chores
+
+* **internal:** codegen related update ([e301eba](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e301ebae94db4fc44bcbbda3821a91ea13c13758))
+
 ## 1.17.0 (2025-11-07)
 
 Full Changelog: [v1.16.0...v1.17.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.16.0...v1.17.0)
