@@ -9,15 +9,15 @@ export const metadata: Metadata = {
   resource: 'schemas',
   operation: 'write',
   tags: [],
-  httpMethod: 'post',
-  httpPath: '/v1/schemas/{schema_id}/activate',
-  operationId: 'activate_user_schema_v1',
+  httpMethod: 'delete',
+  httpPath: '/v1/schemas/{schema_id}',
+  operationId: 'delete_user_schema_v1',
 };
 
 export const tool: Tool = {
-  name: 'activate_schemas',
+  name: 'delete_schemas',
   description:
-    'Activate or deactivate a schema.\n    \n    Active schemas are used for memory extraction and graph generation.\n    Multiple schemas can be active simultaneously and will be merged during\n    the extraction process.',
+    'Delete a schema.\n    \n    Soft deletes the schema by marking it as archived. The schema data and\n    associated graph nodes/relationships are preserved for data integrity.\n    User must have write access to the schema.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -25,20 +25,17 @@ export const tool: Tool = {
         type: 'string',
         title: 'Schema Id',
       },
-      body: {
-        type: 'boolean',
-        title: 'Activate',
-        description: 'True to activate, False to deactivate',
-      },
     },
     required: ['schema_id'],
   },
-  annotations: {},
+  annotations: {
+    idempotentHint: true,
+  },
 };
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
   const { schema_id, ...body } = args as any;
-  return asTextContentResult((await client.schemas.activate(schema_id, body)) as object);
+  return asTextContentResult((await client.schemas.delete(schema_id)) as object);
 };
 
 export default { metadata, tool, handler };

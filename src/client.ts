@@ -58,10 +58,9 @@ import {
   SearchResponse,
 } from './resources/memory';
 import {
-  SchemaActivateParams,
-  SchemaActivateResponse,
   SchemaCreateParams,
   SchemaCreateResponse,
+  SchemaDeleteResponse,
   SchemaListParams,
   SchemaListResponse,
   SchemaRetrieveResponse,
@@ -904,11 +903,10 @@ export declare namespace Papr {
     type SchemaRetrieveResponse as SchemaRetrieveResponse,
     type SchemaUpdateResponse as SchemaUpdateResponse,
     type SchemaListResponse as SchemaListResponse,
-    type SchemaActivateResponse as SchemaActivateResponse,
+    type SchemaDeleteResponse as SchemaDeleteResponse,
     type SchemaCreateParams as SchemaCreateParams,
     type SchemaUpdateParams as SchemaUpdateParams,
     type SchemaListParams as SchemaListParams,
-    type SchemaActivateParams as SchemaActivateParams,
   };
 
   export {

@@ -26,7 +26,7 @@ import create_schemas from './schemas/create-schemas';
 import retrieve_schemas from './schemas/retrieve-schemas';
 import update_schemas from './schemas/update-schemas';
 import list_schemas from './schemas/list-schemas';
-import activate_schemas from './schemas/activate-schemas';
+import delete_schemas from './schemas/delete-schemas';
 import playground_graphql from './graphql/playground-graphql';
 import query_graphql from './graphql/query-graphql';
 
@@ -58,7 +58,7 @@ addEndpoint(create_schemas);
 addEndpoint(retrieve_schemas);
 addEndpoint(update_schemas);
 addEndpoint(list_schemas);
-addEndpoint(activate_schemas);
+addEndpoint(delete_schemas);
 addEndpoint(playground_graphql);
 addEndpoint(query_graphql);
 
