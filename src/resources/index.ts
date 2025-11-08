@@ -49,11 +49,10 @@ export {
   type SchemaRetrieveResponse,
   type SchemaUpdateResponse,
   type SchemaListResponse,
-  type SchemaActivateResponse,
+  type SchemaDeleteResponse,
   type SchemaCreateParams,
   type SchemaUpdateParams,
   type SchemaListParams,
-  type SchemaActivateParams,
 } from './schemas';
 export {
   User,
