@@ -535,10 +535,10 @@ The following tools are available in this MCP server.
       - Bearer token in `Authorization` header
       - API Key in `X-API-Key` header
       - Session token in `X-Session-Token` header
-- `activate_schemas` (`write`): Activate or deactivate a schema.
-      Active schemas are used for memory extraction and graph generation.
-      Multiple schemas can be active simultaneously and will be merged during
-      the extraction process.
+- `delete_schemas` (`write`): Delete a schema.
+      Soft deletes the schema by marking it as archived. The schema data and
+      associated graph nodes/relationships are preserved for data integrity.
+      User must have write access to the schema.
 
 ### Resource `graphql`:
 

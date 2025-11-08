@@ -125,19 +125,14 @@ export class Schemas extends APIResource {
   }
 
   /**
-   * Activate or deactivate a schema.
+   * Delete a schema.
    *
-   *     Active schemas are used for memory extraction and graph generation.
-   *     Multiple schemas can be active simultaneously and will be merged during
-   *     the extraction process.
+   *     Soft deletes the schema by marking it as archived. The schema data and
+   *     associated graph nodes/relationships are preserved for data integrity.
+   *     User must have write access to the schema.
    */
-  activate(
-    schemaID: string,
-    params: SchemaActivateParams | null | undefined = undefined,
-    options?: RequestOptions,
-  ): APIPromise<unknown> {
-    const { body } = params ?? {};
-    return this._client.post(path`/v1/schemas/${schemaID}/activate`, { body: body, ...options });
+  delete(schemaID: string, options?: RequestOptions): APIPromise<unknown> {
+    return this._client.delete(path`/v1/schemas/${schemaID}`, options);
   }
 }
 
@@ -360,7 +355,7 @@ export interface SchemaListResponse {
   total?: number;
 }
 
-export type SchemaActivateResponse = unknown;
+export type SchemaDeleteResponse = unknown;
 
 export interface SchemaCreateParams {
   name: string;
@@ -531,13 +526,6 @@ export interface SchemaListParams {
   workspace_id?: string | null;
 }
 
-export interface SchemaActivateParams {
-  /**
-   * True to activate, False to deactivate
-   */
-  body?: boolean;
-}
-
 export declare namespace Schemas {
   export {
     type UserGraphSchemaOutput as UserGraphSchemaOutput,
@@ -545,10 +533,9 @@ export declare namespace Schemas {
     type SchemaRetrieveResponse as SchemaRetrieveResponse,
     type SchemaUpdateResponse as SchemaUpdateResponse,
     type SchemaListResponse as SchemaListResponse,
-    type SchemaActivateResponse as SchemaActivateResponse,
+    type SchemaDeleteResponse as SchemaDeleteResponse,
     type SchemaCreateParams as SchemaCreateParams,
     type SchemaUpdateParams as SchemaUpdateParams,
     type SchemaListParams as SchemaListParams,
-    type SchemaActivateParams as SchemaActivateParams,
   };
 }

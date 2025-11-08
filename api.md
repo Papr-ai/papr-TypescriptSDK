@@ -90,7 +90,7 @@ Types:
 - <code><a href="./src/resources/schemas.ts">SchemaRetrieveResponse</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaUpdateResponse</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaListResponse</a></code>
-- <code><a href="./src/resources/schemas.ts">SchemaActivateResponse</a></code>
+- <code><a href="./src/resources/schemas.ts">SchemaDeleteResponse</a></code>
 
 Methods:
 
@@ -98,7 +98,7 @@ Methods:
 - <code title="get /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">retrieve</a>(schemaID) -> SchemaRetrieveResponse</code>
 - <code title="put /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">update</a>(schemaID, { ...params }) -> SchemaUpdateResponse</code>
 - <code title="get /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">list</a>({ ...params }) -> SchemaListResponse</code>
-- <code title="post /v1/schemas/{schema_id}/activate">client.schemas.<a href="./src/resources/schemas.ts">activate</a>(schemaID, { ...params }) -> unknown</code>
+- <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> unknown</code>
 
 # Graphql
 
