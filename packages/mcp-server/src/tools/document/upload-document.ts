@@ -1,7 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { maybeFilter } from '@papr/memory-mcp/filtering';
-import { Metadata, asTextContentResult } from '@papr/memory-mcp/tools/types';
+import { isJqError, maybeFilter } from '@papr/memory-mcp/filtering';
+import { Metadata, asErrorResult, asTextContentResult } from '@papr/memory-mcp/tools/types';
 
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import Papr from '@papr/memory';
@@ -90,7 +90,14 @@ export const tool: Tool = {
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
   const { jq_filter, ...body } = args as any;
-  return asTextContentResult(await maybeFilter(jq_filter, await client.document.upload(body)));
+  try {
+    return asTextContentResult(await maybeFilter(jq_filter, await client.document.upload(body)));
+  } catch (error) {
+    if (isJqError(error)) {
+      return asErrorResult(error.message);
+    }
+    throw error;
+  }
 };
 
 export default { metadata, tool, handler };

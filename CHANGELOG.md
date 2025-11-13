@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.18.1 (2025-11-13)
+
+Full Changelog: [v1.18.0...v1.18.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.18.0...v1.18.1)
+
+### Bug Fixes
+
+* **mcp:** return tool execution error on jq failure ([f1d13b9](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f1d13b98c589343b2e6814ad2359b42f5e860e39))
+
+
+### Chores
+
+* **mcp:** clarify http auth error ([7ae9163](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7ae91637d3bf9067a436c8153cb9e867a53d311a))
+* **mcp:** upgrade jq-web ([9607346](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9607346fc76854e564dd64f226341777d8fe6263))
+
 ## 1.18.0 (2025-11-08)
 
 Full Changelog: [v1.17.0...v1.18.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.17.0...v1.18.0)
