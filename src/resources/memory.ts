@@ -253,15 +253,9 @@ export class Memory extends APIResource {
    * ```
    */
   search(params: MemorySearchParams, options?: RequestOptions): APIPromise<SearchResponse> {
-    const {
-      query_enable_agentic_graph,
-      max_memories,
-      max_nodes,
-      'Accept-Encoding': acceptEncoding,
-      ...body
-    } = params;
+    const { max_memories, max_nodes, 'Accept-Encoding': acceptEncoding, ...body } = params;
     return this._client.post('/v1/memory/search', {
-      query: { enable_agentic_graph: query_enable_agentic_graph, max_memories, max_nodes },
+      query: { max_memories, max_nodes },
       body,
       ...options,
       headers: buildHeaders([
@@ -1186,13 +1180,6 @@ export interface MemorySearchParams {
   query: string;
 
   /**
-   * Query param: HIGHLY RECOMMENDED: Enable agentic graph search for intelligent,
-   * context-aware results. Can be set via URL parameter or JSON body. URL parameter
-   * takes precedence if both are provided.
-   */
-  query_enable_agentic_graph?: boolean | null;
-
-  /**
    * Query param: HIGHLY RECOMMENDED: Maximum number of memories to return. Use at
    * least 15-20 for comprehensive results. Lower values (5-10) may miss relevant
    * information. Default is 20 for optimal coverage.
@@ -1217,7 +1204,7 @@ export interface MemorySearchParams {
    * more relevant and comprehensive results. Set to false only if you need faster,
    * simpler keyword-based search.
    */
-  body_enable_agentic_graph?: boolean;
+  enable_agentic_graph?: boolean;
 
   /**
    * Body param: Optional external user ID to filter search results by a specific
@@ -1252,26 +1239,6 @@ export interface MemorySearchParams {
   rank_results?: boolean;
 
   /**
-   * Body param: Optional user-defined schema ID to use for this search. If provided,
-   * this schema (plus system schema) will be used for query generation. If not
-   * provided, system will automatically select relevant schema based on query
-   * content.
-   */
-  schema_id?: string | null;
-
-  /**
-   * Body param: Complete search override specification provided by developer
-   */
-  search_override?: MemorySearchParams.SearchOverride | null;
-
-  /**
-   * Body param: If true, uses simple schema mode: system schema + ONE most relevant
-   * user schema. This ensures better consistency between add/search operations and
-   * reduces query complexity. Recommended for production use.
-   */
-  simple_schema_mode?: boolean;
-
-  /**
    * Body param: Optional internal user ID to filter search results by a specific
    * user. If not provided, results are not filtered by user. If both user_id and
    * external_user_id are provided, user_id takes precedence.
@@ -1282,83 +1249,6 @@ export interface MemorySearchParams {
    * Header param: Recommended to use 'gzip' for response compression
    */
   'Accept-Encoding'?: string;
-}
-
-export namespace MemorySearchParams {
-  /**
-   * Complete search override specification provided by developer
-   */
-  export interface SearchOverride {
-    /**
-     * Graph pattern to search for (source)-[relationship]->(target)
-     */
-    pattern: SearchOverride.Pattern;
-
-    /**
-     * Property filters to apply to the search pattern
-     */
-    filters?: Array<SearchOverride.Filter>;
-
-    /**
-     * Specific properties to return. If not specified, returns all properties.
-     */
-    return_properties?: Array<string> | null;
-  }
-
-  export namespace SearchOverride {
-    /**
-     * Graph pattern to search for (source)-[relationship]->(target)
-     */
-    export interface Pattern {
-      /**
-       * Relationship type (e.g., 'ASSOCIATED_WITH', 'WORKS_FOR'). Must match schema
-       * relationship types.
-       */
-      relationship_type: string;
-
-      /**
-       * Source node label (e.g., 'Memory', 'Person', 'Company'). Must match schema node
-       * types.
-       */
-      source_label: string;
-
-      /**
-       * Target node label (e.g., 'Person', 'Company', 'Project'). Must match schema node
-       * types.
-       */
-      target_label: string;
-
-      /**
-       * Relationship direction: '->' (outgoing), '<-' (incoming), or '-' (bidirectional)
-       */
-      direction?: string;
-    }
-
-    /**
-     * Property filters for search override
-     */
-    export interface Filter {
-      /**
-       * Node type to filter (e.g., 'Person', 'Memory', 'Company')
-       */
-      node_type: string;
-
-      /**
-       * Filter operator: 'CONTAINS', 'EQUALS', 'STARTS_WITH', 'IN'
-       */
-      operator: string;
-
-      /**
-       * Property name to filter on (e.g., 'name', 'content', 'role')
-       */
-      property_name: string;
-
-      /**
-       * Filter value(s). Use list for 'IN' operator.
-       */
-      value: string | Array<string> | number | boolean;
-    }
-  }
 }
 
 export declare namespace Memory {
