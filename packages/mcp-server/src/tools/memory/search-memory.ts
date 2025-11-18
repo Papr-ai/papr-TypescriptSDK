@@ -27,6 +27,12 @@ export const tool: Tool = {
         description:
           "Detailed search query describing what you're looking for. For best results, write 2-3 sentences that include specific details, context, and time frame. Examples: 'Find recurring customer complaints about API performance from the last month. Focus on issues where customers specifically mentioned timeout errors or slow response times in their conversations.' 'What are the main issues and blockers in my current projects? Focus on technical challenges and timeline impacts.' 'Find insights about team collaboration and communication patterns from recent meetings and discussions.'",
       },
+      query_enable_agentic_graph: {
+        type: 'boolean',
+        title: 'Enable Agentic Graph',
+        description:
+          'HIGHLY RECOMMENDED: Enable agentic graph search for intelligent, context-aware results. Can be set via URL parameter or JSON body. URL parameter takes precedence if both are provided.',
+      },
       max_memories: {
         type: 'integer',
         title: 'Max Memories',
@@ -39,7 +45,7 @@ export const tool: Tool = {
         description:
           'HIGHLY RECOMMENDED: Maximum number of neo nodes to return. Use at least 10-15 for comprehensive graph results. Lower values may miss important entity relationships. Default is 15 for optimal coverage.',
       },
-      enable_agentic_graph: {
+      body_enable_agentic_graph: {
         type: 'boolean',
         title: 'Enable Agentic Graph',
         description:

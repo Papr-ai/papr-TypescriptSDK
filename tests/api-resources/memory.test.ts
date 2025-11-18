@@ -404,9 +404,10 @@ describe('resource memory', () => {
     const response = await client.memory.search({
       query:
         "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
+      query_enable_agentic_graph: true,
       max_memories: 10,
       max_nodes: 10,
-      enable_agentic_graph: false,
+      body_enable_agentic_graph: false,
       external_user_id: 'external_user_123',
       metadata: {
         assistantMessage: 'assistantMessage',
