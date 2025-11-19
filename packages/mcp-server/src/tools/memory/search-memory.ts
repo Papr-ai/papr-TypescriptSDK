@@ -85,35 +85,8 @@ export const tool: Tool = {
         properties: {
           pattern: {
             type: 'object',
-            title: 'SearchOverridePattern',
             description: 'Graph pattern to search for (source)-[relationship]->(target)',
-            properties: {
-              relationship_type: {
-                type: 'string',
-                title: 'Relationship Type',
-                description:
-                  "Relationship type (e.g., 'ASSOCIATED_WITH', 'WORKS_FOR'). Must match schema relationship types.",
-              },
-              source_label: {
-                type: 'string',
-                title: 'Source Label',
-                description:
-                  "Source node label (e.g., 'Memory', 'Person', 'Company'). Must match schema node types.",
-              },
-              target_label: {
-                type: 'string',
-                title: 'Target Label',
-                description:
-                  "Target node label (e.g., 'Person', 'Company', 'Project'). Must match schema node types.",
-              },
-              direction: {
-                type: 'string',
-                title: 'Direction',
-                description:
-                  "Relationship direction: '->' (outgoing), '<-' (incoming), or '-' (bidirectional)",
-              },
-            },
-            required: ['relationship_type', 'source_label', 'target_label'],
+            additionalProperties: true,
           },
           filters: {
             type: 'array',
@@ -121,47 +94,7 @@ export const tool: Tool = {
             description: 'Property filters to apply to the search pattern',
             items: {
               type: 'object',
-              title: 'SearchOverrideFilter',
-              description: 'Property filters for search override',
-              properties: {
-                node_type: {
-                  type: 'string',
-                  title: 'Node Type',
-                  description: "Node type to filter (e.g., 'Person', 'Memory', 'Company')",
-                },
-                operator: {
-                  type: 'string',
-                  title: 'Operator',
-                  description: "Filter operator: 'CONTAINS', 'EQUALS', 'STARTS_WITH', 'IN'",
-                },
-                property_name: {
-                  type: 'string',
-                  title: 'Property Name',
-                  description: "Property name to filter on (e.g., 'name', 'content', 'role')",
-                },
-                value: {
-                  anyOf: [
-                    {
-                      type: 'string',
-                    },
-                    {
-                      type: 'array',
-                      items: {
-                        type: 'string',
-                      },
-                    },
-                    {
-                      type: 'number',
-                    },
-                    {
-                      type: 'boolean',
-                    },
-                  ],
-                  title: 'Value',
-                  description: "Filter value(s). Use list for 'IN' operator.",
-                },
-              },
-              required: ['node_type', 'operator', 'property_name', 'value'],
+              additionalProperties: true,
             },
           },
           return_properties: {
