@@ -469,10 +469,10 @@ describe('resource memory', () => {
       schema_id: 'schema_id',
       search_override: {
         pattern: {
+          direction: '->',
           relationship_type: 'ASSOCIATED_WITH',
           source_label: 'Memory',
           target_label: 'Person',
-          direction: '->',
         },
         filters: [
           { node_type: 'Person', operator: 'CONTAINS', property_name: 'name', value: 'John' },
