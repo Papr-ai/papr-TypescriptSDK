@@ -462,8 +462,15 @@ The following tools are available in this MCP server.
       - Define custom relationship types with constraints
       - Automatic validation against system schemas
       - Support for different scopes (personal, workspace, organization)
+      - **Status control**: Set `status` to "active" to immediately activate the schema, or "draft" to save as draft (default)
       - **Enum support**: Use `enum_values` to restrict property values to a predefined list (max 10 values)
-      - **Auto-indexing**: Required properties are automatically indexed in Neo4j for optimal query performance
+      - **Auto-indexing**: Required properties are automatically indexed in Neo4j when schema becomes active
+
+      **Schema Limits (optimized for LLM performance):**
+      - **Maximum 10 node types** per schema
+      - **Maximum 20 relationship types** per schema
+      - **Maximum 10 properties** per node type
+      - **Maximum 10 enum values** per property
 
       **Property Types & Validation:**
       - `string`: Text values with optional `enum_values`, `min_length`, `max_length`, `pattern`
@@ -521,9 +528,14 @@ The following tools are available in this MCP server.
       Returns the complete schema definition including node types, relationship types,
       and metadata. User must have read access to the schema.
 - `update_schemas` (`write`): Update an existing schema.
-      Allows modification of schema properties, node types, and relationship types.
+      Allows modification of schema properties, node types, relationship types, and status.
       User must have write access to the schema. Updates create a new version
       while preserving the existing data.
+
+      **Status Management:**
+      - Set `status` to "active" to activate the schema and trigger Neo4j index creation
+      - Set `status` to "draft" to deactivate the schema
+      - Set `status` to "archived" to soft-delete the schema
 - `list_schemas` (`read`): List all schemas accessible to the authenticated user.
       Returns schemas that the user owns or has read access to, including:
       - Personal schemas created by the user
