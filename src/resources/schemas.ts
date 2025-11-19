@@ -17,8 +17,15 @@ export class Schemas extends APIResource {
    *     - Define custom relationship types with constraints
    *     - Automatic validation against system schemas
    *     - Support for different scopes (personal, workspace, organization)
+   *     - **Status control**: Set `status` to "active" to immediately activate the schema, or "draft" to save as draft (default)
    *     - **Enum support**: Use `enum_values` to restrict property values to a predefined list (max 10 values)
-   *     - **Auto-indexing**: Required properties are automatically indexed in Neo4j for optimal query performance
+   *     - **Auto-indexing**: Required properties are automatically indexed in Neo4j when schema becomes active
+   *
+   *     **Schema Limits (optimized for LLM performance):**
+   *     - **Maximum 10 node types** per schema
+   *     - **Maximum 20 relationship types** per schema
+   *     - **Maximum 10 properties** per node type
+   *     - **Maximum 10 enum values** per property
    *
    *     **Property Types & Validation:**
    *     - `string`: Text values with optional `enum_values`, `min_length`, `max_length`, `pattern`
@@ -90,9 +97,14 @@ export class Schemas extends APIResource {
   /**
    * Update an existing schema.
    *
-   *     Allows modification of schema properties, node types, and relationship types.
+   *     Allows modification of schema properties, node types, relationship types, and status.
    *     User must have write access to the schema. Updates create a new version
    *     while preserving the existing data.
+   *
+   *     **Status Management:**
+   *     - Set `status` to "active" to activate the schema and trigger Neo4j index creation
+   *     - Set `status` to "draft" to deactivate the schema
+   *     - Set `status` to "archived" to soft-delete the schema
    */
   update(
     schemaID: string,
@@ -150,12 +162,14 @@ export interface UserGraphSchemaOutput {
 
   last_used_at?: string | null;
 
+  namespace?: string | { [key: string]: unknown } | null;
+
   /**
-   * Custom node types (max 15 per schema)
+   * Custom node types (max 10 per schema)
    */
   node_types?: { [key: string]: UserGraphSchemaOutput.NodeTypes };
 
-  organization_id?: string | null;
+  organization?: string | { [key: string]: unknown } | null;
 
   read_access?: Array<string>;
 
@@ -164,7 +178,10 @@ export interface UserGraphSchemaOutput {
    */
   relationship_types?: { [key: string]: UserGraphSchemaOutput.RelationshipTypes };
 
-  scope?: 'personal' | 'workspace' | 'organization';
+  /**
+   * Schema scopes available through the API
+   */
+  scope?: 'personal' | 'workspace' | 'namespace' | 'organization';
 
   status?: 'draft' | 'active' | 'deprecated' | 'archived';
 
@@ -197,7 +214,7 @@ export namespace UserGraphSchemaOutput {
     icon?: string | null;
 
     /**
-     * Node properties (max 15 per node type)
+     * Node properties (max 10 per node type)
      */
     properties?: { [key: string]: NodeTypes.Properties };
 
@@ -368,12 +385,14 @@ export interface SchemaCreateParams {
 
   last_used_at?: string | null;
 
+  namespace?: string | { [key: string]: unknown } | null;
+
   /**
-   * Custom node types (max 15 per schema)
+   * Custom node types (max 10 per schema)
    */
   node_types?: { [key: string]: SchemaCreateParams.NodeTypes };
 
-  organization_id?: string | null;
+  organization?: string | { [key: string]: unknown } | null;
 
   read_access?: Array<string>;
 
@@ -382,7 +401,10 @@ export interface SchemaCreateParams {
    */
   relationship_types?: { [key: string]: SchemaCreateParams.RelationshipTypes };
 
-  scope?: 'personal' | 'workspace' | 'organization';
+  /**
+   * Schema scopes available through the API
+   */
+  scope?: 'personal' | 'workspace' | 'namespace' | 'organization';
 
   status?: 'draft' | 'active' | 'deprecated' | 'archived';
 
@@ -415,7 +437,7 @@ export namespace SchemaCreateParams {
     icon?: string | null;
 
     /**
-     * Node properties (max 15 per node type)
+     * Node properties (max 10 per node type)
      */
     properties?: { [key: string]: NodeTypes.Properties };
 

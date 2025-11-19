@@ -27,6 +27,12 @@ export const tool: Tool = {
         description:
           "Detailed search query describing what you're looking for. For best results, write 2-3 sentences that include specific details, context, and time frame. Examples: 'Find recurring customer complaints about API performance from the last month. Focus on issues where customers specifically mentioned timeout errors or slow response times in their conversations.' 'What are the main issues and blockers in my current projects? Focus on technical challenges and timeline impacts.' 'Find insights about team collaboration and communication patterns from recent meetings and discussions.'",
       },
+      query_enable_agentic_graph: {
+        type: 'boolean',
+        title: 'Enable Agentic Graph',
+        description:
+          'HIGHLY RECOMMENDED: Enable agentic graph search for intelligent, context-aware results. Can be set via URL parameter or JSON body. URL parameter takes precedence if both are provided.',
+      },
       max_memories: {
         type: 'integer',
         title: 'Max Memories',
@@ -39,7 +45,7 @@ export const tool: Tool = {
         description:
           'HIGHLY RECOMMENDED: Maximum number of neo nodes to return. Use at least 10-15 for comprehensive graph results. Lower values may miss important entity relationships. Default is 15 for optimal coverage.',
       },
-      enable_agentic_graph: {
+      body_enable_agentic_graph: {
         type: 'boolean',
         title: 'Enable Agentic Graph',
         description:
@@ -71,6 +77,115 @@ export const tool: Tool = {
         title: 'Rank Results',
         description:
           "Whether to enable additional ranking of search results. Default is false because results are already ranked when using an LLM for search (recommended approach). Only enable this if you're not using an LLM in your search pipeline and need additional result ranking.",
+      },
+      schema_id: {
+        type: 'string',
+        title: 'Schema Id',
+        description:
+          'Optional user-defined schema ID to use for this search. If provided, this schema (plus system schema) will be used for query generation. If not provided, system will automatically select relevant schema based on query content.',
+      },
+      search_override: {
+        type: 'object',
+        title: 'SearchOverrideSpecification',
+        description: 'Complete search override specification provided by developer',
+        properties: {
+          pattern: {
+            type: 'object',
+            title: 'SearchOverridePattern',
+            description: 'Graph pattern to search for (source)-[relationship]->(target)',
+            properties: {
+              relationship_type: {
+                type: 'string',
+                title: 'Relationship Type',
+                description:
+                  "Relationship type (e.g., 'ASSOCIATED_WITH', 'WORKS_FOR'). Must match schema relationship types.",
+              },
+              source_label: {
+                type: 'string',
+                title: 'Source Label',
+                description:
+                  "Source node label (e.g., 'Memory', 'Person', 'Company'). Must match schema node types.",
+              },
+              target_label: {
+                type: 'string',
+                title: 'Target Label',
+                description:
+                  "Target node label (e.g., 'Person', 'Company', 'Project'). Must match schema node types.",
+              },
+              direction: {
+                type: 'string',
+                title: 'Direction',
+                description:
+                  "Relationship direction: '->' (outgoing), '<-' (incoming), or '-' (bidirectional)",
+              },
+            },
+            required: ['relationship_type', 'source_label', 'target_label'],
+          },
+          filters: {
+            type: 'array',
+            title: 'Filters',
+            description: 'Property filters to apply to the search pattern',
+            items: {
+              type: 'object',
+              title: 'SearchOverrideFilter',
+              description: 'Property filters for search override',
+              properties: {
+                node_type: {
+                  type: 'string',
+                  title: 'Node Type',
+                  description: "Node type to filter (e.g., 'Person', 'Memory', 'Company')",
+                },
+                operator: {
+                  type: 'string',
+                  title: 'Operator',
+                  description: "Filter operator: 'CONTAINS', 'EQUALS', 'STARTS_WITH', 'IN'",
+                },
+                property_name: {
+                  type: 'string',
+                  title: 'Property Name',
+                  description: "Property name to filter on (e.g., 'name', 'content', 'role')",
+                },
+                value: {
+                  anyOf: [
+                    {
+                      type: 'string',
+                    },
+                    {
+                      type: 'array',
+                      items: {
+                        type: 'string',
+                      },
+                    },
+                    {
+                      type: 'number',
+                    },
+                    {
+                      type: 'boolean',
+                    },
+                  ],
+                  title: 'Value',
+                  description: "Filter value(s). Use list for 'IN' operator.",
+                },
+              },
+              required: ['node_type', 'operator', 'property_name', 'value'],
+            },
+          },
+          return_properties: {
+            type: 'array',
+            title: 'Return Properties',
+            description: 'Specific properties to return. If not specified, returns all properties.',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+        required: ['pattern'],
+      },
+      simple_schema_mode: {
+        type: 'boolean',
+        title: 'Simple Schema Mode',
+        description:
+          'If true, uses simple schema mode: system schema + ONE most relevant user schema. This ensures better consistency between add/search operations and reduces query complexity. Recommended for production use.',
       },
       user_id: {
         type: 'string',
@@ -168,9 +283,37 @@ export const tool: Tool = {
             type: 'string',
             title: 'Namespace Id',
           },
+          namespace_read_access: {
+            type: 'array',
+            title: 'Namespace Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          namespace_write_access: {
+            type: 'array',
+            title: 'Namespace Write Access',
+            items: {
+              type: 'string',
+            },
+          },
           organization_id: {
             type: 'string',
             title: 'Organization Id',
+          },
+          organization_read_access: {
+            type: 'array',
+            title: 'Organization Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          organization_write_access: {
+            type: 'array',
+            title: 'Organization Write Access',
+            items: {
+              type: 'string',
+            },
           },
           pageId: {
             type: 'string',

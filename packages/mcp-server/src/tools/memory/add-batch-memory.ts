@@ -379,9 +379,37 @@ export const tool: Tool = {
             type: 'string',
             title: 'Namespace Id',
           },
+          namespace_read_access: {
+            type: 'array',
+            title: 'Namespace Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          namespace_write_access: {
+            type: 'array',
+            title: 'Namespace Write Access',
+            items: {
+              type: 'string',
+            },
+          },
           organization_id: {
             type: 'string',
             title: 'Organization Id',
+          },
+          organization_read_access: {
+            type: 'array',
+            title: 'Organization Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          organization_write_access: {
+            type: 'array',
+            title: 'Organization Write Access',
+            items: {
+              type: 'string',
+            },
           },
           pageId: {
             type: 'string',
