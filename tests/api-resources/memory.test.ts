@@ -467,19 +467,6 @@ describe('resource memory', () => {
       organization_id: 'organization_id',
       rank_results: true,
       schema_id: 'schema_id',
-      search_override: {
-        pattern: {
-          direction: '->',
-          relationship_type: 'ASSOCIATED_WITH',
-          source_label: 'Memory',
-          target_label: 'Person',
-        },
-        filters: [
-          { node_type: 'Person', operator: 'CONTAINS', property_name: 'name', value: 'John' },
-          { node_type: 'Memory', operator: 'IN', property_name: 'topics', value: ['project', 'meeting'] },
-        ],
-        return_properties: ['name', 'content', 'createdAt'],
-      },
       simple_schema_mode: true,
       user_id: 'user_id',
       'Accept-Encoding': 'Accept-Encoding',

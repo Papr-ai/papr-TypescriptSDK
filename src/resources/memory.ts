@@ -1263,11 +1263,6 @@ export interface MemorySearchParams {
   schema_id?: string | null;
 
   /**
-   * Body param: Complete search override specification provided by developer
-   */
-  search_override?: MemorySearchParams.SearchOverride | null;
-
-  /**
    * Body param: If true, uses simple schema mode: system schema + ONE most relevant
    * user schema. This ensures better consistency between add/search operations and
    * reduces query complexity. Recommended for production use.
@@ -1285,28 +1280,6 @@ export interface MemorySearchParams {
    * Header param: Recommended to use 'gzip' for response compression
    */
   'Accept-Encoding'?: string;
-}
-
-export namespace MemorySearchParams {
-  /**
-   * Complete search override specification provided by developer
-   */
-  export interface SearchOverride {
-    /**
-     * Graph pattern to search for (source)-[relationship]->(target)
-     */
-    pattern: unknown;
-
-    /**
-     * Property filters to apply to the search pattern
-     */
-    filters?: Array<unknown>;
-
-    /**
-     * Specific properties to return. If not specified, returns all properties.
-     */
-    return_properties?: Array<string> | null;
-  }
 }
 
 export declare namespace Memory {

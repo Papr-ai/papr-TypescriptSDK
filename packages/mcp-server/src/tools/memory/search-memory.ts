@@ -78,36 +78,6 @@ export const tool: Tool = {
         description:
           'Optional user-defined schema ID to use for this search. If provided, this schema (plus system schema) will be used for query generation. If not provided, system will automatically select relevant schema based on query content.',
       },
-      search_override: {
-        type: 'object',
-        title: 'SearchOverrideSpecification',
-        description: 'Complete search override specification provided by developer',
-        properties: {
-          pattern: {
-            type: 'object',
-            description: 'Graph pattern to search for (source)-[relationship]->(target)',
-            additionalProperties: true,
-          },
-          filters: {
-            type: 'array',
-            title: 'Filters',
-            description: 'Property filters to apply to the search pattern',
-            items: {
-              type: 'object',
-              additionalProperties: true,
-            },
-          },
-          return_properties: {
-            type: 'array',
-            title: 'Return Properties',
-            description: 'Specific properties to return. If not specified, returns all properties.',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-        required: ['pattern'],
-      },
       simple_schema_mode: {
         type: 'boolean',
         title: 'Simple Schema Mode',
