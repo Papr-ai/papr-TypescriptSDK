@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { Metadata, asTextContentResult } from '@papr/memory-mcp/tools/types';
+import { Metadata, asErrorResult, asTextContentResult } from '@papr/memory-mcp/tools/types';
 
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import Papr from '@papr/memory';
@@ -348,7 +348,14 @@ export const tool: Tool = {
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
   const body = args as any;
-  return asTextContentResult(await client.memory.search(body));
+  try {
+    return asTextContentResult(await client.memory.search(body));
+  } catch (error) {
+    if (error instanceof Papr.APIError) {
+      return asErrorResult(error.message);
+    }
+    throw error;
+  }
 };
 
 export default { metadata, tool, handler };

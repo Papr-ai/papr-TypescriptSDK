@@ -159,7 +159,7 @@ export const handler = async (client: Papr, args: Record<string, unknown> | unde
   try {
     return asTextContentResult(await maybeFilter(jq_filter, await client.feedback.submit(body)));
   } catch (error) {
-    if (isJqError(error)) {
+    if (error instanceof Papr.APIError || isJqError(error)) {
       return asErrorResult(error.message);
     }
     throw error;
