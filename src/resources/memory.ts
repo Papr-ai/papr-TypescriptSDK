@@ -1299,11 +1299,6 @@ export interface MemorySearchParams {
   schema_id?: string | null;
 
   /**
-   * Body param: Complete search override specification provided by developer
-   */
-  search_override?: MemorySearchParams.SearchOverride | null;
-
-  /**
    * Body param: If true, uses simple schema mode: system schema + ONE most relevant
    * user schema. This ensures better consistency between add/search operations and
    * reduces query complexity. Recommended for production use.
@@ -1321,83 +1316,6 @@ export interface MemorySearchParams {
    * Header param: Recommended to use 'gzip' for response compression
    */
   'Accept-Encoding'?: string;
-}
-
-export namespace MemorySearchParams {
-  /**
-   * Complete search override specification provided by developer
-   */
-  export interface SearchOverride {
-    /**
-     * Graph pattern to search for (source)-[relationship]->(target)
-     */
-    pattern: SearchOverride.Pattern;
-
-    /**
-     * Property filters to apply to the search pattern
-     */
-    filters?: Array<SearchOverride.Filter>;
-
-    /**
-     * Specific properties to return. If not specified, returns all properties.
-     */
-    return_properties?: Array<string> | null;
-  }
-
-  export namespace SearchOverride {
-    /**
-     * Graph pattern to search for (source)-[relationship]->(target)
-     */
-    export interface Pattern {
-      /**
-       * Relationship type (e.g., 'ASSOCIATED_WITH', 'WORKS_FOR'). Must match schema
-       * relationship types.
-       */
-      relationship_type: string;
-
-      /**
-       * Source node label (e.g., 'Memory', 'Person', 'Company'). Must match schema node
-       * types.
-       */
-      source_label: string;
-
-      /**
-       * Target node label (e.g., 'Person', 'Company', 'Project'). Must match schema node
-       * types.
-       */
-      target_label: string;
-
-      /**
-       * Relationship direction: '->' (outgoing), '<-' (incoming), or '-' (bidirectional)
-       */
-      direction?: string;
-    }
-
-    /**
-     * Property filters for search override
-     */
-    export interface Filter {
-      /**
-       * Node type to filter (e.g., 'Person', 'Memory', 'Company')
-       */
-      node_type: string;
-
-      /**
-       * Filter operator: 'CONTAINS', 'EQUALS', 'STARTS_WITH', 'IN'
-       */
-      operator: string;
-
-      /**
-       * Property name to filter on (e.g., 'name', 'content', 'role')
-       */
-      property_name: string;
-
-      /**
-       * Filter value(s). Use list for 'IN' operator.
-       */
-      value: string | Array<string> | number | boolean;
-    }
-  }
 }
 
 export declare namespace Memory {
