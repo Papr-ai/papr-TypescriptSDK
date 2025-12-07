@@ -202,6 +202,16 @@ export class Memory extends APIResource {
    *     - API Key in `X-API-Key` header
    *     - Session token in `X-Session-Token` header
    *
+   *     **Response Format Options**:
+   *     Choose between standard JSON or TOON (Token-Oriented Object Notation) format:
+   *     - **JSON (default)**: Standard JSON response format
+   *     - **TOON**: Optimized format achieving 30-60% token reduction for LLM contexts
+   *       - Use `response_format=toon` query parameter
+   *       - Returns `text/plain` with TOON-formatted content
+   *       - Ideal for LLM integrations to reduce API costs and latency
+   *       - Maintains semantic clarity while minimizing token usage
+   *       - Example: `/v1/memory/search?response_format=toon`
+   *
    *     **Custom Schema Support**:
    *     This endpoint supports both system-defined and custom user-defined node types:
    *     - **System nodes**: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code
@@ -226,6 +236,7 @@ export class Memory extends APIResource {
    *     - Set `enable_agentic_graph: true` for intelligent, context-aware search that can understand ambiguous references
    *     - Use `max_memories: 15-20` for comprehensive memory coverage
    *     - Use `max_nodes: 10-15` for comprehensive graph entity relationships
+   *     - Use `response_format: toon` when integrating with LLMs to reduce token costs by 30-60%
    *
    *     **Agentic Graph Benefits:**
    *     When enabled, the system can understand vague references by first identifying specific entities from your memory graph, then performing targeted searches. For example:
@@ -253,9 +264,9 @@ export class Memory extends APIResource {
    * ```
    */
   search(params: MemorySearchParams, options?: RequestOptions): APIPromise<SearchResponse> {
-    const { max_memories, max_nodes, 'Accept-Encoding': acceptEncoding, ...body } = params;
+    const { max_memories, max_nodes, response_format, 'Accept-Encoding': acceptEncoding, ...body } = params;
     return this._client.post('/v1/memory/search', {
-      query: { max_memories, max_nodes },
+      query: { max_memories, max_nodes, response_format },
       body,
       ...options,
       headers: buildHeaders([
@@ -627,7 +638,15 @@ export interface MemoryMetadata {
 
   namespace_id?: string | null;
 
+  namespace_read_access?: Array<string> | null;
+
+  namespace_write_access?: Array<string> | null;
+
   organization_id?: string | null;
+
+  organization_read_access?: Array<string> | null;
+
+  organization_write_access?: Array<string> | null;
 
   pageId?: string | null;
 
@@ -781,11 +800,23 @@ export namespace SearchResponse {
 
       conversation_id?: string;
 
-      created_at?: string | null;
+      createdAt?: string | null;
 
       current_step?: string | null;
 
       customMetadata?: { [key: string]: unknown } | null;
+
+      /**
+       * Full precision (float32) embedding vector from Qdrant. Typically 2560 dimensions
+       * for Qwen4B. Used for CoreML/ANE fp16 models.
+       */
+      embedding?: Array<number> | null;
+
+      /**
+       * Quantized INT8 embedding vector (values -128 to 127). 4x smaller than float32.
+       * Default format for efficiency.
+       */
+      embedding_int8?: Array<number> | null;
 
       external_user_id?: string | null;
 
@@ -808,14 +839,29 @@ export namespace SearchResponse {
        */
       namespace_id?: string | null;
 
+      namespace_read_access?: Array<string> | null;
+
+      namespace_write_access?: Array<string> | null;
+
       /**
        * Organization ID that owns this memory
        */
       organization_id?: string | null;
 
+      organization_read_access?: Array<string> | null;
+
+      organization_write_access?: Array<string> | null;
+
       page?: string | null;
 
       page_number?: number | null;
+
+      /**
+       * Relevance score from server-side ranking algorithm. Higher scores indicate more
+       * relevant memories. Computed as: 60% vector similarity + 30% transition
+       * probability + 20% access frequency.
+       */
+      relevance_score?: number | null;
 
       /**
        * Role that generated this memory (user or assistant)
@@ -844,7 +890,7 @@ export namespace SearchResponse {
 
       total_pages?: number | null;
 
-      updated_at?: string | null;
+      updatedAt?: string | null;
 
       user_read_access?: Array<string> | null;
 
@@ -1194,6 +1240,12 @@ export interface MemorySearchParams {
   max_nodes?: number;
 
   /**
+   * Query param: Response format: 'json' (default) or 'toon' (Token-Oriented Object
+   * Notation for 30-60% token reduction in LLM contexts)
+   */
+  response_format?: 'json' | 'toon';
+
+  /**
    * Body param: HIGHLY RECOMMENDED: Enable agentic graph search for intelligent,
    * context-aware results. When enabled, the system can understand ambiguous
    * references by first identifying specific entities from your memory graph, then
@@ -1237,6 +1289,21 @@ export interface MemorySearchParams {
    * search pipeline and need additional result ranking.
    */
   rank_results?: boolean;
+
+  /**
+   * Body param: Optional user-defined schema ID to use for this search. If provided,
+   * this schema (plus system schema) will be used for query generation. If not
+   * provided, system will automatically select relevant schema based on query
+   * content.
+   */
+  schema_id?: string | null;
+
+  /**
+   * Body param: If true, uses simple schema mode: system schema + ONE most relevant
+   * user schema. This ensures better consistency between add/search operations and
+   * reduces query complexity. Recommended for production use.
+   */
+  simple_schema_mode?: boolean;
 
   /**
    * Body param: Optional internal user ID to filter search results by a specific

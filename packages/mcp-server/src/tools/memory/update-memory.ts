@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { Metadata, asTextContentResult } from '@papr/memory-mcp/tools/types';
+import { Metadata, asErrorResult, asTextContentResult } from '@papr/memory-mcp/tools/types';
 
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import Papr from '@papr/memory';
@@ -168,9 +168,37 @@ export const tool: Tool = {
             type: 'string',
             title: 'Namespace Id',
           },
+          namespace_read_access: {
+            type: 'array',
+            title: 'Namespace Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          namespace_write_access: {
+            type: 'array',
+            title: 'Namespace Write Access',
+            items: {
+              type: 'string',
+            },
+          },
           organization_id: {
             type: 'string',
             title: 'Organization Id',
+          },
+          organization_read_access: {
+            type: 'array',
+            title: 'Organization Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          organization_write_access: {
+            type: 'array',
+            title: 'Organization Write Access',
+            items: {
+              type: 'string',
+            },
           },
           pageId: {
             type: 'string',
@@ -348,7 +376,14 @@ export const tool: Tool = {
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
   const { memory_id, ...body } = args as any;
-  return asTextContentResult(await client.memory.update(memory_id, body));
+  try {
+    return asTextContentResult(await client.memory.update(memory_id, body));
+  } catch (error) {
+    if (error instanceof Papr.APIError) {
+      return asErrorResult(error.message);
+    }
+    throw error;
+  }
 };
 
 export default { metadata, tool, handler };

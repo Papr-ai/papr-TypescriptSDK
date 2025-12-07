@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { Metadata, asTextContentResult } from '@papr/memory-mcp/tools/types';
+import { Metadata, asErrorResult, asTextContentResult } from '@papr/memory-mcp/tools/types';
 
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import Papr from '@papr/memory';
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export const tool: Tool = {
   name: 'search_memory',
   description:
-    'Search through memories with authentication required.\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Custom Schema Support**:\n    This endpoint supports both system-defined and custom user-defined node types:\n    - **System nodes**: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code\n    - **Custom nodes**: Defined by developers via UserGraphSchema (e.g., Developer, Product, Customer, Function)\n    \n    When custom schema nodes are returned:\n    - Each custom node includes a `schema_id` field referencing the UserGraphSchema\n    - The response includes a `schemas_used` array listing all schema IDs used\n    - Use `GET /v1/schemas/{schema_id}` to retrieve full schema definitions including:\n      - Node type definitions and properties\n      - Relationship type definitions and constraints\n      - Validation rules and requirements\n    \n    **Recommended Headers**:\n    ```\n    Accept-Encoding: gzip\n    ```\n    \n    The API supports response compression for improved performance. Responses larger than 1KB will be automatically compressed when this header is present.\n    \n    **HIGHLY RECOMMENDED SETTINGS FOR BEST RESULTS:**\n    - Set `enable_agentic_graph: true` for intelligent, context-aware search that can understand ambiguous references\n    - Use `max_memories: 15-20` for comprehensive memory coverage\n    - Use `max_nodes: 10-15` for comprehensive graph entity relationships\n    \n    **Agentic Graph Benefits:**\n    When enabled, the system can understand vague references by first identifying specific entities from your memory graph, then performing targeted searches. For example:\n    - "customer feedback" → identifies your customers first, then finds their specific feedback\n    - "project issues" → identifies your projects first, then finds related issues\n    - "team meeting notes" → identifies your team members first, then finds meeting notes\n    - "code functions" → identifies your functions first, then finds related code\n    \n    **Role-Based Memory Filtering:**\n    Filter memories by role and category using metadata fields:\n    - `metadata.role`: Filter by "user" or "assistant" \n    - `metadata.category`: Filter by category (user: preference, task, goal, facts, context | assistant: skills, learning)\n    \n    **User Resolution Precedence:**\n    - If both user_id and external_user_id are provided, user_id takes precedence.\n    - If only external_user_id is provided, it will be resolved to the internal user.\n    - If neither is provided, the authenticated user is used.',
+    'Search through memories with authentication required.\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Response Format Options**:\n    Choose between standard JSON or TOON (Token-Oriented Object Notation) format:\n    - **JSON (default)**: Standard JSON response format\n    - **TOON**: Optimized format achieving 30-60% token reduction for LLM contexts\n      - Use `response_format=toon` query parameter\n      - Returns `text/plain` with TOON-formatted content\n      - Ideal for LLM integrations to reduce API costs and latency\n      - Maintains semantic clarity while minimizing token usage\n      - Example: `/v1/memory/search?response_format=toon`\n    \n    **Custom Schema Support**:\n    This endpoint supports both system-defined and custom user-defined node types:\n    - **System nodes**: Memory, Person, Company, Project, Task, Insight, Meeting, Opportunity, Code\n    - **Custom nodes**: Defined by developers via UserGraphSchema (e.g., Developer, Product, Customer, Function)\n    \n    When custom schema nodes are returned:\n    - Each custom node includes a `schema_id` field referencing the UserGraphSchema\n    - The response includes a `schemas_used` array listing all schema IDs used\n    - Use `GET /v1/schemas/{schema_id}` to retrieve full schema definitions including:\n      - Node type definitions and properties\n      - Relationship type definitions and constraints\n      - Validation rules and requirements\n    \n    **Recommended Headers**:\n    ```\n    Accept-Encoding: gzip\n    ```\n    \n    The API supports response compression for improved performance. Responses larger than 1KB will be automatically compressed when this header is present.\n    \n    **HIGHLY RECOMMENDED SETTINGS FOR BEST RESULTS:**\n    - Set `enable_agentic_graph: true` for intelligent, context-aware search that can understand ambiguous references\n    - Use `max_memories: 15-20` for comprehensive memory coverage\n    - Use `max_nodes: 10-15` for comprehensive graph entity relationships\n    - Use `response_format: toon` when integrating with LLMs to reduce token costs by 30-60%\n    \n    **Agentic Graph Benefits:**\n    When enabled, the system can understand vague references by first identifying specific entities from your memory graph, then performing targeted searches. For example:\n    - "customer feedback" → identifies your customers first, then finds their specific feedback\n    - "project issues" → identifies your projects first, then finds related issues\n    - "team meeting notes" → identifies your team members first, then finds meeting notes\n    - "code functions" → identifies your functions first, then finds related code\n    \n    **Role-Based Memory Filtering:**\n    Filter memories by role and category using metadata fields:\n    - `metadata.role`: Filter by "user" or "assistant" \n    - `metadata.category`: Filter by category (user: preference, task, goal, facts, context | assistant: skills, learning)\n    \n    **User Resolution Precedence:**\n    - If both user_id and external_user_id are provided, user_id takes precedence.\n    - If only external_user_id is provided, it will be resolved to the internal user.\n    - If neither is provided, the authenticated user is used.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -38,6 +38,13 @@ export const tool: Tool = {
         title: 'Max Nodes',
         description:
           'HIGHLY RECOMMENDED: Maximum number of neo nodes to return. Use at least 10-15 for comprehensive graph results. Lower values may miss important entity relationships. Default is 15 for optimal coverage.',
+      },
+      response_format: {
+        type: 'string',
+        title: 'ResponseFormat',
+        description:
+          "Response format: 'json' (default) or 'toon' (Token-Oriented Object Notation for 30-60% token reduction in LLM contexts)",
+        enum: ['json', 'toon'],
       },
       enable_agentic_graph: {
         type: 'boolean',
@@ -71,6 +78,18 @@ export const tool: Tool = {
         title: 'Rank Results',
         description:
           "Whether to enable additional ranking of search results. Default is false because results are already ranked when using an LLM for search (recommended approach). Only enable this if you're not using an LLM in your search pipeline and need additional result ranking.",
+      },
+      schema_id: {
+        type: 'string',
+        title: 'Schema Id',
+        description:
+          'Optional user-defined schema ID to use for this search. If provided, this schema (plus system schema) will be used for query generation. If not provided, system will automatically select relevant schema based on query content.',
+      },
+      simple_schema_mode: {
+        type: 'boolean',
+        title: 'Simple Schema Mode',
+        description:
+          'If true, uses simple schema mode: system schema + ONE most relevant user schema. This ensures better consistency between add/search operations and reduces query complexity. Recommended for production use.',
       },
       user_id: {
         type: 'string',
@@ -168,9 +187,37 @@ export const tool: Tool = {
             type: 'string',
             title: 'Namespace Id',
           },
+          namespace_read_access: {
+            type: 'array',
+            title: 'Namespace Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          namespace_write_access: {
+            type: 'array',
+            title: 'Namespace Write Access',
+            items: {
+              type: 'string',
+            },
+          },
           organization_id: {
             type: 'string',
             title: 'Organization Id',
+          },
+          organization_read_access: {
+            type: 'array',
+            title: 'Organization Read Access',
+            items: {
+              type: 'string',
+            },
+          },
+          organization_write_access: {
+            type: 'array',
+            title: 'Organization Write Access',
+            items: {
+              type: 'string',
+            },
           },
           pageId: {
             type: 'string',
@@ -308,7 +355,14 @@ export const tool: Tool = {
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
   const body = args as any;
-  return asTextContentResult(await client.memory.search(body));
+  try {
+    return asTextContentResult(await client.memory.search(body));
+  } catch (error) {
+    if (error instanceof Papr.APIError) {
+      return asErrorResult(error.message);
+    }
+    throw error;
+  }
 };
 
 export default { metadata, tool, handler };

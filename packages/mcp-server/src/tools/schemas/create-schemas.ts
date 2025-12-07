@@ -1,6 +1,5 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import { isJqError, maybeFilter } from '@papr/memory-mcp/filtering';
 import { Metadata, asErrorResult, asTextContentResult } from '@papr/memory-mcp/tools/types';
 
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
 export const tool: Tool = {
   name: 'create_schemas',
   description:
-    "When using this tool, always use the `jq_filter` parameter to reduce the response size and improve performance.\n\nOnly omit if you're sure you don't need the data.\n\nCreate a new user-defined graph schema.\n    \n    This endpoint allows users to define custom node types and relationships for their knowledge graph.\n    The schema will be validated and stored for use in future memory extractions.\n    \n    **Features:**\n    - Define custom node types with properties and validation rules\n    - Define custom relationship types with constraints\n    - Automatic validation against system schemas\n    - Support for different scopes (personal, workspace, organization)\n    - **Enum support**: Use `enum_values` to restrict property values to a predefined list (max 10 values)\n    - **Auto-indexing**: Required properties are automatically indexed in Neo4j for optimal query performance\n    \n    **Property Types & Validation:**\n    - `string`: Text values with optional `enum_values`, `min_length`, `max_length`, `pattern`\n    - `integer`: Whole numbers with optional `min_value`, `max_value`\n    - `float`: Decimal numbers with optional `min_value`, `max_value`\n    - `boolean`: True/false values\n    - `datetime`: ISO 8601 timestamp strings\n    - `array`: Lists of values\n    - `object`: Complex nested objects\n    \n    **Enum Values:**\n    - Add `enum_values` to any string property to restrict values to a predefined list\n    - Maximum 10 enum values allowed per property\n    - Use with `default` to set a default enum value\n    - Example: `\"enum_values\": [\"small\", \"medium\", \"large\"]`\n    \n    **When to Use Enums:**\n    - Limited, well-defined options (≤10 values): sizes, statuses, categories, priorities\n    - Controlled vocabularies: \"active/inactive\", \"high/medium/low\", \"bronze/silver/gold\"\n    - When you want exact matching and no variations\n    \n    **When to Avoid Enums:**\n    - Open-ended text fields: names, titles, descriptions, addresses\n    - Large sets of options (>10): countries, cities, product models\n    - When you want semantic similarity matching for entity resolution\n    - Dynamic or frequently changing value sets\n    \n    **Unique Identifiers & Entity Resolution:**\n    - Properties marked as `unique_identifiers` are used for entity deduplication and merging\n    - **With enum_values**: Exact matching is used - entities with the same enum value are considered identical\n    - **Without enum_values**: Semantic similarity matching is used - entities with similar meanings are automatically merged\n    - Example: A \"name\" unique_identifier without enums will merge \"Apple Inc\" and \"Apple Inc.\" as the same entity\n    - Example: A \"sku\" unique_identifier with enums will only merge entities with exactly matching SKU codes\n    - Use enums for unique_identifiers when you have a limited, predefined set of values (≤10 options)\n    - Avoid enums for unique_identifiers when you have broad, open-ended values or >10 possible options\n    - **Best practices**: Use enums for controlled vocabularies (status codes, categories), avoid for open text (company names, product titles)\n    - **In the example above**: \"name\" uses semantic similarity (open-ended), \"sku\" uses exact matching (controlled set)\n    \n    **LLM-Friendly Descriptions:**\n    - Write detailed property descriptions that guide the LLM on expected formats and usage\n    - Include examples of typical values (e.g., \"Product name, typically 2-4 words like 'iPhone 15 Pro'\")\n    - Specify data formats and constraints clearly (e.g., \"Price in USD as decimal number\")\n    - For enums, explain when to use each option (e.g., \"use 'new' for brand new items\")\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Required Headers**:\n    - Content-Type: application/json\n    - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')\n\n# Response Schema\n```json\n{\n  $ref: '#/$defs/schema_create_response',\n  $defs: {\n    schema_create_response: {\n      type: 'object',\n      title: 'SchemaResponse',\n      description: 'Response model for schema operations',\n      properties: {\n        success: {\n          type: 'boolean',\n          title: 'Success'\n        },\n        code: {\n          type: 'integer',\n          title: 'Code'\n        },\n        data: {\n          $ref: '#/$defs/user_graph_schema_output'\n        },\n        error: {\n          type: 'string',\n          title: 'Error'\n        }\n      },\n      required: [        'success'\n      ]\n    },\n    user_graph_schema_output: {\n      type: 'object',\n      title: 'UserGraphSchema',\n      description: 'Complete user-defined graph schema',\n      properties: {\n        name: {\n          type: 'string',\n          title: 'Name'\n        },\n        id: {\n          type: 'string',\n          title: 'Id'\n        },\n        created_at: {\n          type: 'string',\n          title: 'Created At',\n          format: 'date-time'\n        },\n        description: {\n          type: 'string',\n          title: 'Description'\n        },\n        last_used_at: {\n          type: 'string',\n          title: 'Last Used At',\n          format: 'date-time'\n        },\n        node_types: {\n          type: 'object',\n          title: 'Node Types',\n          description: 'Custom node types (max 15 per schema)',\n          additionalProperties: true\n        },\n        organization_id: {\n          type: 'string',\n          title: 'Organization Id'\n        },\n        read_access: {\n          type: 'array',\n          title: 'Read Access',\n          items: {\n            type: 'string'\n          }\n        },\n        relationship_types: {\n          type: 'object',\n          title: 'Relationship Types',\n          description: 'Custom relationship types (max 20 per schema)',\n          additionalProperties: true\n        },\n        scope: {\n          type: 'string',\n          title: 'SchemaScope',\n          enum: [            'personal',\n            'workspace',\n            'organization'\n          ]\n        },\n        status: {\n          type: 'string',\n          title: 'SchemaStatus',\n          enum: [            'draft',\n            'active',\n            'deprecated',\n            'archived'\n          ]\n        },\n        updated_at: {\n          type: 'string',\n          title: 'Updated At',\n          format: 'date-time'\n        },\n        usage_count: {\n          type: 'integer',\n          title: 'Usage Count'\n        },\n        user_id: {\n          anyOf: [            {\n              type: 'string'\n            },\n            {\n              type: 'object',\n              additionalProperties: true\n            }\n          ],\n          title: 'User Id'\n        },\n        version: {\n          type: 'string',\n          title: 'Version'\n        },\n        workspace_id: {\n          anyOf: [            {\n              type: 'string'\n            },\n            {\n              type: 'object',\n              additionalProperties: true\n            }\n          ],\n          title: 'Workspace Id'\n        },\n        write_access: {\n          type: 'array',\n          title: 'Write Access',\n          items: {\n            type: 'string'\n          }\n        }\n      },\n      required: [        'name'\n      ]\n    }\n  }\n}\n```",
+    'Create a new user-defined graph schema.\n    \n    This endpoint allows users to define custom node types and relationships for their knowledge graph.\n    The schema will be validated and stored for use in future memory extractions.\n    \n    **Features:**\n    - Define custom node types with properties and validation rules\n    - Define custom relationship types with constraints\n    - Automatic validation against system schemas\n    - Support for different scopes (personal, workspace, namespace, organization)\n    - **Status control**: Set `status` to "active" to immediately activate the schema, or "draft" to save as draft (default)\n    - **Enum support**: Use `enum_values` to restrict property values to a predefined list (max 15 values)\n    - **Auto-indexing**: Required properties are automatically indexed in Neo4j when schema becomes active\n    \n    **Schema Limits (optimized for LLM performance):**\n    - **Maximum 10 node types** per schema\n    - **Maximum 20 relationship types** per schema\n    - **Maximum 10 properties** per node type\n    - **Maximum 15 enum values** per property\n    \n    **Property Types & Validation:**\n    - `string`: Text values with optional `enum_values`, `min_length`, `max_length`, `pattern`\n    - `integer`: Whole numbers with optional `min_value`, `max_value`\n    - `float`: Decimal numbers with optional `min_value`, `max_value`\n    - `boolean`: True/false values\n    - `datetime`: ISO 8601 timestamp strings\n    - `array`: Lists of values\n    - `object`: Complex nested objects\n    \n    **Enum Values:**\n    - Add `enum_values` to any string property to restrict values to a predefined list\n    - Maximum 15 enum values allowed per property\n    - Use with `default` to set a default enum value\n    - Example: `"enum_values": ["small", "medium", "large"]`\n    \n    **When to Use Enums:**\n    - Limited, well-defined options (≤15 values): sizes, statuses, categories, priorities\n    - Controlled vocabularies: "active/inactive", "high/medium/low", "bronze/silver/gold"\n    - When you want exact matching and no variations\n    \n    **When to Avoid Enums:**\n    - Open-ended text fields: names, titles, descriptions, addresses\n    - Large sets of options (>15): countries, cities, product models\n    - When you want semantic similarity matching for entity resolution\n    - Dynamic or frequently changing value sets\n    \n    **Unique Identifiers & Entity Resolution:**\n    - Properties marked as `unique_identifiers` are used for entity deduplication and merging\n    - **With enum_values**: Exact matching is used - entities with the same enum value are considered identical\n    - **Without enum_values**: Semantic similarity matching is used - entities with similar meanings are automatically merged\n    - Example: A "name" unique_identifier without enums will merge "Apple Inc" and "Apple Inc." as the same entity\n    - Example: A "sku" unique_identifier with enums will only merge entities with exactly matching SKU codes\n    - Use enums for unique_identifiers when you have a limited, predefined set of values (≤15 options)\n    - Avoid enums for unique_identifiers when you have broad, open-ended values or >15 possible options\n    - **Best practices**: Use enums for controlled vocabularies (status codes, categories), avoid for open text (company names, product titles)\n    - **In the example above**: "name" uses semantic similarity (open-ended), "sku" uses exact matching (controlled set)\n    \n    **LLM-Friendly Descriptions:**\n    - Write detailed property descriptions that guide the LLM on expected formats and usage\n    - Include examples of typical values (e.g., "Product name, typically 2-4 words like \'iPhone 15 Pro\'")\n    - Specify data formats and constraints clearly (e.g., "Price in USD as decimal number")\n    - For enums, explain when to use each option (e.g., "use \'new\' for brand new items")\n    \n    **Authentication Required**:\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header\n    - API Key in `X-API-Key` header\n    - Session token in `X-Session-Token` header\n    \n    **Required Headers**:\n    - Content-Type: application/json\n    - X-Client-Type: (e.g., \'papr_plugin\', \'browser_extension\')',
   inputSchema: {
     type: 'object',
     properties: {
@@ -44,15 +43,35 @@ export const tool: Tool = {
         title: 'Last Used At',
         format: 'date-time',
       },
+      namespace: {
+        anyOf: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'object',
+            additionalProperties: true,
+          },
+        ],
+        title: 'Namespace',
+      },
       node_types: {
         type: 'object',
         title: 'Node Types',
-        description: 'Custom node types (max 15 per schema)',
+        description: 'Custom node types (max 10 per schema)',
         additionalProperties: true,
       },
-      organization_id: {
-        type: 'string',
-        title: 'Organization Id',
+      organization: {
+        anyOf: [
+          {
+            type: 'string',
+          },
+          {
+            type: 'object',
+            additionalProperties: true,
+          },
+        ],
+        title: 'Organization',
       },
       read_access: {
         type: 'array',
@@ -70,7 +89,8 @@ export const tool: Tool = {
       scope: {
         type: 'string',
         title: 'SchemaScope',
-        enum: ['personal', 'workspace', 'organization'],
+        description: 'Schema scopes available through the API',
+        enum: ['personal', 'workspace', 'namespace', 'organization'],
       },
       status: {
         type: 'string',
@@ -121,12 +141,6 @@ export const tool: Tool = {
           type: 'string',
         },
       },
-      jq_filter: {
-        type: 'string',
-        title: 'jq Filter',
-        description:
-          'A jq filter to apply to the response to include certain fields. Consult the output schema in the tool description to see the fields that are available.\n\nFor example: to include only the `name` field in every object of a results array, you can provide ".results[].name".\n\nFor more information, see the [jq documentation](https://jqlang.org/manual/).',
-      },
     },
     required: ['name'],
   },
@@ -134,11 +148,11 @@ export const tool: Tool = {
 };
 
 export const handler = async (client: Papr, args: Record<string, unknown> | undefined) => {
-  const { jq_filter, ...body } = args as any;
+  const body = args as any;
   try {
-    return asTextContentResult(await maybeFilter(jq_filter, await client.schemas.create(body)));
+    return asTextContentResult(await client.schemas.create(body));
   } catch (error) {
-    if (isJqError(error)) {
+    if (error instanceof Papr.APIError) {
       return asErrorResult(error.message);
     }
     throw error;
