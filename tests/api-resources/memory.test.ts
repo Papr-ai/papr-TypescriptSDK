@@ -418,6 +418,7 @@ describe('resource memory', () => {
         "Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.",
       max_memories: 10,
       max_nodes: 10,
+      response_format: 'json',
       enable_agentic_graph: false,
       external_user_id: 'external_user_123',
       metadata: {
@@ -467,6 +468,19 @@ describe('resource memory', () => {
       organization_id: 'organization_id',
       rank_results: true,
       schema_id: 'schema_id',
+      search_override: {
+        pattern: {
+          relationship_type: 'ASSOCIATED_WITH',
+          source_label: 'Memory',
+          target_label: 'Person',
+          direction: '->',
+        },
+        filters: [
+          { node_type: 'Person', operator: 'CONTAINS', property_name: 'name', value: 'John' },
+          { node_type: 'Memory', operator: 'IN', property_name: 'topics', value: ['project', 'meeting'] },
+        ],
+        return_properties: ['name', 'content', 'createdAt'],
+      },
       simple_schema_mode: true,
       user_id: 'user_id',
       'Accept-Encoding': 'Accept-Encoding',
