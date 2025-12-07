@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.20.0 (2025-12-07)
+
+Full Changelog: [v1.19.0...v1.20.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.19.0...v1.20.0)
+
+### Features
+
+* **api:** manual updates ([cd9ca53](https://github.com/Papr-ai/papr-TypescriptSDK/commit/cd9ca53b723f76bd81fe1950e9358bf197e2a7c9))
+* **api:** manual updates ([73c07cb](https://github.com/Papr-ai/papr-TypescriptSDK/commit/73c07cb02eb042f6e41bd13697d4bad77fc157bd))
+* **api:** manual updates ([9f57f98](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9f57f989b686b507348cb54df09389fe4972a51e))
+* **api:** manual updates ([a4c1cb5](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a4c1cb535bee11366e6f4aa3e8c9ff5cca26eae3))
+* **api:** manual updates ([a4e8f94](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a4e8f9410a6af39a6f18fcdd6e2c2798c9f3b917))
+* **api:** manual updates ([01d90b2](https://github.com/Papr-ai/papr-TypescriptSDK/commit/01d90b23fbcc9b8fd1bd09795fb7c214ce3f526b))
+* **mcp:** add detail field to docs search tool ([043078f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/043078f745da30fb1a4640f9ab3a1ef3fdc84498))
+* **mcp:** add typescript check to code execution tool ([d519ddf](https://github.com/Papr-ai/papr-TypescriptSDK/commit/d519ddf185e2a49f9ae0923569fc2757b4e5eab5))
+* **mcp:** handle code mode calls in the Stainless API ([b3dd08a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b3dd08add111dd8d6f073a8041326e90a233ff23))
+* **mcp:** return logs on code tool errors ([189b453](https://github.com/Papr-ai/papr-TypescriptSDK/commit/189b45307b77284724e3b91b049c901ddde73ab7))
+
+
+### Bug Fixes
+
+* **mcp:** correct code tool API endpoint ([03ce65f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/03ce65fe78b49ab17892c6e6a369a69a28f43e51))
+* **mcp:** return correct lines on typescript errors ([92be76b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/92be76bdd94ad9f90e740838ad2f0fda7245b599))
+* **mcp:** return tool execution error on api error ([1286eff](https://github.com/Papr-ai/papr-TypescriptSDK/commit/1286efffbaab3f171b3c1add5de368b6fbc59ca0))
+
+
+### Chores
+
+* **client:** fix logger property type ([d452de9](https://github.com/Papr-ai/papr-TypescriptSDK/commit/d452de9fdce755091017e7c4c2532f06c057ab09))
+* **internal:** codegen related update ([5e2c419](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5e2c4191146b3319d85cb07a82840f34bd9590d2))
+* **internal:** codegen related update ([c4ce604](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c4ce604a4ae1747bf73443db57e85113719ef0a3))
+* **internal:** upgrade eslint ([e56da9d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e56da9d88798adb68d954c5986c7450b0f54ce1f))
+* use latest @modelcontextprotocol/sdk ([953cd68](https://github.com/Papr-ai/papr-TypescriptSDK/commit/953cd6843984413285dc16f1187f85aaac1c7f9f))
+
 ## 1.19.0 (2025-11-18)
 
 Full Changelog: [v1.18.0...v1.19.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.18.0...v1.19.0)
