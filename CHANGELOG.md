@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.20.1 (2025-12-11)
+
+Full Changelog: [v1.20.0...v1.20.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.20.0...v1.20.1)
+
+### Bug Fixes
+
+* **mcp:** add client instantiation options to code tool ([7ece07b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7ece07b3cc5f1b45e1d10b3d56449f7ff07c74ec))
+
+
+### Chores
+
+* **mcp:** update lockfile ([1a53317](https://github.com/Papr-ai/papr-TypescriptSDK/commit/1a533176cca5ff63d00de7a954e644e82b73b0df))
+
 ## 1.20.0 (2025-12-07)
 
 Full Changelog: [v1.19.0...v1.20.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.19.0...v1.20.0)
