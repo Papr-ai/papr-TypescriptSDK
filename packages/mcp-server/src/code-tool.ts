@@ -39,6 +39,7 @@ export async function codeTool() {
           PAPR_MEMORY_API_KEY: readEnv('PAPR_MEMORY_API_KEY'),
           PAPR_MEMORY_Session_Token: readEnv('PAPR_MEMORY_Session_Token'),
           PAPR_MEMORY_BEARER_TOKEN: readEnv('PAPR_MEMORY_BEARER_TOKEN'),
+          PAPR_BASE_URL: readEnv('PAPR_BASE_URL'),
         }),
       },
       body: JSON.stringify({
