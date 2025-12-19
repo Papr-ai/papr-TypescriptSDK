@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.0.0 (2025-12-19)
+
+Full Changelog: [v1.20.0...v2.0.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.20.0...v2.0.0)
+
+### ⚠ BREAKING CHANGES
+
+* **mcp:** remove deprecated tool schemes
+* **mcp:** **Migration:** To migrate, simply modify the command used to invoke the MCP server. Currently, the only supported tool scheme is code mode. Now, starting the server with just `node /path/to/mcp/server` or `npx package-name` will invoke code tools: changing your command to one of these is likely all you will need to do.
+
+### Bug Fixes
+
+* **mcp:** add client instantiation options to code tool ([7ece07b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7ece07b3cc5f1b45e1d10b3d56449f7ff07c74ec))
+* **mcp:** pass base url to code tool ([22d4617](https://github.com/Papr-ai/papr-TypescriptSDK/commit/22d46175c5f64400f2d1658b85f4966c6c3e406e))
+
+
+### Chores
+
+* **mcp:** remove deprecated tool schemes ([f5c44b0](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f5c44b087ba99cbc6ad85eb7bd18d95c228f6b11))
+* **mcp:** update lockfile ([1a53317](https://github.com/Papr-ai/papr-TypescriptSDK/commit/1a533176cca5ff63d00de7a954e644e82b73b0df))
+
 ## 1.20.0 (2025-12-07)
 
 Full Changelog: [v1.19.0...v1.20.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.19.0...v1.20.0)
