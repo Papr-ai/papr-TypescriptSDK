@@ -43,7 +43,7 @@ For clients with a configuration JSON, it might look something like this:
 If you use Cursor, you can install the MCP server by using the button below. You will need to set your environment variables
 in Cursor's `mcp.json`, which can be found in Cursor Settings > Tools & MCP > New MCP Server.
 
-[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en-US/install-mcp?name=@papr/memory-mcp&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBwYXByL21lbW9yeS1tY3AiXSwiZW52Ijp7IlBBUFJfTUVNT1JZX0FQSV9LRVkiOiJTZXQgeW91ciBQQVBSX01FTU9SWV9BUElfS0VZIGhlcmUuIiwiUEFQUl9NRU1PUllfU2Vzc2lvbl9Ub2tlbiI6IlNldCB5b3VyIFBBUFJfTUVNT1JZX1Nlc3Npb25fVG9rZW4gaGVyZS4iLCJQQVBSX01FTU9SWV9CRUFSRVJfVE9LRU4iOiJTZXQgeW91ciBQQVBSX01FTU9SWV9CRUFSRVJfVE9LRU4gaGVyZS4ifX0)
+[![Add to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en-US/install-mcp?name=%40papr%2Fmemory-mcp&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBwYXByL21lbW9yeS1tY3AiXSwiZW52Ijp7IlBBUFJfTUVNT1JZX0FQSV9LRVkiOiJTZXQgeW91ciBQQVBSX01FTU9SWV9BUElfS0VZIGhlcmUuIiwiUEFQUl9NRU1PUllfU2Vzc2lvbl9Ub2tlbiI6IlNldCB5b3VyIFBBUFJfTUVNT1JZX1Nlc3Npb25fVG9rZW4gaGVyZS4iLCJQQVBSX01FTU9SWV9CRUFSRVJfVE9LRU4iOiJTZXQgeW91ciBQQVBSX01FTU9SWV9CRUFSRVJfVE9LRU4gaGVyZS4ifX0)
 
 ### VS Code
 
@@ -58,7 +58,7 @@ If you use Claude Code, you can install the MCP server by running the command be
 environment variables in Claude Code's `.claude.json`, which can be found in your home directory.
 
 ```
-claude mcp add --transport stdio papr_memory_api --env PAPR_MEMORY_API_KEY="Your PAPR_MEMORY_API_KEY here." PAPR_MEMORY_Session_Token="Your PAPR_MEMORY_Session_Token here." PAPR_MEMORY_BEARER_TOKEN="Your PAPR_MEMORY_BEARER_TOKEN here." -- npx -y @papr/memory-mcp
+claude mcp add papr_memory_mcp_api --env PAPR_MEMORY_API_KEY="Your PAPR_MEMORY_API_KEY here." PAPR_MEMORY_Session_Token="Your PAPR_MEMORY_Session_Token here." PAPR_MEMORY_BEARER_TOKEN="Your PAPR_MEMORY_BEARER_TOKEN here." -- npx -y @papr/memory-mcp
 ```
 
 ## Code Mode
