@@ -69,15 +69,30 @@ describe('resource memory', () => {
       graph_generation: {
         auto: {
           property_overrides: [
-            { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+            {
+              nodeLabel: 'User',
+              set: { id: 'bar', role: 'bar' },
+              match: { name: 'bar' },
+            },
           ],
           schema_id: 'schema_id',
           simple_schema_mode: true,
         },
         manual: {
-          nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+          nodes: [
+            {
+              id: 'x',
+              label: 'x',
+              properties: { foo: 'bar' },
+            },
+          ],
           relationships: [
-            { relationship_type: 'x', source_node_id: 'x', target_node_id: 'x', properties: { foo: 'bar' } },
+            {
+              relationship_type: 'x',
+              source_node_id: 'x',
+              target_node_id: 'x',
+              properties: { foo: 'bar' },
+            },
           ],
         },
         mode: 'auto',
@@ -173,13 +188,23 @@ describe('resource memory', () => {
           graph_generation: {
             auto: {
               property_overrides: [
-                { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+                {
+                  nodeLabel: 'User',
+                  set: { id: 'bar', role: 'bar' },
+                  match: { name: 'bar' },
+                },
               ],
               schema_id: 'schema_id',
               simple_schema_mode: true,
             },
             manual: {
-              nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+              nodes: [
+                {
+                  id: 'x',
+                  label: 'x',
+                  properties: { foo: 'bar' },
+                },
+              ],
               relationships: [
                 {
                   relationship_type: 'x',
@@ -259,13 +284,23 @@ describe('resource memory', () => {
           graph_generation: {
             auto: {
               property_overrides: [
-                { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+                {
+                  nodeLabel: 'User',
+                  set: { id: 'bar', role: 'bar' },
+                  match: { name: 'bar' },
+                },
               ],
               schema_id: 'schema_id',
               simple_schema_mode: true,
             },
             manual: {
-              nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+              nodes: [
+                {
+                  id: 'x',
+                  label: 'x',
+                  properties: { foo: 'bar' },
+                },
+              ],
               relationships: [
                 {
                   relationship_type: 'x',
@@ -340,15 +375,30 @@ describe('resource memory', () => {
       graph_generation: {
         auto: {
           property_overrides: [
-            { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+            {
+              nodeLabel: 'User',
+              set: { id: 'bar', role: 'bar' },
+              match: { name: 'bar' },
+            },
           ],
           schema_id: 'schema_id',
           simple_schema_mode: true,
         },
         manual: {
-          nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+          nodes: [
+            {
+              id: 'x',
+              label: 'x',
+              properties: { foo: 'bar' },
+            },
+          ],
           relationships: [
-            { relationship_type: 'x', source_node_id: 'x', target_node_id: 'x', properties: { foo: 'bar' } },
+            {
+              relationship_type: 'x',
+              source_node_id: 'x',
+              target_node_id: 'x',
+              properties: { foo: 'bar' },
+            },
           ],
         },
         mode: 'auto',
@@ -378,7 +428,11 @@ describe('resource memory', () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.memory.deleteAll(
-        { external_user_id: 'external_user_id', skip_parse: true, user_id: 'user_id' },
+        {
+          external_user_id: 'external_user_id',
+          skip_parse: true,
+          user_id: 'user_id',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Papr.NotFoundError);

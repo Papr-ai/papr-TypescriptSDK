@@ -47,7 +47,12 @@ describe('resource user', () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.user.list(
-        { email: 'email', external_id: 'external_id', page: 1, page_size: 1 },
+        {
+          email: 'email',
+          external_id: 'external_id',
+          page: 1,
+          page_size: 1,
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Papr.NotFoundError);
