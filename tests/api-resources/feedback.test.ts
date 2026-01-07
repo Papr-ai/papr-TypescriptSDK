@@ -41,7 +41,11 @@ describe('resource feedback', () => {
       feedbackData: {
         feedbackSource: 'inline',
         feedbackType: 'thumbs_up',
-        assistantMessage: { className: 'PostMessage', objectId: 'abc123def456', __type: 'Pointer' },
+        assistantMessage: {
+          className: 'PostMessage',
+          objectId: 'abc123def456',
+          __type: 'Pointer',
+        },
         citedMemoryIds: ['mem_123', 'mem_456'],
         citedNodeIds: ['node_123', 'node_456'],
         feedbackImpact: 'positive',
@@ -49,7 +53,11 @@ describe('resource feedback', () => {
         feedbackScore: 1,
         feedbackText: 'This answer was very helpful and accurate',
         feedbackValue: 'helpful',
-        userMessage: { className: 'PostMessage', objectId: 'abc123def456', __type: 'Pointer' },
+        userMessage: {
+          className: 'PostMessage',
+          objectId: 'abc123def456',
+          __type: 'Pointer',
+        },
       },
       search_id: 'abc123def456',
       external_user_id: 'dev_api_key_123',
@@ -63,7 +71,10 @@ describe('resource feedback', () => {
   test.skip('submitBatch: only required params', async () => {
     const responsePromise = client.feedback.submitBatch({
       feedback_items: [
-        { feedbackData: { feedbackSource: 'inline', feedbackType: 'thumbs_up' }, search_id: 'abc123def456' },
+        {
+          feedbackData: { feedbackSource: 'inline', feedbackType: 'thumbs_up' },
+          search_id: 'abc123def456',
+        },
       ],
     });
     const rawResponse = await responsePromise.asResponse();
@@ -83,7 +94,11 @@ describe('resource feedback', () => {
           feedbackData: {
             feedbackSource: 'inline',
             feedbackType: 'thumbs_up',
-            assistantMessage: { className: 'PostMessage', objectId: 'abc123def456', __type: 'Pointer' },
+            assistantMessage: {
+              className: 'PostMessage',
+              objectId: 'abc123def456',
+              __type: 'Pointer',
+            },
             citedMemoryIds: ['mem_123', 'mem_456'],
             citedNodeIds: ['node_123', 'node_456'],
             feedbackImpact: 'positive',
@@ -91,7 +106,11 @@ describe('resource feedback', () => {
             feedbackScore: 1,
             feedbackText: 'This answer was very helpful and accurate',
             feedbackValue: 'helpful',
-            userMessage: { className: 'PostMessage', objectId: 'abc123def456', __type: 'Pointer' },
+            userMessage: {
+              className: 'PostMessage',
+              objectId: 'abc123def456',
+              __type: 'Pointer',
+            },
           },
           search_id: 'abc123def456',
           external_user_id: 'dev_api_key_123',
