@@ -4,6 +4,7 @@ import { McpTool, Metadata, ToolCallResult, asErrorResult, asTextContentResult }
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { readEnv, readEnvOrError } from './server';
 import { WorkerInput, WorkerOutput } from './code-tool-types';
+import { Papr } from '@papr/memory';
 
 const prompt = `Runs JavaScript code to interact with the Papr API.
 
@@ -54,7 +55,7 @@ export function codeTool(): McpTool {
       required: ['code'],
     },
   };
-  const handler = async (_: unknown, args: any): Promise<ToolCallResult> => {
+  const handler = async (client: Papr, args: any): Promise<ToolCallResult> => {
     const code = args.code as string;
     const intent = args.intent as string | undefined;
 
@@ -70,10 +71,11 @@ export function codeTool(): McpTool {
         ...(stainlessAPIKey && { Authorization: stainlessAPIKey }),
         'Content-Type': 'application/json',
         client_envs: JSON.stringify({
-          PAPR_MEMORY_API_KEY: readEnvOrError('PAPR_MEMORY_API_KEY'),
-          PAPR_MEMORY_Session_Token: readEnv('PAPR_MEMORY_Session_Token'),
-          PAPR_MEMORY_BEARER_TOKEN: readEnv('PAPR_MEMORY_BEARER_TOKEN'),
-          PAPR_BASE_URL: readEnv('PAPR_BASE_URL'),
+          PAPR_MEMORY_API_KEY: readEnvOrError('PAPR_MEMORY_API_KEY') ?? client.xAPIKey ?? undefined,
+          PAPR_MEMORY_Session_Token:
+            readEnv('PAPR_MEMORY_Session_Token') ?? client.xSessionToken ?? undefined,
+          PAPR_MEMORY_BEARER_TOKEN: readEnv('PAPR_MEMORY_BEARER_TOKEN') ?? client.bearerToken ?? undefined,
+          PAPR_BASE_URL: readEnv('PAPR_BASE_URL') ?? client.baseURL ?? undefined,
         }),
       },
       body: JSON.stringify({
