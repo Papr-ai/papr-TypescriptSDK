@@ -2,7 +2,7 @@
 
 import { McpTool, Metadata, ToolCallResult, asErrorResult, asTextContentResult } from './types';
 import { Tool } from '@modelcontextprotocol/sdk/types.js';
-import { readEnv, readEnvOrError } from './server';
+import { readEnv, requireValue } from './server';
 import { WorkerInput, WorkerOutput } from './code-tool-types';
 import { Papr } from '@papr/memory';
 
@@ -71,7 +71,10 @@ export function codeTool(): McpTool {
         ...(stainlessAPIKey && { Authorization: stainlessAPIKey }),
         'Content-Type': 'application/json',
         client_envs: JSON.stringify({
-          PAPR_MEMORY_API_KEY: readEnvOrError('PAPR_MEMORY_API_KEY') ?? client.xAPIKey ?? undefined,
+          PAPR_MEMORY_API_KEY: requireValue(
+            readEnv('PAPR_MEMORY_API_KEY') ?? client.xAPIKey,
+            'set PAPR_MEMORY_API_KEY environment variable or provide xAPIKey client option',
+          ),
           PAPR_MEMORY_Session_Token:
             readEnv('PAPR_MEMORY_Session_Token') ?? client.xSessionToken ?? undefined,
           PAPR_MEMORY_BEARER_TOKEN: readEnv('PAPR_MEMORY_BEARER_TOKEN') ?? client.bearerToken ?? undefined,
