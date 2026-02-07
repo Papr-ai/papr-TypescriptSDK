@@ -43,8 +43,20 @@ export {
   type MemoryGetParams,
   type MemorySearchParams,
 } from './memory';
+export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
+export {
+  Omo,
+  type OmoExportMemoriesResponse,
+  type OmoExportMemoriesAsJsonResponse,
+  type OmoImportMemoriesResponse,
+  type OmoExportMemoriesParams,
+  type OmoExportMemoriesAsJsonParams,
+  type OmoImportMemoriesParams,
+} from './omo';
 export {
   Schemas,
+  type PropertyDefinition,
+  type SearchConfigOutput,
   type UserGraphSchemaOutput,
   type SchemaCreateResponse,
   type SchemaRetrieveResponse,
@@ -56,6 +68,13 @@ export {
   type SchemaListParams,
 } from './schemas';
 export {
+  Sync,
+  type SyncGetDeltaResponse,
+  type SyncGetTiersResponse,
+  type SyncGetDeltaParams,
+  type SyncGetTiersParams,
+} from './sync';
+export {
   User,
   type UserResponse,
   type UserType,
@@ -63,6 +82,7 @@ export {
   type UserDeleteResponse,
   type UserCreateBatchResponse,
   type UserCreateParams,
+  type UserUpdateParams,
   type UserListParams,
   type UserDeleteParams,
   type UserCreateBatchParams,
