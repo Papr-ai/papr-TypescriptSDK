@@ -50,15 +50,15 @@ describe('resource document', () => {
   test.skip('upload: required and optional params', async () => {
     const response = await client.document.upload({
       file: await toFile(Buffer.from('# my file contents'), 'README.md'),
-      end_user_id: 'end_user_id',
+      external_user_id: 'external_user_id',
       graph_override: 'graph_override',
       hierarchical_enabled: true,
+      memory_policy: 'memory_policy',
       metadata: 'metadata',
-      namespace: 'namespace',
+      namespace_id: 'namespace_id',
       preferred_provider: 'gemini',
       property_overrides: 'property_overrides',
       schema_id: 'schema_id',
-      simple_schema_mode: true,
       user_id: 'user_id',
       webhook_secret: 'webhook_secret',
       webhook_url: 'webhook_url',
