@@ -97,8 +97,12 @@ export class Memory extends APIResource {
    * ```
    */
   add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
-    const { skip_background_processing, ...body } = params;
-    return this._client.post('/v1/memory', { query: { skip_background_processing }, body, ...options });
+    const { enable_holographic, format, skip_background_processing, ...body } = params;
+    return this._client.post('/v1/memory', {
+      query: { enable_holographic, format, skip_background_processing },
+      body,
+      ...options,
+    });
   }
 
   /**
@@ -189,8 +193,12 @@ export class Memory extends APIResource {
    * const searchResponse = await client.memory.get('memory_id');
    * ```
    */
-  get(memoryID: string, options?: RequestOptions): APIPromise<SearchResponse> {
-    return this._client.get(path`/v1/memory/${memoryID}`, options);
+  get(
+    memoryID: string,
+    query: MemoryGetParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<SearchResponse> {
+    return this._client.get(path`/v1/memory/${memoryID}`, { query, ...options });
   }
 
   /**
@@ -287,14 +295,60 @@ export interface AddMemory {
   content: string;
 
   /**
-   * Context can be conversation history or any relevant context for a memory item
+   * Conversation history context for this memory. Use for providing message history
+   * when adding a memory. Format: [{role: 'user'|'assistant', content: '...'}]
    */
   context?: Array<ContextItem> | null;
 
   /**
-   * Graph generation configuration
+   * Your application's user identifier. This is the primary way to identify users.
+   * Use this for your app's user IDs (e.g., 'user_alice_123', UUID, email). Papr
+   * will automatically resolve or create internal users as needed.
+   */
+  external_user_id?: string | null;
+
+  /**
+   * @deprecated Graph generation configuration
    */
   graph_generation?: GraphGeneration | null;
+
+  /**
+   * Shorthand DSL for node/edge constraints. Expands to
+   * memory_policy.node_constraints and edge_constraints. Formats: - String:
+   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
+   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
+   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
+   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
+   * '$this', '$previous', '$context:N' Example:
+   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   */
+  link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+  /**
+   * Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  memory_policy?: AddMemory.MemoryPolicy | null;
 
   /**
    * Metadata for memory request
@@ -314,7 +368,10 @@ export interface AddMemory {
   organization_id?: string | null;
 
   /**
-   * Array of relationships that we can use in Graph DB (neo4J)
+   * @deprecated DEPRECATED: Use 'memory_policy' instead. Migration options: 1.
+   * Specific memory: relationships=[{source: '$this', target: 'mem_123', type:
+   * 'FOLLOWS'}] 2. Previous memory: link_to_previous_memory=True 3. Related
+   * memories: link_to_related_memories=3
    */
   relationships_json?: Array<RelationshipItem> | null;
 
@@ -322,6 +379,736 @@ export interface AddMemory {
    * Memory item type; defaults to 'text' if omitted
    */
   type?: MemoryType;
+
+  /**
+   * @deprecated DEPRECATED: Use 'external_user_id' instead. Internal Papr Parse user
+   * ID. Most developers should not use this field directly.
+   */
+  user_id?: string | null;
+}
+
+export namespace AddMemory {
+  /**
+   * Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  export interface MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: MemoryPolicy.ACL | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used. 'explicit': User
+     * explicitly agreed. 'implicit': Inferred from context (default). 'terms': Covered
+     * by Terms of Service. 'none': No consent - graph extraction will be SKIPPED.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    /**
+     * Rules for how LLM-extracted edges/relationships should be created/handled. Used
+     * in 'auto' mode when present. Controls: - create: 'auto' (create target if not
+     * found) or 'never' (controlled vocabulary) - search: How to find existing target
+     * nodes - set: Edge property values (exact or auto-extracted) -
+     * source_type/target_type: Filter by connected node types Example: {edge_type:
+     * 'MITIGATES', create: 'never', search: {properties: ['name']}}
+     */
+    edge_constraints?: Array<MemoryPolicy.EdgeConstraint> | null;
+
+    /**
+     * How to generate graph from this memory. 'auto': LLM extracts entities freely.
+     * 'manual': You provide exact nodes (no LLM). Note: 'structured' is accepted as
+     * deprecated alias for 'manual'.
+     */
+    mode?: 'auto' | 'manual';
+
+    /**
+     * Rules for how LLM-extracted nodes should be created/updated. Used in 'auto' mode
+     * when present. Controls creation policy, property forcing, and merge behavior.
+     */
+    node_constraints?: Array<MemoryPolicy.NodeConstraint> | null;
+
+    /**
+     * For manual mode: Exact nodes to create (no LLM extraction). Required when
+     * mode='manual'. Each node needs id, type, and properties.
+     */
+    nodes?: Array<MemoryPolicy.Node> | null;
+
+    /**
+     * Relationships between nodes. Supports special placeholders:
+     * '$this' = the Memory node being created, '$previous' = the user's most recent
+     * memory. Examples: {source: '$this', target: '$previous', type: 'FOLLOWS'} links
+     * to previous memory. {source: '$this', target: 'mem_abc', type: 'REFERENCES'}
+     * links to specific memory.
+     */
+    relationships?: Array<MemoryPolicy.Relationship> | null;
+
+    /**
+     * Safety assessment for this memory. 'none': Safe content (default). 'sensitive':
+     * Contains PII or sensitive info. 'flagged': Requires review - ACL will be
+     * restricted to owner only.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    /**
+     * Reference a UserGraphSchema by ID. The schema's memory_policy (if defined) will
+     * be used as defaults, with this request's settings taking precedence.
+     */
+    schema_id?: string | null;
+  }
+
+  export namespace MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    export interface ACL {
+      /**
+       * Entity IDs that can read this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice', 'organization:org_123'). Supported prefixes: user,
+       * external_user, organization, namespace, workspace, role. Unprefixed values
+       * treated as external_user for backwards compatibility.
+       */
+      read?: Array<string>;
+
+      /**
+       * Entity IDs that can write/modify this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice'). Supported prefixes: user, external_user, organization,
+       * namespace, workspace, role.
+       */
+      write?: Array<string>;
+    }
+
+    /**
+     * Policy for how edges/relationships of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserRelationshipType.constraint` - `edge_type` is
+     *    implicit from parent
+     * 2. **Memory level**: In `memory_policy.edge_constraints[]` - `edge_type` is
+     *    required
+     *
+     * Edge constraints allow developers to control:
+     *
+     * - Which edge types can be created vs. linked to existing targets
+     * - How to find/select target nodes (via `search`)
+     * - What edge property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     * - Filter by source/target node types
+     *
+     * **The `search` field** handles target node selection:
+     *
+     * - Uses SearchConfig to define how to find existing target nodes
+     * - Example: `{"properties": [{"name": "name", "mode": "semantic"}]}`
+     * - For controlled vocabulary: find existing target, don't create new
+     *
+     * **The `set` field** controls edge property values:
+     *
+     * - Exact value: `{"weight": 1.0}` - sets exact value
+     * - Auto-extract: `{"reason": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators (same as NodeConstraint):
+     *
+     * - Simple: `{"severity": "high"}`
+     * - AND: `{"_and": [{"severity": "high"}, {"confirmed": true}]}`
+     * - OR: `{"_or": [{"type": "MITIGATES"}, {"type": "PREVENTS"}]}`
+     * - NOT: `{"_not": {"status": "deprecated"}}`
+     */
+    export interface EdgeConstraint {
+      /**
+       * 'upsert': Create target node if not found via search (default). 'lookup': Only
+       * link to existing target nodes (controlled vocabulary). When 'lookup', edges to
+       * non-existing targets are skipped. Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * Direction of edges this constraint applies to. 'outgoing': edges where current
+       * node is source (default). 'incoming': edges where current node is target.
+       * 'both': applies in either direction.
+       */
+      direction?: 'outgoing' | 'incoming' | 'both';
+
+      /**
+       * Edge/relationship type this constraint applies to (e.g., 'MITIGATES',
+       * 'ASSIGNED_TO'). Optional at schema level (implicit from parent
+       * UserRelationshipType), required at memory level (in
+       * memory_policy.edge_constraints).
+       */
+      edge_type?: string | null;
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing target nodes. Equivalent to @lookup decorator in
+       * schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Explicit behavior when no target match found via search. 'create': create new
+       * target node (same as upsert). 'ignore': skip edge creation (same as lookup).
+       * 'error': raise error if target not found. If specified, overrides 'create'
+       * field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: EdgeConstraint.Search | null;
+
+      /**
+       * Set property values on edges. Supports: 1. Exact value: {'weight': 1.0} - sets
+       * exact value. 2. Auto-extract: {'reason': {'mode': 'auto'}} - LLM extracts from
+       * content. Edge properties are useful for relationship metadata (weight,
+       * timestamp, reason, etc.).
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | EdgeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Filter: only apply when source node is of this type. Example:
+       * source_type='SecurityBehavior' - only applies to edges from SecurityBehavior
+       * nodes.
+       */
+      source_type?: string | null;
+
+      /**
+       * Filter: only apply when target node is of this type. Example:
+       * target_type='TacticDef' - only applies to edges targeting TacticDef nodes.
+       */
+      target_type?: string | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Applied to edge properties or context. Example: {'\_and':
+       * [{'severity': 'high'}, {'_not': {'status': 'deprecated'}}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace EdgeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Policy for how nodes of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserNodeType.constraint` - `node_type` is implicit
+     *    from parent
+     * 2. **Memory level**: In `memory_policy.node_constraints[]` - `node_type` is
+     *    required
+     *
+     * Node constraints allow developers to control:
+     *
+     * - Which node types can be created vs. linked
+     * - How to find/select existing nodes (via `search`)
+     * - What property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     *
+     * **The `search` field** handles node selection:
+     *
+     * - Uses PropertyMatch list to define unique identifiers and matching strategy
+     * - Example:
+     *   `{"properties": [{"name": "id", "mode": "exact"}, {"name": "title", "mode": "semantic"}]}`
+     * - For direct selection, use PropertyMatch with value:
+     *   `{"name": "id", "mode": "exact", "value": "proj_123"}`
+     *
+     * **The `set` field** controls property values:
+     *
+     * - Exact value: `{"status": "done"}` - sets exact value
+     * - Auto-extract: `{"status": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators:
+     *
+     * - Simple: `{"priority": "high"}`
+     * - AND: `{"_and": [{"priority": "high"}, {"status": "active"}]}`
+     * - OR: `{"_or": [{"status": "active"}, {"status": "pending"}]}`
+     * - NOT: `{"_not": {"status": "completed"}}`
+     * - Complex:
+     *   `{"_and": [{"priority": "high"}, {"_or": [{"status": "active"}, {"urgent": true}]}]}`
+     */
+    export interface NodeConstraint {
+      /**
+       * 'upsert': Create if not found via search (default). 'lookup': Only link to
+       * existing nodes (controlled vocabulary). Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing nodes (controlled vocabulary). Equivalent to
+       * @lookup decorator in schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Node type this constraint applies to (e.g., 'Task', 'Project', 'Person').
+       * Optional at schema level (implicit from parent UserNodeType), required at memory
+       * level (in memory_policy.node_constraints).
+       */
+      node_type?: string | null;
+
+      /**
+       * Explicit behavior when no match found via search. 'create': create new node
+       * (same as upsert). 'ignore': skip node creation (same as lookup). 'error': raise
+       * error if node not found. If specified, overrides 'create' field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: NodeConstraint.Search | null;
+
+      /**
+       * Set property values on nodes. Supports: 1. Exact value: {'status': 'done'} -
+       * sets exact value. 2. Auto-extract: {'status': {'mode': 'auto'}} - LLM extracts
+       * from content. 3. Text mode: {'summary': {'mode': 'auto', 'text_mode':
+       * 'merge'}} - controls text updates. For text properties, text_mode can be
+       * 'replace', 'append', or 'merge'.
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | NodeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Examples: Simple: {'priority': 'high'} - matches when priority
+       * equals 'high'. AND: {'\_and': [{'priority': 'high'}, {'status': 'active'}]} -
+       * all must match. OR: {'\_or': [{'status': 'active'}, {'status': 'pending'}]} -
+       * any must match. NOT: {'\_not': {'status': 'completed'}} - negation. Complex:
+       * {'\_and': [{'priority': 'high'}, {'\_or': [{'status': 'active'}, {'urgent':
+       * true}]}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace NodeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Specification for a node in manual mode.
+     *
+     * Used when mode='manual' to define exact nodes to create.
+     */
+    export interface Node {
+      /**
+       * Unique identifier for this node
+       */
+      id: string;
+
+      /**
+       * Node type/label (e.g., 'Transaction', 'Product', 'Person')
+       */
+      type: string;
+
+      /**
+       * Properties for this node
+       */
+      properties?: { [key: string]: unknown };
+    }
+
+    /**
+     * Specification for a relationship in manual mode.
+     *
+     * Used when mode='manual' to define exact relationships between nodes.
+     */
+    export interface Relationship {
+      /**
+       * ID of the source node
+       */
+      source: string;
+
+      /**
+       * ID of the target node
+       */
+      target: string;
+
+      /**
+       * Relationship type (e.g., 'PURCHASED', 'WORKS_AT', 'ASSIGNED_TO')
+       */
+      type: string;
+
+      /**
+       * Optional properties for this relationship
+       */
+      properties?: { [key: string]: unknown } | null;
+    }
+  }
 }
 
 /**
@@ -367,11 +1154,6 @@ export interface AutoGraphGeneration {
    * Force AI to use this specific schema instead of auto-selecting
    */
   schema_id?: string | null;
-
-  /**
-   * Limit AI to system + one user schema for consistency
-   */
-  simple_schema_mode?: boolean;
 }
 
 export namespace AutoGraphGeneration {
@@ -596,6 +1378,12 @@ export namespace ManualGraphGeneration {
  * Metadata for memory request
  */
 export interface MemoryMetadata {
+  /**
+   * @deprecated DEPRECATED: Use 'memory_policy.acl' at request level instead.
+   * Format: {'read': [...], 'write': [...]}.
+   */
+  acl?: { [key: string]: Array<string> } | null;
+
   assistantMessage?: string | null;
 
   /**
@@ -603,6 +1391,12 @@ export interface MemoryMetadata {
    * For assistants: skills, learning, task, goal, fact, context.
    */
   category?: 'preference' | 'task' | 'goal' | 'fact' | 'context' | 'skills' | 'learning' | null;
+
+  /**
+   * @deprecated DEPRECATED: Use 'memory_policy.consent' at request level instead.
+   * Values: 'explicit', 'implicit' (default), 'terms', 'none'.
+   */
+  consent?: string | null;
 
   conversationId?: string | null;
 
@@ -621,10 +1415,22 @@ export interface MemoryMetadata {
 
   'emotion tags'?: Array<string> | null;
 
+  /**
+   * @deprecated DEPRECATED: Use 'external_user_id' at request level instead. This
+   * field will be removed in v2.
+   */
   external_user_id?: string | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   external_user_read_access?: Array<string> | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   external_user_write_access?: Array<string> | null;
 
   goalClassificationScores?: Array<number> | null;
@@ -632,20 +1438,44 @@ export interface MemoryMetadata {
   /**
    * Hierarchical structures to enable navigation from broad topics to specific ones
    */
-  hierarchical_structures?: string | null;
+  hierarchical_structures?: string | Array<unknown> | null;
 
   location?: string | null;
 
+  /**
+   * @deprecated DEPRECATED: Use 'namespace_id' at request level instead. This field
+   * will be removed in v2.
+   */
   namespace_id?: string | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   namespace_read_access?: Array<string> | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   namespace_write_access?: Array<string> | null;
 
+  /**
+   * @deprecated DEPRECATED: Use 'organization_id' at request level instead. This
+   * field will be removed in v2.
+   */
   organization_id?: string | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   organization_read_access?: Array<string> | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   organization_write_access?: Array<string> | null;
 
   pageId?: string | null;
@@ -659,12 +1489,26 @@ export interface MemoryMetadata {
   relatedUseCases?: Array<string> | null;
 
   /**
+   * @deprecated DEPRECATED: Use 'memory_policy.risk' at request level instead.
+   * Values: 'none' (default), 'sensitive', 'flagged'.
+   */
+  risk?: string | null;
+
+  /**
    * Role of the message sender
    */
   role?: 'user' | 'assistant' | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   role_read_access?: Array<string> | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   role_write_access?: Array<string> | null;
 
   sessionId?: string | null;
@@ -684,18 +1528,38 @@ export interface MemoryMetadata {
 
   useCaseClassificationScores?: Array<number> | null;
 
+  /**
+   * @deprecated DEPRECATED: Use 'external_user_id' at request level instead. This
+   * field will be removed in v2.
+   */
   user_id?: string | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   user_read_access?: Array<string> | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   user_write_access?: Array<string> | null;
 
   userMessage?: string | null;
 
   workspace_id?: string | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   workspace_read_access?: Array<string> | null;
 
+  /**
+   * INTERNAL: Auto-populated for vector store filtering. Use memory_policy.acl
+   * instead.
+   */
   workspace_write_access?: Array<string> | null;
 
   [k: string]: unknown;
@@ -834,6 +1698,8 @@ export namespace SearchResponse {
 
       metadata?: string | { [key: string]: unknown } | null;
 
+      metrics?: { [key: string]: unknown } | null;
+
       /**
        * Namespace ID this memory belongs to
        */
@@ -857,11 +1723,39 @@ export namespace SearchResponse {
       page_number?: number | null;
 
       /**
-       * Relevance score from server-side ranking algorithm. Higher scores indicate more
-       * relevant memories. Computed as: 60% vector similarity + 30% transition
-       * probability + 20% access frequency.
+       * Popularity signal (0-1): 0.5*cacheConfidenceWeighted30d +
+       * 0.5*citationConfidenceWeighted30d. Uses stored EMA fields.
+       */
+      popularity_score?: number | null;
+
+      /**
+       * Recency signal (0-1): exp(-0.05 \* days_since_last_access). Half-life ~14 days.
+       */
+      recency_score?: number | null;
+
+      /**
+       * Final relevance (0-1). rank_results=False: 0.6*sim + 0.25*pop + 0.15\*recency.
+       * rank_results=True: RRF-based fusion.
        */
       relevance_score?: number | null;
+
+      /**
+       * Reranker confidence (0-1). Meaningful for LLM reranking; equals reranker_score
+       * for cross-encoders.
+       */
+      reranker_confidence?: number | null;
+
+      /**
+       * Reranker relevance (0-1). From cross-encoder (Cohere/Qwen3/BGE) or LLM
+       * (GPT-5-nano).
+       */
+      reranker_score?: number | null;
+
+      /**
+       * Reranker type: 'cross_encoder' (Cohere/Qwen3/BGE) or 'llm'
+       * (GPT-5-nano/GPT-4o-mini).
+       */
+      reranker_type?: string | null;
 
       /**
        * Role that generated this memory (user or assistant)
@@ -871,6 +1765,12 @@ export namespace SearchResponse {
       role_read_access?: Array<string> | null;
 
       role_write_access?: Array<string> | null;
+
+      /**
+       * Cosine similarity from vector search (0-1). Measures semantic relevance to
+       * query.
+       */
+      similarity_score?: number | null;
 
       source_document_id?: string | null;
 
@@ -889,6 +1789,8 @@ export namespace SearchResponse {
       topics?: Array<string>;
 
       total_pages?: number | null;
+
+      totalProcessingCost?: number | null;
 
       updatedAt?: string | null;
 
@@ -1050,6 +1952,49 @@ export interface MemoryUpdateParams {
   context?: Array<ContextItem> | null;
 
   /**
+   * Graph generation configuration
+   */
+  graph_generation?: GraphGeneration | null;
+
+  /**
+   * Shorthand DSL for node/edge constraints. Expands to
+   * memory_policy.node_constraints and edge_constraints. Formats: - String:
+   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
+   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
+   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
+   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
+   * '$this', '$previous', '$context:N' Example:
+   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   */
+  link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+  /**
+   * Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  memory_policy?: MemoryUpdateParams.MemoryPolicy | null;
+
+  /**
    * Metadata for memory request
    */
   metadata?: MemoryMetadata | null;
@@ -1077,6 +2022,730 @@ export interface MemoryUpdateParams {
   type?: MemoryType | null;
 }
 
+export namespace MemoryUpdateParams {
+  /**
+   * Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  export interface MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: MemoryPolicy.ACL | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used. 'explicit': User
+     * explicitly agreed. 'implicit': Inferred from context (default). 'terms': Covered
+     * by Terms of Service. 'none': No consent - graph extraction will be SKIPPED.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    /**
+     * Rules for how LLM-extracted edges/relationships should be created/handled. Used
+     * in 'auto' mode when present. Controls: - create: 'auto' (create target if not
+     * found) or 'never' (controlled vocabulary) - search: How to find existing target
+     * nodes - set: Edge property values (exact or auto-extracted) -
+     * source_type/target_type: Filter by connected node types Example: {edge_type:
+     * 'MITIGATES', create: 'never', search: {properties: ['name']}}
+     */
+    edge_constraints?: Array<MemoryPolicy.EdgeConstraint> | null;
+
+    /**
+     * How to generate graph from this memory. 'auto': LLM extracts entities freely.
+     * 'manual': You provide exact nodes (no LLM). Note: 'structured' is accepted as
+     * deprecated alias for 'manual'.
+     */
+    mode?: 'auto' | 'manual';
+
+    /**
+     * Rules for how LLM-extracted nodes should be created/updated. Used in 'auto' mode
+     * when present. Controls creation policy, property forcing, and merge behavior.
+     */
+    node_constraints?: Array<MemoryPolicy.NodeConstraint> | null;
+
+    /**
+     * For manual mode: Exact nodes to create (no LLM extraction). Required when
+     * mode='manual'. Each node needs id, type, and properties.
+     */
+    nodes?: Array<MemoryPolicy.Node> | null;
+
+    /**
+     * Relationships between nodes. Supports special placeholders:
+     * '$this' = the Memory node being created, '$previous' = the user's most recent
+     * memory. Examples: {source: '$this', target: '$previous', type: 'FOLLOWS'} links
+     * to previous memory. {source: '$this', target: 'mem_abc', type: 'REFERENCES'}
+     * links to specific memory.
+     */
+    relationships?: Array<MemoryPolicy.Relationship> | null;
+
+    /**
+     * Safety assessment for this memory. 'none': Safe content (default). 'sensitive':
+     * Contains PII or sensitive info. 'flagged': Requires review - ACL will be
+     * restricted to owner only.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    /**
+     * Reference a UserGraphSchema by ID. The schema's memory_policy (if defined) will
+     * be used as defaults, with this request's settings taking precedence.
+     */
+    schema_id?: string | null;
+  }
+
+  export namespace MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    export interface ACL {
+      /**
+       * Entity IDs that can read this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice', 'organization:org_123'). Supported prefixes: user,
+       * external_user, organization, namespace, workspace, role. Unprefixed values
+       * treated as external_user for backwards compatibility.
+       */
+      read?: Array<string>;
+
+      /**
+       * Entity IDs that can write/modify this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice'). Supported prefixes: user, external_user, organization,
+       * namespace, workspace, role.
+       */
+      write?: Array<string>;
+    }
+
+    /**
+     * Policy for how edges/relationships of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserRelationshipType.constraint` - `edge_type` is
+     *    implicit from parent
+     * 2. **Memory level**: In `memory_policy.edge_constraints[]` - `edge_type` is
+     *    required
+     *
+     * Edge constraints allow developers to control:
+     *
+     * - Which edge types can be created vs. linked to existing targets
+     * - How to find/select target nodes (via `search`)
+     * - What edge property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     * - Filter by source/target node types
+     *
+     * **The `search` field** handles target node selection:
+     *
+     * - Uses SearchConfig to define how to find existing target nodes
+     * - Example: `{"properties": [{"name": "name", "mode": "semantic"}]}`
+     * - For controlled vocabulary: find existing target, don't create new
+     *
+     * **The `set` field** controls edge property values:
+     *
+     * - Exact value: `{"weight": 1.0}` - sets exact value
+     * - Auto-extract: `{"reason": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators (same as NodeConstraint):
+     *
+     * - Simple: `{"severity": "high"}`
+     * - AND: `{"_and": [{"severity": "high"}, {"confirmed": true}]}`
+     * - OR: `{"_or": [{"type": "MITIGATES"}, {"type": "PREVENTS"}]}`
+     * - NOT: `{"_not": {"status": "deprecated"}}`
+     */
+    export interface EdgeConstraint {
+      /**
+       * 'upsert': Create target node if not found via search (default). 'lookup': Only
+       * link to existing target nodes (controlled vocabulary). When 'lookup', edges to
+       * non-existing targets are skipped. Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * Direction of edges this constraint applies to. 'outgoing': edges where current
+       * node is source (default). 'incoming': edges where current node is target.
+       * 'both': applies in either direction.
+       */
+      direction?: 'outgoing' | 'incoming' | 'both';
+
+      /**
+       * Edge/relationship type this constraint applies to (e.g., 'MITIGATES',
+       * 'ASSIGNED_TO'). Optional at schema level (implicit from parent
+       * UserRelationshipType), required at memory level (in
+       * memory_policy.edge_constraints).
+       */
+      edge_type?: string | null;
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing target nodes. Equivalent to @lookup decorator in
+       * schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Explicit behavior when no target match found via search. 'create': create new
+       * target node (same as upsert). 'ignore': skip edge creation (same as lookup).
+       * 'error': raise error if target not found. If specified, overrides 'create'
+       * field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: EdgeConstraint.Search | null;
+
+      /**
+       * Set property values on edges. Supports: 1. Exact value: {'weight': 1.0} - sets
+       * exact value. 2. Auto-extract: {'reason': {'mode': 'auto'}} - LLM extracts from
+       * content. Edge properties are useful for relationship metadata (weight,
+       * timestamp, reason, etc.).
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | EdgeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Filter: only apply when source node is of this type. Example:
+       * source_type='SecurityBehavior' - only applies to edges from SecurityBehavior
+       * nodes.
+       */
+      source_type?: string | null;
+
+      /**
+       * Filter: only apply when target node is of this type. Example:
+       * target_type='TacticDef' - only applies to edges targeting TacticDef nodes.
+       */
+      target_type?: string | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Applied to edge properties or context. Example: {'\_and':
+       * [{'severity': 'high'}, {'_not': {'status': 'deprecated'}}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace EdgeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Policy for how nodes of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserNodeType.constraint` - `node_type` is implicit
+     *    from parent
+     * 2. **Memory level**: In `memory_policy.node_constraints[]` - `node_type` is
+     *    required
+     *
+     * Node constraints allow developers to control:
+     *
+     * - Which node types can be created vs. linked
+     * - How to find/select existing nodes (via `search`)
+     * - What property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     *
+     * **The `search` field** handles node selection:
+     *
+     * - Uses PropertyMatch list to define unique identifiers and matching strategy
+     * - Example:
+     *   `{"properties": [{"name": "id", "mode": "exact"}, {"name": "title", "mode": "semantic"}]}`
+     * - For direct selection, use PropertyMatch with value:
+     *   `{"name": "id", "mode": "exact", "value": "proj_123"}`
+     *
+     * **The `set` field** controls property values:
+     *
+     * - Exact value: `{"status": "done"}` - sets exact value
+     * - Auto-extract: `{"status": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators:
+     *
+     * - Simple: `{"priority": "high"}`
+     * - AND: `{"_and": [{"priority": "high"}, {"status": "active"}]}`
+     * - OR: `{"_or": [{"status": "active"}, {"status": "pending"}]}`
+     * - NOT: `{"_not": {"status": "completed"}}`
+     * - Complex:
+     *   `{"_and": [{"priority": "high"}, {"_or": [{"status": "active"}, {"urgent": true}]}]}`
+     */
+    export interface NodeConstraint {
+      /**
+       * 'upsert': Create if not found via search (default). 'lookup': Only link to
+       * existing nodes (controlled vocabulary). Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing nodes (controlled vocabulary). Equivalent to
+       * @lookup decorator in schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Node type this constraint applies to (e.g., 'Task', 'Project', 'Person').
+       * Optional at schema level (implicit from parent UserNodeType), required at memory
+       * level (in memory_policy.node_constraints).
+       */
+      node_type?: string | null;
+
+      /**
+       * Explicit behavior when no match found via search. 'create': create new node
+       * (same as upsert). 'ignore': skip node creation (same as lookup). 'error': raise
+       * error if node not found. If specified, overrides 'create' field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: NodeConstraint.Search | null;
+
+      /**
+       * Set property values on nodes. Supports: 1. Exact value: {'status': 'done'} -
+       * sets exact value. 2. Auto-extract: {'status': {'mode': 'auto'}} - LLM extracts
+       * from content. 3. Text mode: {'summary': {'mode': 'auto', 'text_mode':
+       * 'merge'}} - controls text updates. For text properties, text_mode can be
+       * 'replace', 'append', or 'merge'.
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | NodeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Examples: Simple: {'priority': 'high'} - matches when priority
+       * equals 'high'. AND: {'\_and': [{'priority': 'high'}, {'status': 'active'}]} -
+       * all must match. OR: {'\_or': [{'status': 'active'}, {'status': 'pending'}]} -
+       * any must match. NOT: {'\_not': {'status': 'completed'}} - negation. Complex:
+       * {'\_and': [{'priority': 'high'}, {'\_or': [{'status': 'active'}, {'urgent':
+       * true}]}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace NodeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Specification for a node in manual mode.
+     *
+     * Used when mode='manual' to define exact nodes to create.
+     */
+    export interface Node {
+      /**
+       * Unique identifier for this node
+       */
+      id: string;
+
+      /**
+       * Node type/label (e.g., 'Transaction', 'Product', 'Person')
+       */
+      type: string;
+
+      /**
+       * Properties for this node
+       */
+      properties?: { [key: string]: unknown };
+    }
+
+    /**
+     * Specification for a relationship in manual mode.
+     *
+     * Used when mode='manual' to define exact relationships between nodes.
+     */
+    export interface Relationship {
+      /**
+       * ID of the source node
+       */
+      source: string;
+
+      /**
+       * ID of the target node
+       */
+      target: string;
+
+      /**
+       * Relationship type (e.g., 'PURCHASED', 'WORKS_AT', 'ASSIGNED_TO')
+       */
+      type: string;
+
+      /**
+       * Optional properties for this relationship
+       */
+      properties?: { [key: string]: unknown } | null;
+    }
+  }
+}
+
 export interface MemoryDeleteParams {
   /**
    * Skip Parse Server deletion
@@ -1091,20 +2760,78 @@ export interface MemoryAddParams {
   content: string;
 
   /**
+   * Query param: If True, applies holographic neural transforms and stores in
+   * holographic collection
+   */
+  enable_holographic?: boolean;
+
+  /**
+   * Query param: Response format. Use 'omo' for Open Memory Object standard format
+   * (portable across platforms).
+   */
+  format?: string | null;
+
+  /**
    * Query param: If True, skips adding background tasks for processing
    */
   skip_background_processing?: boolean;
 
   /**
-   * Body param: Context can be conversation history or any relevant context for a
-   * memory item
+   * Body param: Conversation history context for this memory. Use for providing
+   * message history when adding a memory. Format: [{role: 'user'|'assistant',
+   * content: '...'}]
    */
   context?: Array<ContextItem> | null;
+
+  /**
+   * Body param: Your application's user identifier. This is the primary way to
+   * identify users. Use this for your app's user IDs (e.g., 'user_alice_123', UUID,
+   * email). Papr will automatically resolve or create internal users as needed.
+   */
+  external_user_id?: string | null;
 
   /**
    * Body param: Graph generation configuration
    */
   graph_generation?: GraphGeneration | null;
+
+  /**
+   * Body param: Shorthand DSL for node/edge constraints. Expands to
+   * memory_policy.node_constraints and edge_constraints. Formats: - String:
+   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
+   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
+   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
+   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
+   * '$this', '$previous', '$context:N' Example:
+   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   */
+  link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+  /**
+   * Body param: Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  memory_policy?: MemoryAddParams.MemoryPolicy | null;
 
   /**
    * Body param: Metadata for memory request
@@ -1124,7 +2851,10 @@ export interface MemoryAddParams {
   organization_id?: string | null;
 
   /**
-   * Body param: Array of relationships that we can use in Graph DB (neo4J)
+   * @deprecated Body param: DEPRECATED: Use 'memory_policy' instead. Migration
+   * options: 1. Specific memory: relationships=[{source: '$this', target: 'mem_123',
+   * type: 'FOLLOWS'}] 2. Previous memory: link_to_previous_memory=True 3. Related
+   * memories: link_to_related_memories=3
    */
   relationships_json?: Array<RelationshipItem> | null;
 
@@ -1132,6 +2862,736 @@ export interface MemoryAddParams {
    * Body param: Memory item type; defaults to 'text' if omitted
    */
   type?: MemoryType;
+
+  /**
+   * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
+   * Papr Parse user ID. Most developers should not use this field directly.
+   */
+  user_id?: string | null;
+}
+
+export namespace MemoryAddParams {
+  /**
+   * Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  export interface MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: MemoryPolicy.ACL | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used. 'explicit': User
+     * explicitly agreed. 'implicit': Inferred from context (default). 'terms': Covered
+     * by Terms of Service. 'none': No consent - graph extraction will be SKIPPED.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    /**
+     * Rules for how LLM-extracted edges/relationships should be created/handled. Used
+     * in 'auto' mode when present. Controls: - create: 'auto' (create target if not
+     * found) or 'never' (controlled vocabulary) - search: How to find existing target
+     * nodes - set: Edge property values (exact or auto-extracted) -
+     * source_type/target_type: Filter by connected node types Example: {edge_type:
+     * 'MITIGATES', create: 'never', search: {properties: ['name']}}
+     */
+    edge_constraints?: Array<MemoryPolicy.EdgeConstraint> | null;
+
+    /**
+     * How to generate graph from this memory. 'auto': LLM extracts entities freely.
+     * 'manual': You provide exact nodes (no LLM). Note: 'structured' is accepted as
+     * deprecated alias for 'manual'.
+     */
+    mode?: 'auto' | 'manual';
+
+    /**
+     * Rules for how LLM-extracted nodes should be created/updated. Used in 'auto' mode
+     * when present. Controls creation policy, property forcing, and merge behavior.
+     */
+    node_constraints?: Array<MemoryPolicy.NodeConstraint> | null;
+
+    /**
+     * For manual mode: Exact nodes to create (no LLM extraction). Required when
+     * mode='manual'. Each node needs id, type, and properties.
+     */
+    nodes?: Array<MemoryPolicy.Node> | null;
+
+    /**
+     * Relationships between nodes. Supports special placeholders:
+     * '$this' = the Memory node being created, '$previous' = the user's most recent
+     * memory. Examples: {source: '$this', target: '$previous', type: 'FOLLOWS'} links
+     * to previous memory. {source: '$this', target: 'mem_abc', type: 'REFERENCES'}
+     * links to specific memory.
+     */
+    relationships?: Array<MemoryPolicy.Relationship> | null;
+
+    /**
+     * Safety assessment for this memory. 'none': Safe content (default). 'sensitive':
+     * Contains PII or sensitive info. 'flagged': Requires review - ACL will be
+     * restricted to owner only.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    /**
+     * Reference a UserGraphSchema by ID. The schema's memory_policy (if defined) will
+     * be used as defaults, with this request's settings taking precedence.
+     */
+    schema_id?: string | null;
+  }
+
+  export namespace MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    export interface ACL {
+      /**
+       * Entity IDs that can read this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice', 'organization:org_123'). Supported prefixes: user,
+       * external_user, organization, namespace, workspace, role. Unprefixed values
+       * treated as external_user for backwards compatibility.
+       */
+      read?: Array<string>;
+
+      /**
+       * Entity IDs that can write/modify this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice'). Supported prefixes: user, external_user, organization,
+       * namespace, workspace, role.
+       */
+      write?: Array<string>;
+    }
+
+    /**
+     * Policy for how edges/relationships of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserRelationshipType.constraint` - `edge_type` is
+     *    implicit from parent
+     * 2. **Memory level**: In `memory_policy.edge_constraints[]` - `edge_type` is
+     *    required
+     *
+     * Edge constraints allow developers to control:
+     *
+     * - Which edge types can be created vs. linked to existing targets
+     * - How to find/select target nodes (via `search`)
+     * - What edge property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     * - Filter by source/target node types
+     *
+     * **The `search` field** handles target node selection:
+     *
+     * - Uses SearchConfig to define how to find existing target nodes
+     * - Example: `{"properties": [{"name": "name", "mode": "semantic"}]}`
+     * - For controlled vocabulary: find existing target, don't create new
+     *
+     * **The `set` field** controls edge property values:
+     *
+     * - Exact value: `{"weight": 1.0}` - sets exact value
+     * - Auto-extract: `{"reason": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators (same as NodeConstraint):
+     *
+     * - Simple: `{"severity": "high"}`
+     * - AND: `{"_and": [{"severity": "high"}, {"confirmed": true}]}`
+     * - OR: `{"_or": [{"type": "MITIGATES"}, {"type": "PREVENTS"}]}`
+     * - NOT: `{"_not": {"status": "deprecated"}}`
+     */
+    export interface EdgeConstraint {
+      /**
+       * 'upsert': Create target node if not found via search (default). 'lookup': Only
+       * link to existing target nodes (controlled vocabulary). When 'lookup', edges to
+       * non-existing targets are skipped. Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * Direction of edges this constraint applies to. 'outgoing': edges where current
+       * node is source (default). 'incoming': edges where current node is target.
+       * 'both': applies in either direction.
+       */
+      direction?: 'outgoing' | 'incoming' | 'both';
+
+      /**
+       * Edge/relationship type this constraint applies to (e.g., 'MITIGATES',
+       * 'ASSIGNED_TO'). Optional at schema level (implicit from parent
+       * UserRelationshipType), required at memory level (in
+       * memory_policy.edge_constraints).
+       */
+      edge_type?: string | null;
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing target nodes. Equivalent to @lookup decorator in
+       * schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Explicit behavior when no target match found via search. 'create': create new
+       * target node (same as upsert). 'ignore': skip edge creation (same as lookup).
+       * 'error': raise error if target not found. If specified, overrides 'create'
+       * field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: EdgeConstraint.Search | null;
+
+      /**
+       * Set property values on edges. Supports: 1. Exact value: {'weight': 1.0} - sets
+       * exact value. 2. Auto-extract: {'reason': {'mode': 'auto'}} - LLM extracts from
+       * content. Edge properties are useful for relationship metadata (weight,
+       * timestamp, reason, etc.).
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | EdgeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Filter: only apply when source node is of this type. Example:
+       * source_type='SecurityBehavior' - only applies to edges from SecurityBehavior
+       * nodes.
+       */
+      source_type?: string | null;
+
+      /**
+       * Filter: only apply when target node is of this type. Example:
+       * target_type='TacticDef' - only applies to edges targeting TacticDef nodes.
+       */
+      target_type?: string | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Applied to edge properties or context. Example: {'\_and':
+       * [{'severity': 'high'}, {'_not': {'status': 'deprecated'}}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace EdgeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Policy for how nodes of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserNodeType.constraint` - `node_type` is implicit
+     *    from parent
+     * 2. **Memory level**: In `memory_policy.node_constraints[]` - `node_type` is
+     *    required
+     *
+     * Node constraints allow developers to control:
+     *
+     * - Which node types can be created vs. linked
+     * - How to find/select existing nodes (via `search`)
+     * - What property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     *
+     * **The `search` field** handles node selection:
+     *
+     * - Uses PropertyMatch list to define unique identifiers and matching strategy
+     * - Example:
+     *   `{"properties": [{"name": "id", "mode": "exact"}, {"name": "title", "mode": "semantic"}]}`
+     * - For direct selection, use PropertyMatch with value:
+     *   `{"name": "id", "mode": "exact", "value": "proj_123"}`
+     *
+     * **The `set` field** controls property values:
+     *
+     * - Exact value: `{"status": "done"}` - sets exact value
+     * - Auto-extract: `{"status": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators:
+     *
+     * - Simple: `{"priority": "high"}`
+     * - AND: `{"_and": [{"priority": "high"}, {"status": "active"}]}`
+     * - OR: `{"_or": [{"status": "active"}, {"status": "pending"}]}`
+     * - NOT: `{"_not": {"status": "completed"}}`
+     * - Complex:
+     *   `{"_and": [{"priority": "high"}, {"_or": [{"status": "active"}, {"urgent": true}]}]}`
+     */
+    export interface NodeConstraint {
+      /**
+       * 'upsert': Create if not found via search (default). 'lookup': Only link to
+       * existing nodes (controlled vocabulary). Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing nodes (controlled vocabulary). Equivalent to
+       * @lookup decorator in schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Node type this constraint applies to (e.g., 'Task', 'Project', 'Person').
+       * Optional at schema level (implicit from parent UserNodeType), required at memory
+       * level (in memory_policy.node_constraints).
+       */
+      node_type?: string | null;
+
+      /**
+       * Explicit behavior when no match found via search. 'create': create new node
+       * (same as upsert). 'ignore': skip node creation (same as lookup). 'error': raise
+       * error if node not found. If specified, overrides 'create' field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: NodeConstraint.Search | null;
+
+      /**
+       * Set property values on nodes. Supports: 1. Exact value: {'status': 'done'} -
+       * sets exact value. 2. Auto-extract: {'status': {'mode': 'auto'}} - LLM extracts
+       * from content. 3. Text mode: {'summary': {'mode': 'auto', 'text_mode':
+       * 'merge'}} - controls text updates. For text properties, text_mode can be
+       * 'replace', 'append', or 'merge'.
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | NodeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Examples: Simple: {'priority': 'high'} - matches when priority
+       * equals 'high'. AND: {'\_and': [{'priority': 'high'}, {'status': 'active'}]} -
+       * all must match. OR: {'\_or': [{'status': 'active'}, {'status': 'pending'}]} -
+       * any must match. NOT: {'\_not': {'status': 'completed'}} - negation. Complex:
+       * {'\_and': [{'priority': 'high'}, {'\_or': [{'status': 'active'}, {'urgent':
+       * true}]}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace NodeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Specification for a node in manual mode.
+     *
+     * Used when mode='manual' to define exact nodes to create.
+     */
+    export interface Node {
+      /**
+       * Unique identifier for this node
+       */
+      id: string;
+
+      /**
+       * Node type/label (e.g., 'Transaction', 'Product', 'Person')
+       */
+      type: string;
+
+      /**
+       * Properties for this node
+       */
+      properties?: { [key: string]: unknown };
+    }
+
+    /**
+     * Specification for a relationship in manual mode.
+     *
+     * Used when mode='manual' to define exact relationships between nodes.
+     */
+    export interface Relationship {
+      /**
+       * ID of the source node
+       */
+      source: string;
+
+      /**
+       * ID of the target node
+       */
+      target: string;
+
+      /**
+       * Relationship type (e.g., 'PURCHASED', 'WORKS_AT', 'ASSIGNED_TO')
+       */
+      type: string;
+
+      /**
+       * Optional properties for this relationship
+       */
+      properties?: { [key: string]: unknown } | null;
+    }
+  }
 }
 
 export interface MemoryAddBatchParams {
@@ -1151,8 +3611,9 @@ export interface MemoryAddBatchParams {
   batch_size?: number | null;
 
   /**
-   * Body param: External user ID for all memories in the batch. If provided and
-   * user_id is not, will be resolved to internal user ID.
+   * Body param: Your application's user identifier for all memories in the batch.
+   * This is the primary way to identify users. Papr will automatically resolve or
+   * create internal users as needed.
    */
   external_user_id?: string | null;
 
@@ -1160,6 +3621,44 @@ export interface MemoryAddBatchParams {
    * Body param: Graph generation configuration
    */
   graph_generation?: GraphGeneration | null;
+
+  /**
+   * Body param: Shorthand DSL for node/edge constraints. Expands to
+   * memory_policy.node_constraints and edge_constraints. Formats: - String:
+   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
+   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
+   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
+   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
+   * '$this', '$previous', '$context:N' Example:
+   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   */
+  link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+  /**
+   * Body param: Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  memory_policy?: MemoryAddBatchParams.MemoryPolicy | null;
 
   /**
    * Body param: Optional namespace ID for multi-tenant batch memory scoping. When
@@ -1174,8 +3673,8 @@ export interface MemoryAddBatchParams {
   organization_id?: string | null;
 
   /**
-   * Body param: Internal user ID for all memories in the batch. If not provided,
-   * developer's user ID will be used.
+   * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
+   * Papr Parse user ID.
    */
   user_id?: string | null;
 
@@ -1194,6 +3693,730 @@ export interface MemoryAddBatchParams {
   [k: string]: unknown;
 }
 
+export namespace MemoryAddBatchParams {
+  /**
+   * Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  export interface MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: MemoryPolicy.ACL | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used. 'explicit': User
+     * explicitly agreed. 'implicit': Inferred from context (default). 'terms': Covered
+     * by Terms of Service. 'none': No consent - graph extraction will be SKIPPED.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    /**
+     * Rules for how LLM-extracted edges/relationships should be created/handled. Used
+     * in 'auto' mode when present. Controls: - create: 'auto' (create target if not
+     * found) or 'never' (controlled vocabulary) - search: How to find existing target
+     * nodes - set: Edge property values (exact or auto-extracted) -
+     * source_type/target_type: Filter by connected node types Example: {edge_type:
+     * 'MITIGATES', create: 'never', search: {properties: ['name']}}
+     */
+    edge_constraints?: Array<MemoryPolicy.EdgeConstraint> | null;
+
+    /**
+     * How to generate graph from this memory. 'auto': LLM extracts entities freely.
+     * 'manual': You provide exact nodes (no LLM). Note: 'structured' is accepted as
+     * deprecated alias for 'manual'.
+     */
+    mode?: 'auto' | 'manual';
+
+    /**
+     * Rules for how LLM-extracted nodes should be created/updated. Used in 'auto' mode
+     * when present. Controls creation policy, property forcing, and merge behavior.
+     */
+    node_constraints?: Array<MemoryPolicy.NodeConstraint> | null;
+
+    /**
+     * For manual mode: Exact nodes to create (no LLM extraction). Required when
+     * mode='manual'. Each node needs id, type, and properties.
+     */
+    nodes?: Array<MemoryPolicy.Node> | null;
+
+    /**
+     * Relationships between nodes. Supports special placeholders:
+     * '$this' = the Memory node being created, '$previous' = the user's most recent
+     * memory. Examples: {source: '$this', target: '$previous', type: 'FOLLOWS'} links
+     * to previous memory. {source: '$this', target: 'mem_abc', type: 'REFERENCES'}
+     * links to specific memory.
+     */
+    relationships?: Array<MemoryPolicy.Relationship> | null;
+
+    /**
+     * Safety assessment for this memory. 'none': Safe content (default). 'sensitive':
+     * Contains PII or sensitive info. 'flagged': Requires review - ACL will be
+     * restricted to owner only.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    /**
+     * Reference a UserGraphSchema by ID. The schema's memory_policy (if defined) will
+     * be used as defaults, with this request's settings taking precedence.
+     */
+    schema_id?: string | null;
+  }
+
+  export namespace MemoryPolicy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    export interface ACL {
+      /**
+       * Entity IDs that can read this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice', 'organization:org_123'). Supported prefixes: user,
+       * external_user, organization, namespace, workspace, role. Unprefixed values
+       * treated as external_user for backwards compatibility.
+       */
+      read?: Array<string>;
+
+      /**
+       * Entity IDs that can write/modify this memory. Format: 'prefix:id' (e.g.,
+       * 'external_user:alice'). Supported prefixes: user, external_user, organization,
+       * namespace, workspace, role.
+       */
+      write?: Array<string>;
+    }
+
+    /**
+     * Policy for how edges/relationships of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserRelationshipType.constraint` - `edge_type` is
+     *    implicit from parent
+     * 2. **Memory level**: In `memory_policy.edge_constraints[]` - `edge_type` is
+     *    required
+     *
+     * Edge constraints allow developers to control:
+     *
+     * - Which edge types can be created vs. linked to existing targets
+     * - How to find/select target nodes (via `search`)
+     * - What edge property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     * - Filter by source/target node types
+     *
+     * **The `search` field** handles target node selection:
+     *
+     * - Uses SearchConfig to define how to find existing target nodes
+     * - Example: `{"properties": [{"name": "name", "mode": "semantic"}]}`
+     * - For controlled vocabulary: find existing target, don't create new
+     *
+     * **The `set` field** controls edge property values:
+     *
+     * - Exact value: `{"weight": 1.0}` - sets exact value
+     * - Auto-extract: `{"reason": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators (same as NodeConstraint):
+     *
+     * - Simple: `{"severity": "high"}`
+     * - AND: `{"_and": [{"severity": "high"}, {"confirmed": true}]}`
+     * - OR: `{"_or": [{"type": "MITIGATES"}, {"type": "PREVENTS"}]}`
+     * - NOT: `{"_not": {"status": "deprecated"}}`
+     */
+    export interface EdgeConstraint {
+      /**
+       * 'upsert': Create target node if not found via search (default). 'lookup': Only
+       * link to existing target nodes (controlled vocabulary). When 'lookup', edges to
+       * non-existing targets are skipped. Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * Direction of edges this constraint applies to. 'outgoing': edges where current
+       * node is source (default). 'incoming': edges where current node is target.
+       * 'both': applies in either direction.
+       */
+      direction?: 'outgoing' | 'incoming' | 'both';
+
+      /**
+       * Edge/relationship type this constraint applies to (e.g., 'MITIGATES',
+       * 'ASSIGNED_TO'). Optional at schema level (implicit from parent
+       * UserRelationshipType), required at memory level (in
+       * memory_policy.edge_constraints).
+       */
+      edge_type?: string | null;
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing target nodes. Equivalent to @lookup decorator in
+       * schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Explicit behavior when no target match found via search. 'create': create new
+       * target node (same as upsert). 'ignore': skip edge creation (same as lookup).
+       * 'error': raise error if target not found. If specified, overrides 'create'
+       * field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: EdgeConstraint.Search | null;
+
+      /**
+       * Set property values on edges. Supports: 1. Exact value: {'weight': 1.0} - sets
+       * exact value. 2. Auto-extract: {'reason': {'mode': 'auto'}} - LLM extracts from
+       * content. Edge properties are useful for relationship metadata (weight,
+       * timestamp, reason, etc.).
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | EdgeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Filter: only apply when source node is of this type. Example:
+       * source_type='SecurityBehavior' - only applies to edges from SecurityBehavior
+       * nodes.
+       */
+      source_type?: string | null;
+
+      /**
+       * Filter: only apply when target node is of this type. Example:
+       * target_type='TacticDef' - only applies to edges targeting TacticDef nodes.
+       */
+      target_type?: string | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Applied to edge properties or context. Example: {'\_and':
+       * [{'severity': 'high'}, {'_not': {'status': 'deprecated'}}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace EdgeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Policy for how nodes of a specific type should be handled.
+     *
+     * Used in two places:
+     *
+     * 1. **Schema level**: Inside `UserNodeType.constraint` - `node_type` is implicit
+     *    from parent
+     * 2. **Memory level**: In `memory_policy.node_constraints[]` - `node_type` is
+     *    required
+     *
+     * Node constraints allow developers to control:
+     *
+     * - Which node types can be created vs. linked
+     * - How to find/select existing nodes (via `search`)
+     * - What property values to set (exact or auto-extracted)
+     * - When to apply the constraint (conditional with logical operators)
+     *
+     * **The `search` field** handles node selection:
+     *
+     * - Uses PropertyMatch list to define unique identifiers and matching strategy
+     * - Example:
+     *   `{"properties": [{"name": "id", "mode": "exact"}, {"name": "title", "mode": "semantic"}]}`
+     * - For direct selection, use PropertyMatch with value:
+     *   `{"name": "id", "mode": "exact", "value": "proj_123"}`
+     *
+     * **The `set` field** controls property values:
+     *
+     * - Exact value: `{"status": "done"}` - sets exact value
+     * - Auto-extract: `{"status": {"mode": "auto"}}` - LLM extracts from content
+     *
+     * **The `when` field** supports logical operators:
+     *
+     * - Simple: `{"priority": "high"}`
+     * - AND: `{"_and": [{"priority": "high"}, {"status": "active"}]}`
+     * - OR: `{"_or": [{"status": "active"}, {"status": "pending"}]}`
+     * - NOT: `{"_not": {"status": "completed"}}`
+     * - Complex:
+     *   `{"_and": [{"priority": "high"}, {"_or": [{"status": "active"}, {"urgent": true}]}]}`
+     */
+    export interface NodeConstraint {
+      /**
+       * 'upsert': Create if not found via search (default). 'lookup': Only link to
+       * existing nodes (controlled vocabulary). Deprecated aliases: 'auto' -> 'upsert',
+       * 'never' -> 'lookup'.
+       */
+      create?: 'upsert' | 'lookup' | 'auto' | 'never';
+
+      /**
+       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
+       * True, only links to existing nodes (controlled vocabulary). Equivalent to
+       * @lookup decorator in schema definitions.
+       */
+      link_only?: boolean;
+
+      /**
+       * Node type this constraint applies to (e.g., 'Task', 'Project', 'Person').
+       * Optional at schema level (implicit from parent UserNodeType), required at memory
+       * level (in memory_policy.node_constraints).
+       */
+      node_type?: string | null;
+
+      /**
+       * Explicit behavior when no match found via search. 'create': create new node
+       * (same as upsert). 'ignore': skip node creation (same as lookup). 'error': raise
+       * error if node not found. If specified, overrides 'create' field.
+       */
+      on_miss?: 'create' | 'ignore' | 'error' | null;
+
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      search?: NodeConstraint.Search | null;
+
+      /**
+       * Set property values on nodes. Supports: 1. Exact value: {'status': 'done'} -
+       * sets exact value. 2. Auto-extract: {'status': {'mode': 'auto'}} - LLM extracts
+       * from content. 3. Text mode: {'summary': {'mode': 'auto', 'text_mode':
+       * 'merge'}} - controls text updates. For text properties, text_mode can be
+       * 'replace', 'append', or 'merge'.
+       */
+      set?: {
+        [key: string]:
+          | string
+          | number
+          | boolean
+          | Array<unknown>
+          | { [key: string]: unknown }
+          | NodeConstraint.PropertyValue;
+      } | null;
+
+      /**
+       * Condition for when this constraint applies. Supports logical operators: '\_and',
+       * '\_or', '\_not'. Examples: Simple: {'priority': 'high'} - matches when priority
+       * equals 'high'. AND: {'\_and': [{'priority': 'high'}, {'status': 'active'}]} -
+       * all must match. OR: {'\_or': [{'status': 'active'}, {'status': 'pending'}]} -
+       * any must match. NOT: {'\_not': {'status': 'completed'}} - negation. Complex:
+       * {'\_and': [{'priority': 'high'}, {'\_or': [{'status': 'active'}, {'urgent':
+       * true}]}]}
+       */
+      when?: { [key: string]: unknown } | null;
+    }
+
+    export namespace NodeConstraint {
+      /**
+       * Configuration for finding/selecting existing nodes.
+       *
+       * Defines which properties to match on and how, in priority order. The first
+       * matching property wins.
+       *
+       * **String Shorthand** (simple cases - converts to exact match):
+       * SearchConfig(properties=["id", "email"]) # Equivalent to:
+       * SearchConfig(properties=[PropertyMatch.exact("id"),
+       * PropertyMatch.exact("email")])
+       *
+       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+       * control ])
+       *
+       * **Full Form** (maximum control): SearchConfig(properties=[
+       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+       * mode="semantic", threshold=0.85) ])
+       *
+       * **To select a specific node by ID**:
+       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+       */
+      export interface Search {
+        /**
+         * Default search mode when property doesn't specify one. 'semantic' (vector
+         * similarity), 'exact' (property match), 'fuzzy' (partial match).
+         */
+        mode?: 'semantic' | 'exact' | 'fuzzy';
+
+        /**
+         * Properties to match on, in priority order (first match wins). Accepts strings
+         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+         * 'value' field for specific node selection.
+         */
+        properties?: Array<Search.Property> | null;
+
+        /**
+         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+         * property doesn't specify its own threshold.
+         */
+        threshold?: number;
+
+        /**
+         * Search for nodes via their relationships. Example: Find tasks assigned to a
+         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+         * target_search. Multiple relationship matches are ANDed together.
+         */
+        via_relationship?: Array<unknown> | null;
+      }
+
+      export namespace Search {
+        /**
+         * Property matching configuration.
+         *
+         * Defines which property to match on and how. When listed in search.properties,
+         * this property becomes a unique identifier.
+         *
+         * **Shorthand Helpers** (recommended for common cases):
+         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+         * Semantic match with custom threshold PropertyMatch.semantic("title",
+         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+         * Fuzzy match
+         *
+         * **Full Form** (when you need all options): PropertyMatch(name="title",
+         * mode="semantic", threshold=0.9, value="auth bug")
+         *
+         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+         */
+        export interface Property {
+          /**
+           * Property name to match on (e.g., 'id', 'email', 'title')
+           */
+          name: string;
+
+          /**
+           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+           * 'fuzzy' (Levenshtein distance)
+           */
+          mode?: 'semantic' | 'exact' | 'fuzzy';
+
+          /**
+           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+           */
+          threshold?: number;
+
+          /**
+           * Runtime value override. If set, use this value for matching instead of
+           * extracting from content. Useful for memory-level overrides when you know the
+           * exact value to search for.
+           */
+          value?: unknown;
+        }
+      }
+
+      /**
+       * Configuration for a property value in NodeConstraint.set.
+       *
+       * Supports two modes:
+       *
+       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
+       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
+       *
+       * For text properties, use text_mode to control how updates are applied.
+       */
+      export interface PropertyValue {
+        /**
+         * 'auto': LLM extracts value from memory content.
+         */
+        mode?: 'auto';
+
+        /**
+         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
+         * combines existing + new).
+         */
+        text_mode?: 'replace' | 'append' | 'merge';
+      }
+    }
+
+    /**
+     * Specification for a node in manual mode.
+     *
+     * Used when mode='manual' to define exact nodes to create.
+     */
+    export interface Node {
+      /**
+       * Unique identifier for this node
+       */
+      id: string;
+
+      /**
+       * Node type/label (e.g., 'Transaction', 'Product', 'Person')
+       */
+      type: string;
+
+      /**
+       * Properties for this node
+       */
+      properties?: { [key: string]: unknown };
+    }
+
+    /**
+     * Specification for a relationship in manual mode.
+     *
+     * Used when mode='manual' to define exact relationships between nodes.
+     */
+    export interface Relationship {
+      /**
+       * ID of the source node
+       */
+      source: string;
+
+      /**
+       * ID of the target node
+       */
+      target: string;
+
+      /**
+       * Relationship type (e.g., 'PURCHASED', 'WORKS_AT', 'ASSIGNED_TO')
+       */
+      type: string;
+
+      /**
+       * Optional properties for this relationship
+       */
+      properties?: { [key: string]: unknown } | null;
+    }
+  }
+}
+
 export interface MemoryDeleteAllParams {
   /**
    * Optional external user ID to resolve and delete memories for
@@ -1210,6 +4433,26 @@ export interface MemoryDeleteAllParams {
    * user)
    */
   user_id?: string | null;
+}
+
+export interface MemoryGetParams {
+  /**
+   * If true, return 404 if the memory has risk='flagged'. Filters out flagged
+   * content.
+   */
+  exclude_flagged?: boolean;
+
+  /**
+   * Maximum risk level allowed. Values: 'none', 'sensitive', 'flagged'. If memory
+   * exceeds this, return 404.
+   */
+  max_risk?: string | null;
+
+  /**
+   * If true, return 404 if the memory has consent='none'. Ensures only consented
+   * memories are returned.
+   */
+  require_consent?: boolean;
 }
 
 export interface MemorySearchParams {
@@ -1259,11 +4502,21 @@ export interface MemorySearchParams {
   enable_agentic_graph?: boolean;
 
   /**
-   * Body param: Optional external user ID to filter search results by a specific
-   * external user. If both user_id and external_user_id are provided, user_id takes
-   * precedence.
+   * Body param: Your application's user identifier to filter search results. This is
+   * the primary way to identify users. Use this for your app's user IDs (e.g.,
+   * 'user_alice_123', UUID, email).
    */
   external_user_id?: string | null;
+
+  /**
+   * Body param: Configuration for holographic neural embedding transforms and H-COND
+   * scoring.
+   *
+   * Neural holographic embeddings use 13 brain-inspired frequency bands to encode
+   * hierarchical semantic metadata alongside the base embedding. H-COND (Holographic
+   * CONDitional) scoring uses phase alignment for improved relevance ranking.
+   */
+  holographic_config?: MemorySearchParams.HolographicConfig | null;
 
   /**
    * Body param: Metadata for memory request
@@ -1277,18 +4530,34 @@ export interface MemorySearchParams {
   namespace_id?: string | null;
 
   /**
+   * Body param: Filter for Open Memory Object (OMO) safety standards in
+   * search/retrieval.
+   *
+   * Use this to filter search results by consent level and/or risk level.
+   */
+  omo_filter?: MemorySearchParams.OmoFilter | null;
+
+  /**
    * Body param: Optional organization ID for multi-tenant search scoping. When
    * provided, search is scoped to memories within this organization.
    */
   organization_id?: string | null;
 
   /**
-   * Body param: Whether to enable additional ranking of search results. Default is
-   * false because results are already ranked when using an LLM for search
-   * (recommended approach). Only enable this if you're not using an LLM in your
-   * search pipeline and need additional result ranking.
+   * @deprecated Body param: DEPRECATED: Use 'reranking_config' instead. Whether to
+   * enable additional ranking of search results. Default is false because results
+   * are already ranked when using an LLM for search (recommended approach). Only
+   * enable this if you're not using an LLM in your search pipeline and need
+   * additional result ranking. Migration: Replace 'rank_results: true' with
+   * 'reranking_config: {reranking_enabled: true, reranking_provider: "cohere",
+   * reranking_model: "rerank-v3.5"}'
    */
   rank_results?: boolean;
+
+  /**
+   * Body param: Configuration for reranking memory search results
+   */
+  reranking_config?: MemorySearchParams.RerankingConfig | null;
 
   /**
    * Body param: Optional user-defined schema ID to use for this search. If provided,
@@ -1299,16 +4568,13 @@ export interface MemorySearchParams {
   schema_id?: string | null;
 
   /**
-   * Body param: If true, uses simple schema mode: system schema + ONE most relevant
-   * user schema. This ensures better consistency between add/search operations and
-   * reduces query complexity. Recommended for production use.
+   * Body param: Complete search override specification provided by developer
    */
-  simple_schema_mode?: boolean;
+  search_override?: MemorySearchParams.SearchOverride | null;
 
   /**
-   * Body param: Optional internal user ID to filter search results by a specific
-   * user. If not provided, results are not filtered by user. If both user_id and
-   * external_user_id are provided, user_id takes precedence.
+   * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
+   * Papr Parse user ID. Most developers should not use this field directly.
    */
   user_id?: string | null;
 
@@ -1316,6 +4582,186 @@ export interface MemorySearchParams {
    * Header param: Recommended to use 'gzip' for response compression
    */
   'Accept-Encoding'?: string;
+}
+
+export namespace MemorySearchParams {
+  /**
+   * Configuration for holographic neural embedding transforms and H-COND scoring.
+   *
+   * Neural holographic embeddings use 13 brain-inspired frequency bands to encode
+   * hierarchical semantic metadata alongside the base embedding. H-COND (Holographic
+   * CONDitional) scoring uses phase alignment for improved relevance ranking.
+   */
+  export interface HolographicConfig {
+    /**
+     * Whether to enable holographic embedding transforms
+     */
+    enabled?: boolean;
+
+    /**
+     * Maximum boost to add for high alignment (0.0-0.5)
+     */
+    hcond_boost_factor?: number;
+
+    /**
+     * Phase alignment threshold above which to apply boost (0.0-1.0)
+     */
+    hcond_boost_threshold?: number;
+
+    /**
+     * Maximum penalty for low alignment (0.0-0.5)
+     */
+    hcond_penalty_factor?: number;
+
+    /**
+     * Search mode: 'disabled' (off), 'integrated' (search transformed embeddings),
+     * 'post_search' (fetch then rerank with H-COND)
+     */
+    search_mode?: 'disabled' | 'integrated' | 'post_search';
+  }
+
+  /**
+   * Filter for Open Memory Object (OMO) safety standards in search/retrieval.
+   *
+   * Use this to filter search results by consent level and/or risk level.
+   */
+  export interface OmoFilter {
+    /**
+     * Explicitly exclude memories with these consent levels. Example:
+     * exclude_consent=['none'] filters out all memories without consent.
+     */
+    exclude_consent?: Array<'explicit' | 'implicit' | 'terms' | 'none'> | null;
+
+    /**
+     * If true, exclude all flagged content (risk == 'flagged'). Shorthand for
+     * exclude_risk=['flagged'].
+     */
+    exclude_flagged?: boolean;
+
+    /**
+     * Explicitly exclude memories with these risk levels. Example:
+     * exclude_risk=['flagged'] filters out all flagged content.
+     */
+    exclude_risk?: Array<'none' | 'sensitive' | 'flagged'> | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    max_risk?: 'none' | 'sensitive' | 'flagged' | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    min_consent?: 'explicit' | 'implicit' | 'terms' | 'none' | null;
+
+    /**
+     * If true, only return memories with explicit consent (consent != 'none').
+     * Shorthand for exclude_consent=['none'].
+     */
+    require_consent?: boolean;
+  }
+
+  /**
+   * Configuration for reranking memory search results
+   */
+  export interface RerankingConfig {
+    /**
+     * Whether to enable reranking of search results
+     */
+    reranking_enabled?: boolean;
+
+    /**
+     * Model to use for reranking. OpenAI (LLM): 'gpt-5-nano' (fast reasoning,
+     * default), 'gpt-5-mini' (better quality reasoning). Cohere (cross-encoder):
+     * 'rerank-v3.5' (latest), 'rerank-english-v3.0', 'rerank-multilingual-v3.0'
+     */
+    reranking_model?: string;
+
+    /**
+     * Reranking provider: 'openai' (better quality, slower) or 'cohere' (faster,
+     * optimized for reranking)
+     */
+    reranking_provider?: 'openai' | 'cohere';
+  }
+
+  /**
+   * Complete search override specification provided by developer
+   */
+  export interface SearchOverride {
+    /**
+     * Graph pattern to search for (source)-[relationship]->(target)
+     */
+    pattern: SearchOverride.Pattern;
+
+    /**
+     * Property filters to apply to the search pattern
+     */
+    filters?: Array<SearchOverride.Filter>;
+
+    /**
+     * Specific properties to return. If not specified, returns all properties.
+     */
+    return_properties?: Array<string> | null;
+  }
+
+  export namespace SearchOverride {
+    /**
+     * Graph pattern to search for (source)-[relationship]->(target)
+     */
+    export interface Pattern {
+      /**
+       * Relationship type (e.g., 'ASSOCIATED_WITH', 'WORKS_FOR'). Must match schema
+       * relationship types.
+       */
+      relationship_type: string;
+
+      /**
+       * Source node label (e.g., 'Memory', 'Person', 'Company'). Must match schema node
+       * types.
+       */
+      source_label: string;
+
+      /**
+       * Target node label (e.g., 'Person', 'Company', 'Project'). Must match schema node
+       * types.
+       */
+      target_label: string;
+
+      /**
+       * Relationship direction: '->' (outgoing), '<-' (incoming), or '-' (bidirectional)
+       */
+      direction?: string;
+    }
+
+    /**
+     * Property filters for search override
+     */
+    export interface Filter {
+      /**
+       * Node type to filter (e.g., 'Person', 'Memory', 'Company')
+       */
+      node_type: string;
+
+      /**
+       * Filter operator: 'CONTAINS', 'EQUALS', 'STARTS_WITH', 'IN'
+       */
+      operator: string;
+
+      /**
+       * Property name to filter on (e.g., 'name', 'content', 'role')
+       */
+      property_name: string;
+
+      /**
+       * Filter value(s). Use list for 'IN' operator.
+       */
+      value: string | Array<string> | number | boolean;
+    }
+  }
 }
 
 export declare namespace Memory {
@@ -1339,6 +4785,7 @@ export declare namespace Memory {
     type MemoryAddParams as MemoryAddParams,
     type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemoryDeleteAllParams as MemoryDeleteAllParams,
+    type MemoryGetParams as MemoryGetParams,
     type MemorySearchParams as MemorySearchParams,
   };
 }

@@ -40,6 +40,7 @@ export {
   type MemoryAddParams,
   type MemoryAddBatchParams,
   type MemoryDeleteAllParams,
+  type MemoryGetParams,
   type MemorySearchParams,
 } from './memory';
 export {
