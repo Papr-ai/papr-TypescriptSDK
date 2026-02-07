@@ -59,6 +59,16 @@ import {
   SearchResponse,
 } from './resources/memory';
 import {
+  Omo,
+  OmoExportMemoriesAsJsonParams,
+  OmoExportMemoriesAsJsonResponse,
+  OmoExportMemoriesParams,
+  OmoExportMemoriesResponse,
+  OmoImportMemoriesParams,
+  OmoImportMemoriesResponse,
+} from './resources/omo';
+import {
+  PropertyDefinition,
   SchemaCreateParams,
   SchemaCreateResponse,
   SchemaDeleteResponse,
@@ -68,8 +78,16 @@ import {
   SchemaUpdateParams,
   SchemaUpdateResponse,
   Schemas,
+  SearchConfigOutput,
   UserGraphSchemaOutput,
 } from './resources/schemas';
+import {
+  Sync,
+  SyncGetDeltaParams,
+  SyncGetDeltaResponse,
+  SyncGetTiersParams,
+  SyncGetTiersResponse,
+} from './resources/sync';
 import {
   User,
   UserCreateBatchParams,
@@ -81,7 +99,9 @@ import {
   UserListResponse,
   UserResponse,
   UserType,
+  UserUpdateParams,
 } from './resources/user';
+import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -836,6 +856,9 @@ export class Papr {
   document: API.Document = new API.Document(this);
   schemas: API.Schemas = new API.Schemas(this);
   graphql: API.Graphql = new API.Graphql(this);
+  messages: API.Messages = new API.Messages(this);
+  omo: API.Omo = new API.Omo(this);
+  sync: API.Sync = new API.Sync(this);
 }
 
 Papr.User = User;
@@ -844,6 +867,9 @@ Papr.Feedback = Feedback;
 Papr.Document = Document;
 Papr.Schemas = Schemas;
 Papr.Graphql = Graphql;
+Papr.Messages = Messages;
+Papr.Omo = Omo;
+Papr.Sync = Sync;
 
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
@@ -856,6 +882,7 @@ export declare namespace Papr {
     type UserDeleteResponse as UserDeleteResponse,
     type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
+    type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
@@ -907,6 +934,8 @@ export declare namespace Papr {
 
   export {
     Schemas as Schemas,
+    type PropertyDefinition as PropertyDefinition,
+    type SearchConfigOutput as SearchConfigOutput,
     type UserGraphSchemaOutput as UserGraphSchemaOutput,
     type SchemaCreateResponse as SchemaCreateResponse,
     type SchemaRetrieveResponse as SchemaRetrieveResponse,
@@ -924,5 +953,38 @@ export declare namespace Papr {
     type GraphqlQueryResponse as GraphqlQueryResponse,
   };
 
+  export {
+    Messages as Messages,
+    type MessageStoreResponse as MessageStoreResponse,
+    type MessageStoreParams as MessageStoreParams,
+  };
+
+  export {
+    Omo as Omo,
+    type OmoExportMemoriesResponse as OmoExportMemoriesResponse,
+    type OmoExportMemoriesAsJsonResponse as OmoExportMemoriesAsJsonResponse,
+    type OmoImportMemoriesResponse as OmoImportMemoriesResponse,
+    type OmoExportMemoriesParams as OmoExportMemoriesParams,
+    type OmoExportMemoriesAsJsonParams as OmoExportMemoriesAsJsonParams,
+    type OmoImportMemoriesParams as OmoImportMemoriesParams,
+  };
+
+  export {
+    Sync as Sync,
+    type SyncGetDeltaResponse as SyncGetDeltaResponse,
+    type SyncGetTiersResponse as SyncGetTiersResponse,
+    type SyncGetDeltaParams as SyncGetDeltaParams,
+    type SyncGetTiersParams as SyncGetTiersParams,
+  };
+
+  export type ACLConfig = API.ACLConfig;
   export type AddMemoryItem = API.AddMemoryItem;
+  export type EdgeConstraintInput = API.EdgeConstraintInput;
+  export type Memory = API.Memory;
+  export type MemoryPolicy = API.MemoryPolicy;
+  export type NodeConstraintInput = API.NodeConstraintInput;
+  export type NodeSpec = API.NodeSpec;
+  export type PropertyValue = API.PropertyValue;
+  export type RelationshipSpec = API.RelationshipSpec;
+  export type SearchConfigInput = API.SearchConfigInput;
 }

@@ -2,7 +2,16 @@
 
 Types:
 
+- <code><a href="./src/resources/shared.ts">ACLConfig</a></code>
 - <code><a href="./src/resources/shared.ts">AddMemoryItem</a></code>
+- <code><a href="./src/resources/shared.ts">EdgeConstraintInput</a></code>
+- <code><a href="./src/resources/shared.ts">Memory</a></code>
+- <code><a href="./src/resources/shared.ts">MemoryPolicy</a></code>
+- <code><a href="./src/resources/shared.ts">NodeConstraintInput</a></code>
+- <code><a href="./src/resources/shared.ts">NodeSpec</a></code>
+- <code><a href="./src/resources/shared.ts">PropertyValue</a></code>
+- <code><a href="./src/resources/shared.ts">RelationshipSpec</a></code>
+- <code><a href="./src/resources/shared.ts">SearchConfigInput</a></code>
 
 # User
 
@@ -17,6 +26,7 @@ Types:
 Methods:
 
 - <code title="post /v1/user">client.user.<a href="./src/resources/user.ts">create</a>({ ...params }) -> UserResponse</code>
+- <code title="put /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">update</a>(userID, { ...params }) -> UserResponse</code>
 - <code title="get /v1/user">client.user.<a href="./src/resources/user.ts">list</a>({ ...params }) -> UserListResponse</code>
 - <code title="delete /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">delete</a>(userID, { ...params }) -> UserDeleteResponse</code>
 - <code title="post /v1/user/batch">client.user.<a href="./src/resources/user.ts">createBatch</a>({ ...params }) -> UserCreateBatchResponse</code>
@@ -85,6 +95,8 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/schemas.ts">PropertyDefinition</a></code>
+- <code><a href="./src/resources/schemas.ts">SearchConfigOutput</a></code>
 - <code><a href="./src/resources/schemas.ts">UserGraphSchemaOutput</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaCreateResponse</a></code>
 - <code><a href="./src/resources/schemas.ts">SchemaRetrieveResponse</a></code>
@@ -111,3 +123,55 @@ Methods:
 
 - <code title="get /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">playground</a>() -> unknown</code>
 - <code title="post /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">query</a>() -> unknown</code>
+
+# Messages
+
+Types:
+
+- <code><a href="./src/resources/messages/messages.ts">MessageStoreResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/messages">client.messages.<a href="./src/resources/messages/messages.ts">store</a>({ ...params }) -> MessageStoreResponse</code>
+
+## Sessions
+
+Types:
+
+- <code><a href="./src/resources/messages/sessions.ts">SessionCompressResponse</a></code>
+- <code><a href="./src/resources/messages/sessions.ts">SessionProcessResponse</a></code>
+- <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveHistoryResponse</a></code>
+- <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveStatusResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/messages/sessions/{session_id}/compress">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">compress</a>(sessionID) -> SessionCompressResponse</code>
+- <code title="post /v1/messages/sessions/{session_id}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">process</a>(sessionID) -> unknown</code>
+- <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>
+- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> unknown</code>
+
+# Omo
+
+Types:
+
+- <code><a href="./src/resources/omo.ts">OmoExportMemoriesResponse</a></code>
+- <code><a href="./src/resources/omo.ts">OmoExportMemoriesAsJsonResponse</a></code>
+- <code><a href="./src/resources/omo.ts">OmoImportMemoriesResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/omo/export">client.omo.<a href="./src/resources/omo.ts">exportMemories</a>({ ...params }) -> OmoExportMemoriesResponse</code>
+- <code title="get /v1/omo/export.json">client.omo.<a href="./src/resources/omo.ts">exportMemoriesAsJson</a>({ ...params }) -> unknown</code>
+- <code title="post /v1/omo/import">client.omo.<a href="./src/resources/omo.ts">importMemories</a>({ ...params }) -> OmoImportMemoriesResponse</code>
+
+# Sync
+
+Types:
+
+- <code><a href="./src/resources/sync.ts">SyncGetDeltaResponse</a></code>
+- <code><a href="./src/resources/sync.ts">SyncGetTiersResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/sync/delta">client.sync.<a href="./src/resources/sync.ts">getDelta</a>({ ...params }) -> SyncGetDeltaResponse</code>
+- <code title="post /v1/sync/tiers">client.sync.<a href="./src/resources/sync.ts">getTiers</a>({ ...params }) -> SyncGetTiersResponse</code>

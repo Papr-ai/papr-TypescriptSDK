@@ -1,6 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as SchemasAPI from './schemas';
+import * as Shared from './shared';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -146,6 +148,131 @@ export class Schemas extends APIResource {
    */
   delete(schemaID: string, options?: RequestOptions): APIPromise<unknown> {
     return this._client.delete(path`/v1/schemas/${schemaID}`, options);
+  }
+}
+
+/**
+ * Property definition for nodes/relationships
+ */
+export interface PropertyDefinition {
+  type: 'string' | 'integer' | 'float' | 'boolean' | 'array' | 'datetime' | 'object';
+
+  default?: unknown;
+
+  description?: string | null;
+
+  /**
+   * List of allowed enum values (max 15)
+   */
+  enum_values?: Array<string> | null;
+
+  max_length?: number | null;
+
+  max_value?: number | null;
+
+  min_length?: number | null;
+
+  min_value?: number | null;
+
+  pattern?: string | null;
+
+  required?: boolean;
+}
+
+/**
+ * Configuration for finding/selecting existing nodes.
+ *
+ * Defines which properties to match on and how, in priority order. The first
+ * matching property wins.
+ *
+ * **String Shorthand** (simple cases - converts to exact match):
+ * SearchConfig(properties=["id", "email"]) # Equivalent to:
+ * SearchConfig(properties=[PropertyMatch.exact("id"),
+ * PropertyMatch.exact("email")])
+ *
+ * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
+ * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
+ * control ])
+ *
+ * **Full Form** (maximum control): SearchConfig(properties=[
+ * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
+ * mode="semantic", threshold=0.85) ])
+ *
+ * **To select a specific node by ID**:
+ * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
+ */
+export interface SearchConfigOutput {
+  /**
+   * Default search mode when property doesn't specify one. 'semantic' (vector
+   * similarity), 'exact' (property match), 'fuzzy' (partial match).
+   */
+  mode?: 'semantic' | 'exact' | 'fuzzy';
+
+  /**
+   * Properties to match on, in priority order (first match wins). Accepts strings
+   * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
+   * 'value' field for specific node selection.
+   */
+  properties?: Array<SearchConfigOutput.Property> | null;
+
+  /**
+   * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
+   * property doesn't specify its own threshold.
+   */
+  threshold?: number;
+
+  /**
+   * Search for nodes via their relationships. Example: Find tasks assigned to a
+   * specific person. Each RelationshipMatch specifies edge_type, target_type, and
+   * target_search. Multiple relationship matches are ANDed together.
+   */
+  via_relationship?: Array<unknown> | null;
+}
+
+export namespace SearchConfigOutput {
+  /**
+   * Property matching configuration.
+   *
+   * Defines which property to match on and how. When listed in search.properties,
+   * this property becomes a unique identifier.
+   *
+   * **Shorthand Helpers** (recommended for common cases):
+   * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
+   * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
+   * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
+   * Semantic match with custom threshold PropertyMatch.semantic("title",
+   * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
+   * Fuzzy match
+   *
+   * **Full Form** (when you need all options): PropertyMatch(name="title",
+   * mode="semantic", threshold=0.9, value="auth bug")
+   *
+   * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
+   * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
+   */
+  export interface Property {
+    /**
+     * Property name to match on (e.g., 'id', 'email', 'title')
+     */
+    name: string;
+
+    /**
+     * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
+     * 'fuzzy' (Levenshtein distance)
+     */
+    mode?: 'semantic' | 'exact' | 'fuzzy';
+
+    /**
+     * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
+     */
+    threshold?: number;
+
+    /**
+     * Runtime value override. If set, use this value for matching instead of
+     * extracting from content. Useful for memory-level overrides when you know the
+     * exact value to search for.
+     */
+    value?: unknown;
   }
 }
 
@@ -307,7 +434,7 @@ export namespace UserGraphSchemaOutput {
     /**
      * Node properties (max 10 per node type)
      */
-    properties?: { [key: string]: NodeTypes.Properties };
+    properties?: { [key: string]: SchemasAPI.PropertyDefinition };
 
     required_properties?: Array<string>;
 
@@ -417,7 +544,7 @@ export namespace UserGraphSchemaOutput {
        * **To select a specific node by ID**:
        * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
        */
-      search?: Constraint.Search | null;
+      search?: SchemasAPI.SearchConfigOutput | null;
 
       /**
        * Set property values on nodes. Supports: 1. Exact value: {'status': 'done'} -
@@ -433,7 +560,7 @@ export namespace UserGraphSchemaOutput {
           | boolean
           | Array<unknown>
           | { [key: string]: unknown }
-          | Constraint.PropertyValue;
+          | Shared.PropertyValue;
       } | null;
 
       /**
@@ -446,156 +573,6 @@ export namespace UserGraphSchemaOutput {
        * true}]}]}
        */
       when?: { [key: string]: unknown } | null;
-    }
-
-    export namespace Constraint {
-      /**
-       * Configuration for finding/selecting existing nodes.
-       *
-       * Defines which properties to match on and how, in priority order. The first
-       * matching property wins.
-       *
-       * **String Shorthand** (simple cases - converts to exact match):
-       * SearchConfig(properties=["id", "email"]) # Equivalent to:
-       * SearchConfig(properties=[PropertyMatch.exact("id"),
-       * PropertyMatch.exact("email")])
-       *
-       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
-       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
-       * control ])
-       *
-       * **Full Form** (maximum control): SearchConfig(properties=[
-       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
-       * mode="semantic", threshold=0.85) ])
-       *
-       * **To select a specific node by ID**:
-       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
-       */
-      export interface Search {
-        /**
-         * Default search mode when property doesn't specify one. 'semantic' (vector
-         * similarity), 'exact' (property match), 'fuzzy' (partial match).
-         */
-        mode?: 'semantic' | 'exact' | 'fuzzy';
-
-        /**
-         * Properties to match on, in priority order (first match wins). Accepts strings
-         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
-         * 'value' field for specific node selection.
-         */
-        properties?: Array<Search.Property> | null;
-
-        /**
-         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
-         * property doesn't specify its own threshold.
-         */
-        threshold?: number;
-
-        /**
-         * Search for nodes via their relationships. Example: Find tasks assigned to a
-         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
-         * target_search. Multiple relationship matches are ANDed together.
-         */
-        via_relationship?: Array<unknown> | null;
-      }
-
-      export namespace Search {
-        /**
-         * Property matching configuration.
-         *
-         * Defines which property to match on and how. When listed in search.properties,
-         * this property becomes a unique identifier.
-         *
-         * **Shorthand Helpers** (recommended for common cases):
-         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
-         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
-         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
-         * Semantic match with custom threshold PropertyMatch.semantic("title",
-         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
-         * Fuzzy match
-         *
-         * **Full Form** (when you need all options): PropertyMatch(name="title",
-         * mode="semantic", threshold=0.9, value="auth bug")
-         *
-         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
-         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
-         */
-        export interface Property {
-          /**
-           * Property name to match on (e.g., 'id', 'email', 'title')
-           */
-          name: string;
-
-          /**
-           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
-           * 'fuzzy' (Levenshtein distance)
-           */
-          mode?: 'semantic' | 'exact' | 'fuzzy';
-
-          /**
-           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
-           */
-          threshold?: number;
-
-          /**
-           * Runtime value override. If set, use this value for matching instead of
-           * extracting from content. Useful for memory-level overrides when you know the
-           * exact value to search for.
-           */
-          value?: unknown;
-        }
-      }
-
-      /**
-       * Configuration for a property value in NodeConstraint.set.
-       *
-       * Supports two modes:
-       *
-       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
-       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
-       *
-       * For text properties, use text_mode to control how updates are applied.
-       */
-      export interface PropertyValue {
-        /**
-         * 'auto': LLM extracts value from memory content.
-         */
-        mode?: 'auto';
-
-        /**
-         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
-         * combines existing + new).
-         */
-        text_mode?: 'replace' | 'append' | 'merge';
-      }
-    }
-
-    /**
-     * Property definition for nodes/relationships
-     */
-    export interface Properties {
-      type: 'string' | 'integer' | 'float' | 'boolean' | 'array' | 'datetime' | 'object';
-
-      default?: unknown;
-
-      description?: string | null;
-
-      /**
-       * List of allowed enum values (max 15)
-       */
-      enum_values?: Array<string> | null;
-
-      max_length?: number | null;
-
-      max_value?: number | null;
-
-      min_length?: number | null;
-
-      min_value?: number | null;
-
-      pattern?: string | null;
-
-      required?: boolean;
     }
   }
 
@@ -679,7 +656,7 @@ export namespace UserGraphSchemaOutput {
      */
     link_only?: boolean;
 
-    properties?: { [key: string]: RelationshipTypes.Properties };
+    properties?: { [key: string]: SchemasAPI.PropertyDefinition };
 
     /**
      * Shorthand for constraint.create. 'upsert': Create target if not found (default).
@@ -788,7 +765,7 @@ export namespace UserGraphSchemaOutput {
        * **To select a specific node by ID**:
        * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
        */
-      search?: Constraint.Search | null;
+      search?: SchemasAPI.SearchConfigOutput | null;
 
       /**
        * Set property values on edges. Supports: 1. Exact value: {'weight': 1.0} - sets
@@ -803,7 +780,7 @@ export namespace UserGraphSchemaOutput {
           | boolean
           | Array<unknown>
           | { [key: string]: unknown }
-          | Constraint.PropertyValue;
+          | Shared.PropertyValue;
       } | null;
 
       /**
@@ -825,156 +802,6 @@ export namespace UserGraphSchemaOutput {
        * [{'severity': 'high'}, {'_not': {'status': 'deprecated'}}]}
        */
       when?: { [key: string]: unknown } | null;
-    }
-
-    export namespace Constraint {
-      /**
-       * Configuration for finding/selecting existing nodes.
-       *
-       * Defines which properties to match on and how, in priority order. The first
-       * matching property wins.
-       *
-       * **String Shorthand** (simple cases - converts to exact match):
-       * SearchConfig(properties=["id", "email"]) # Equivalent to:
-       * SearchConfig(properties=[PropertyMatch.exact("id"),
-       * PropertyMatch.exact("email")])
-       *
-       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
-       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
-       * control ])
-       *
-       * **Full Form** (maximum control): SearchConfig(properties=[
-       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
-       * mode="semantic", threshold=0.85) ])
-       *
-       * **To select a specific node by ID**:
-       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
-       */
-      export interface Search {
-        /**
-         * Default search mode when property doesn't specify one. 'semantic' (vector
-         * similarity), 'exact' (property match), 'fuzzy' (partial match).
-         */
-        mode?: 'semantic' | 'exact' | 'fuzzy';
-
-        /**
-         * Properties to match on, in priority order (first match wins). Accepts strings
-         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
-         * 'value' field for specific node selection.
-         */
-        properties?: Array<Search.Property> | null;
-
-        /**
-         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
-         * property doesn't specify its own threshold.
-         */
-        threshold?: number;
-
-        /**
-         * Search for nodes via their relationships. Example: Find tasks assigned to a
-         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
-         * target_search. Multiple relationship matches are ANDed together.
-         */
-        via_relationship?: Array<unknown> | null;
-      }
-
-      export namespace Search {
-        /**
-         * Property matching configuration.
-         *
-         * Defines which property to match on and how. When listed in search.properties,
-         * this property becomes a unique identifier.
-         *
-         * **Shorthand Helpers** (recommended for common cases):
-         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
-         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
-         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
-         * Semantic match with custom threshold PropertyMatch.semantic("title",
-         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
-         * Fuzzy match
-         *
-         * **Full Form** (when you need all options): PropertyMatch(name="title",
-         * mode="semantic", threshold=0.9, value="auth bug")
-         *
-         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
-         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
-         */
-        export interface Property {
-          /**
-           * Property name to match on (e.g., 'id', 'email', 'title')
-           */
-          name: string;
-
-          /**
-           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
-           * 'fuzzy' (Levenshtein distance)
-           */
-          mode?: 'semantic' | 'exact' | 'fuzzy';
-
-          /**
-           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
-           */
-          threshold?: number;
-
-          /**
-           * Runtime value override. If set, use this value for matching instead of
-           * extracting from content. Useful for memory-level overrides when you know the
-           * exact value to search for.
-           */
-          value?: unknown;
-        }
-      }
-
-      /**
-       * Configuration for a property value in NodeConstraint.set.
-       *
-       * Supports two modes:
-       *
-       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
-       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
-       *
-       * For text properties, use text_mode to control how updates are applied.
-       */
-      export interface PropertyValue {
-        /**
-         * 'auto': LLM extracts value from memory content.
-         */
-        mode?: 'auto';
-
-        /**
-         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
-         * combines existing + new).
-         */
-        text_mode?: 'replace' | 'append' | 'merge';
-      }
-    }
-
-    /**
-     * Property definition for nodes/relationships
-     */
-    export interface Properties {
-      type: 'string' | 'integer' | 'float' | 'boolean' | 'array' | 'datetime' | 'object';
-
-      default?: unknown;
-
-      description?: string | null;
-
-      /**
-       * List of allowed enum values (max 15)
-       */
-      enum_values?: Array<string> | null;
-
-      max_length?: number | null;
-
-      max_value?: number | null;
-
-      min_length?: number | null;
-
-      min_value?: number | null;
-
-      pattern?: string | null;
-
-      required?: boolean;
     }
   }
 }
@@ -1182,7 +1009,7 @@ export namespace SchemaCreateParams {
      * - Complex:
      *   `{"_and": [{"priority": "high"}, {"_or": [{"status": "active"}, {"urgent": true}]}]}`
      */
-    constraint?: NodeTypes.Constraint | null;
+    constraint?: Shared.NodeConstraintInput | null;
 
     description?: string | null;
 
@@ -1199,7 +1026,7 @@ export namespace SchemaCreateParams {
     /**
      * Node properties (max 10 per node type)
      */
-    properties?: { [key: string]: NodeTypes.Properties };
+    properties?: { [key: string]: SchemasAPI.PropertyDefinition };
 
     required_properties?: Array<string>;
 
@@ -1216,279 +1043,6 @@ export namespace SchemaCreateParams {
      * identify this node type. Example: ['name', 'email'] for Customer nodes.
      */
     unique_identifiers?: Array<string>;
-  }
-
-  export namespace NodeTypes {
-    /**
-     * Policy for how nodes of a specific type should be handled.
-     *
-     * Used in two places:
-     *
-     * 1. **Schema level**: Inside `UserNodeType.constraint` - `node_type` is implicit
-     *    from parent
-     * 2. **Memory level**: In `memory_policy.node_constraints[]` - `node_type` is
-     *    required
-     *
-     * Node constraints allow developers to control:
-     *
-     * - Which node types can be created vs. linked
-     * - How to find/select existing nodes (via `search`)
-     * - What property values to set (exact or auto-extracted)
-     * - When to apply the constraint (conditional with logical operators)
-     *
-     * **The `search` field** handles node selection:
-     *
-     * - Uses PropertyMatch list to define unique identifiers and matching strategy
-     * - Example:
-     *   `{"properties": [{"name": "id", "mode": "exact"}, {"name": "title", "mode": "semantic"}]}`
-     * - For direct selection, use PropertyMatch with value:
-     *   `{"name": "id", "mode": "exact", "value": "proj_123"}`
-     *
-     * **The `set` field** controls property values:
-     *
-     * - Exact value: `{"status": "done"}` - sets exact value
-     * - Auto-extract: `{"status": {"mode": "auto"}}` - LLM extracts from content
-     *
-     * **The `when` field** supports logical operators:
-     *
-     * - Simple: `{"priority": "high"}`
-     * - AND: `{"_and": [{"priority": "high"}, {"status": "active"}]}`
-     * - OR: `{"_or": [{"status": "active"}, {"status": "pending"}]}`
-     * - NOT: `{"_not": {"status": "completed"}}`
-     * - Complex:
-     *   `{"_and": [{"priority": "high"}, {"_or": [{"status": "active"}, {"urgent": true}]}]}`
-     */
-    export interface Constraint {
-      /**
-       * 'upsert': Create if not found via search (default). 'lookup': Only link to
-       * existing nodes (controlled vocabulary). Deprecated aliases: 'auto' -> 'upsert',
-       * 'never' -> 'lookup'.
-       */
-      create?: 'upsert' | 'lookup' | 'auto' | 'never';
-
-      /**
-       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
-       * True, only links to existing nodes (controlled vocabulary). Equivalent to
-       * @lookup decorator in schema definitions.
-       */
-      link_only?: boolean;
-
-      /**
-       * Node type this constraint applies to (e.g., 'Task', 'Project', 'Person').
-       * Optional at schema level (implicit from parent UserNodeType), required at memory
-       * level (in memory_policy.node_constraints).
-       */
-      node_type?: string | null;
-
-      /**
-       * Explicit behavior when no match found via search. 'create': create new node
-       * (same as upsert). 'ignore': skip node creation (same as lookup). 'error': raise
-       * error if node not found. If specified, overrides 'create' field.
-       */
-      on_miss?: 'create' | 'ignore' | 'error' | null;
-
-      /**
-       * Configuration for finding/selecting existing nodes.
-       *
-       * Defines which properties to match on and how, in priority order. The first
-       * matching property wins.
-       *
-       * **String Shorthand** (simple cases - converts to exact match):
-       * SearchConfig(properties=["id", "email"]) # Equivalent to:
-       * SearchConfig(properties=[PropertyMatch.exact("id"),
-       * PropertyMatch.exact("email")])
-       *
-       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
-       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
-       * control ])
-       *
-       * **Full Form** (maximum control): SearchConfig(properties=[
-       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
-       * mode="semantic", threshold=0.85) ])
-       *
-       * **To select a specific node by ID**:
-       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
-       */
-      search?: Constraint.Search | null;
-
-      /**
-       * Set property values on nodes. Supports: 1. Exact value: {'status': 'done'} -
-       * sets exact value. 2. Auto-extract: {'status': {'mode': 'auto'}} - LLM extracts
-       * from content. 3. Text mode: {'summary': {'mode': 'auto', 'text_mode':
-       * 'merge'}} - controls text updates. For text properties, text_mode can be
-       * 'replace', 'append', or 'merge'.
-       */
-      set?: {
-        [key: string]:
-          | string
-          | number
-          | boolean
-          | Array<unknown>
-          | { [key: string]: unknown }
-          | Constraint.PropertyValue;
-      } | null;
-
-      /**
-       * Condition for when this constraint applies. Supports logical operators: '\_and',
-       * '\_or', '\_not'. Examples: Simple: {'priority': 'high'} - matches when priority
-       * equals 'high'. AND: {'\_and': [{'priority': 'high'}, {'status': 'active'}]} -
-       * all must match. OR: {'\_or': [{'status': 'active'}, {'status': 'pending'}]} -
-       * any must match. NOT: {'\_not': {'status': 'completed'}} - negation. Complex:
-       * {'\_and': [{'priority': 'high'}, {'\_or': [{'status': 'active'}, {'urgent':
-       * true}]}]}
-       */
-      when?: { [key: string]: unknown } | null;
-    }
-
-    export namespace Constraint {
-      /**
-       * Configuration for finding/selecting existing nodes.
-       *
-       * Defines which properties to match on and how, in priority order. The first
-       * matching property wins.
-       *
-       * **String Shorthand** (simple cases - converts to exact match):
-       * SearchConfig(properties=["id", "email"]) # Equivalent to:
-       * SearchConfig(properties=[PropertyMatch.exact("id"),
-       * PropertyMatch.exact("email")])
-       *
-       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
-       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
-       * control ])
-       *
-       * **Full Form** (maximum control): SearchConfig(properties=[
-       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
-       * mode="semantic", threshold=0.85) ])
-       *
-       * **To select a specific node by ID**:
-       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
-       */
-      export interface Search {
-        /**
-         * Default search mode when property doesn't specify one. 'semantic' (vector
-         * similarity), 'exact' (property match), 'fuzzy' (partial match).
-         */
-        mode?: 'semantic' | 'exact' | 'fuzzy';
-
-        /**
-         * Properties to match on, in priority order (first match wins). Accepts strings
-         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
-         * 'value' field for specific node selection.
-         */
-        properties?: Array<Search.Property> | null;
-
-        /**
-         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
-         * property doesn't specify its own threshold.
-         */
-        threshold?: number;
-
-        /**
-         * Search for nodes via their relationships. Example: Find tasks assigned to a
-         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
-         * target_search. Multiple relationship matches are ANDed together.
-         */
-        via_relationship?: Array<unknown> | null;
-      }
-
-      export namespace Search {
-        /**
-         * Property matching configuration.
-         *
-         * Defines which property to match on and how. When listed in search.properties,
-         * this property becomes a unique identifier.
-         *
-         * **Shorthand Helpers** (recommended for common cases):
-         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
-         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
-         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
-         * Semantic match with custom threshold PropertyMatch.semantic("title",
-         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
-         * Fuzzy match
-         *
-         * **Full Form** (when you need all options): PropertyMatch(name="title",
-         * mode="semantic", threshold=0.9, value="auth bug")
-         *
-         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
-         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
-         */
-        export interface Property {
-          /**
-           * Property name to match on (e.g., 'id', 'email', 'title')
-           */
-          name: string;
-
-          /**
-           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
-           * 'fuzzy' (Levenshtein distance)
-           */
-          mode?: 'semantic' | 'exact' | 'fuzzy';
-
-          /**
-           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
-           */
-          threshold?: number;
-
-          /**
-           * Runtime value override. If set, use this value for matching instead of
-           * extracting from content. Useful for memory-level overrides when you know the
-           * exact value to search for.
-           */
-          value?: unknown;
-        }
-      }
-
-      /**
-       * Configuration for a property value in NodeConstraint.set.
-       *
-       * Supports two modes:
-       *
-       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
-       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
-       *
-       * For text properties, use text_mode to control how updates are applied.
-       */
-      export interface PropertyValue {
-        /**
-         * 'auto': LLM extracts value from memory content.
-         */
-        mode?: 'auto';
-
-        /**
-         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
-         * combines existing + new).
-         */
-        text_mode?: 'replace' | 'append' | 'merge';
-      }
-    }
-
-    /**
-     * Property definition for nodes/relationships
-     */
-    export interface Properties {
-      type: 'string' | 'integer' | 'float' | 'boolean' | 'array' | 'datetime' | 'object';
-
-      default?: unknown;
-
-      description?: string | null;
-
-      /**
-       * List of allowed enum values (max 15)
-       */
-      enum_values?: Array<string> | null;
-
-      max_length?: number | null;
-
-      max_value?: number | null;
-
-      min_length?: number | null;
-
-      min_value?: number | null;
-
-      pattern?: string | null;
-
-      required?: boolean;
-    }
   }
 
   /**
@@ -1559,7 +1113,7 @@ export namespace SchemaCreateParams {
      * - OR: `{"_or": [{"type": "MITIGATES"}, {"type": "PREVENTS"}]}`
      * - NOT: `{"_not": {"status": "deprecated"}}`
      */
-    constraint?: RelationshipTypes.Constraint | null;
+    constraint?: Shared.EdgeConstraintInput | null;
 
     description?: string | null;
 
@@ -1571,7 +1125,7 @@ export namespace SchemaCreateParams {
      */
     link_only?: boolean;
 
-    properties?: { [key: string]: RelationshipTypes.Properties };
+    properties?: { [key: string]: SchemasAPI.PropertyDefinition };
 
     /**
      * Shorthand for constraint.create. 'upsert': Create target if not found (default).
@@ -1580,294 +1134,6 @@ export namespace SchemaCreateParams {
      * will set constraint.create accordingly.
      */
     resolution_policy?: 'upsert' | 'lookup';
-  }
-
-  export namespace RelationshipTypes {
-    /**
-     * Policy for how edges/relationships of a specific type should be handled.
-     *
-     * Used in two places:
-     *
-     * 1. **Schema level**: Inside `UserRelationshipType.constraint` - `edge_type` is
-     *    implicit from parent
-     * 2. **Memory level**: In `memory_policy.edge_constraints[]` - `edge_type` is
-     *    required
-     *
-     * Edge constraints allow developers to control:
-     *
-     * - Which edge types can be created vs. linked to existing targets
-     * - How to find/select target nodes (via `search`)
-     * - What edge property values to set (exact or auto-extracted)
-     * - When to apply the constraint (conditional with logical operators)
-     * - Filter by source/target node types
-     *
-     * **The `search` field** handles target node selection:
-     *
-     * - Uses SearchConfig to define how to find existing target nodes
-     * - Example: `{"properties": [{"name": "name", "mode": "semantic"}]}`
-     * - For controlled vocabulary: find existing target, don't create new
-     *
-     * **The `set` field** controls edge property values:
-     *
-     * - Exact value: `{"weight": 1.0}` - sets exact value
-     * - Auto-extract: `{"reason": {"mode": "auto"}}` - LLM extracts from content
-     *
-     * **The `when` field** supports logical operators (same as NodeConstraint):
-     *
-     * - Simple: `{"severity": "high"}`
-     * - AND: `{"_and": [{"severity": "high"}, {"confirmed": true}]}`
-     * - OR: `{"_or": [{"type": "MITIGATES"}, {"type": "PREVENTS"}]}`
-     * - NOT: `{"_not": {"status": "deprecated"}}`
-     */
-    export interface Constraint {
-      /**
-       * 'upsert': Create target node if not found via search (default). 'lookup': Only
-       * link to existing target nodes (controlled vocabulary). When 'lookup', edges to
-       * non-existing targets are skipped. Deprecated aliases: 'auto' -> 'upsert',
-       * 'never' -> 'lookup'.
-       */
-      create?: 'upsert' | 'lookup' | 'auto' | 'never';
-
-      /**
-       * Direction of edges this constraint applies to. 'outgoing': edges where current
-       * node is source (default). 'incoming': edges where current node is target.
-       * 'both': applies in either direction.
-       */
-      direction?: 'outgoing' | 'incoming' | 'both';
-
-      /**
-       * Edge/relationship type this constraint applies to (e.g., 'MITIGATES',
-       * 'ASSIGNED_TO'). Optional at schema level (implicit from parent
-       * UserRelationshipType), required at memory level (in
-       * memory_policy.edge_constraints).
-       */
-      edge_type?: string | null;
-
-      /**
-       * DEPRECATED: Use create='lookup' instead. Shorthand for create='lookup'. When
-       * True, only links to existing target nodes. Equivalent to @lookup decorator in
-       * schema definitions.
-       */
-      link_only?: boolean;
-
-      /**
-       * Explicit behavior when no target match found via search. 'create': create new
-       * target node (same as upsert). 'ignore': skip edge creation (same as lookup).
-       * 'error': raise error if target not found. If specified, overrides 'create'
-       * field.
-       */
-      on_miss?: 'create' | 'ignore' | 'error' | null;
-
-      /**
-       * Configuration for finding/selecting existing nodes.
-       *
-       * Defines which properties to match on and how, in priority order. The first
-       * matching property wins.
-       *
-       * **String Shorthand** (simple cases - converts to exact match):
-       * SearchConfig(properties=["id", "email"]) # Equivalent to:
-       * SearchConfig(properties=[PropertyMatch.exact("id"),
-       * PropertyMatch.exact("email")])
-       *
-       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
-       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
-       * control ])
-       *
-       * **Full Form** (maximum control): SearchConfig(properties=[
-       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
-       * mode="semantic", threshold=0.85) ])
-       *
-       * **To select a specific node by ID**:
-       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
-       */
-      search?: Constraint.Search | null;
-
-      /**
-       * Set property values on edges. Supports: 1. Exact value: {'weight': 1.0} - sets
-       * exact value. 2. Auto-extract: {'reason': {'mode': 'auto'}} - LLM extracts from
-       * content. Edge properties are useful for relationship metadata (weight,
-       * timestamp, reason, etc.).
-       */
-      set?: {
-        [key: string]:
-          | string
-          | number
-          | boolean
-          | Array<unknown>
-          | { [key: string]: unknown }
-          | Constraint.PropertyValue;
-      } | null;
-
-      /**
-       * Filter: only apply when source node is of this type. Example:
-       * source_type='SecurityBehavior' - only applies to edges from SecurityBehavior
-       * nodes.
-       */
-      source_type?: string | null;
-
-      /**
-       * Filter: only apply when target node is of this type. Example:
-       * target_type='TacticDef' - only applies to edges targeting TacticDef nodes.
-       */
-      target_type?: string | null;
-
-      /**
-       * Condition for when this constraint applies. Supports logical operators: '\_and',
-       * '\_or', '\_not'. Applied to edge properties or context. Example: {'\_and':
-       * [{'severity': 'high'}, {'_not': {'status': 'deprecated'}}]}
-       */
-      when?: { [key: string]: unknown } | null;
-    }
-
-    export namespace Constraint {
-      /**
-       * Configuration for finding/selecting existing nodes.
-       *
-       * Defines which properties to match on and how, in priority order. The first
-       * matching property wins.
-       *
-       * **String Shorthand** (simple cases - converts to exact match):
-       * SearchConfig(properties=["id", "email"]) # Equivalent to:
-       * SearchConfig(properties=[PropertyMatch.exact("id"),
-       * PropertyMatch.exact("email")])
-       *
-       * **Mixed Form** (combine strings and PropertyMatch): SearchConfig(properties=[
-       * "id", # String -> exact match PropertyMatch.semantic("title", 0.9) # Full
-       * control ])
-       *
-       * **Full Form** (maximum control): SearchConfig(properties=[
-       * PropertyMatch(name="id", mode="exact"), PropertyMatch(name="title",
-       * mode="semantic", threshold=0.85) ])
-       *
-       * **To select a specific node by ID**:
-       * SearchConfig(properties=[PropertyMatch.exact("id", "TASK-123")])
-       */
-      export interface Search {
-        /**
-         * Default search mode when property doesn't specify one. 'semantic' (vector
-         * similarity), 'exact' (property match), 'fuzzy' (partial match).
-         */
-        mode?: 'semantic' | 'exact' | 'fuzzy';
-
-        /**
-         * Properties to match on, in priority order (first match wins). Accepts strings
-         * (converted to exact match) or PropertyMatch objects. Use PropertyMatch with
-         * 'value' field for specific node selection.
-         */
-        properties?: Array<Search.Property> | null;
-
-        /**
-         * Default similarity threshold for semantic/fuzzy matching (0.0-1.0). Used when
-         * property doesn't specify its own threshold.
-         */
-        threshold?: number;
-
-        /**
-         * Search for nodes via their relationships. Example: Find tasks assigned to a
-         * specific person. Each RelationshipMatch specifies edge_type, target_type, and
-         * target_search. Multiple relationship matches are ANDed together.
-         */
-        via_relationship?: Array<unknown> | null;
-      }
-
-      export namespace Search {
-        /**
-         * Property matching configuration.
-         *
-         * Defines which property to match on and how. When listed in search.properties,
-         * this property becomes a unique identifier.
-         *
-         * **Shorthand Helpers** (recommended for common cases):
-         * PropertyMatch.exact("id") # Exact match on id PropertyMatch.exact("id",
-         * "TASK-123") # Exact match with specific value PropertyMatch.semantic("title") #
-         * Semantic match with default threshold PropertyMatch.semantic("title", 0.9) #
-         * Semantic match with custom threshold PropertyMatch.semantic("title",
-         * value="bug") # Semantic search for "bug" PropertyMatch.fuzzy("name", 0.8) #
-         * Fuzzy match
-         *
-         * **Full Form** (when you need all options): PropertyMatch(name="title",
-         * mode="semantic", threshold=0.9, value="auth bug")
-         *
-         * **String Shorthand** (in SearchConfig.properties): properties=["id", "email"] #
-         * Equivalent to [PropertyMatch.exact("id"), PropertyMatch.exact("email")]
-         */
-        export interface Property {
-          /**
-           * Property name to match on (e.g., 'id', 'email', 'title')
-           */
-          name: string;
-
-          /**
-           * Matching mode: 'exact' (string match), 'semantic' (embedding similarity),
-           * 'fuzzy' (Levenshtein distance)
-           */
-          mode?: 'semantic' | 'exact' | 'fuzzy';
-
-          /**
-           * Similarity threshold for semantic/fuzzy modes (0.0-1.0). Ignored for exact mode.
-           */
-          threshold?: number;
-
-          /**
-           * Runtime value override. If set, use this value for matching instead of
-           * extracting from content. Useful for memory-level overrides when you know the
-           * exact value to search for.
-           */
-          value?: unknown;
-        }
-      }
-
-      /**
-       * Configuration for a property value in NodeConstraint.set.
-       *
-       * Supports two modes:
-       *
-       * 1. Exact value: Just pass the value directly (e.g., "done", 123, True)
-       * 2. Auto-extract: {"mode": "auto"} - LLM extracts from memory content
-       *
-       * For text properties, use text_mode to control how updates are applied.
-       */
-      export interface PropertyValue {
-        /**
-         * 'auto': LLM extracts value from memory content.
-         */
-        mode?: 'auto';
-
-        /**
-         * For text properties: 'replace' (overwrite), 'append' (add to), 'merge' (LLM
-         * combines existing + new).
-         */
-        text_mode?: 'replace' | 'append' | 'merge';
-      }
-    }
-
-    /**
-     * Property definition for nodes/relationships
-     */
-    export interface Properties {
-      type: 'string' | 'integer' | 'float' | 'boolean' | 'array' | 'datetime' | 'object';
-
-      default?: unknown;
-
-      description?: string | null;
-
-      /**
-       * List of allowed enum values (max 15)
-       */
-      enum_values?: Array<string> | null;
-
-      max_length?: number | null;
-
-      max_value?: number | null;
-
-      min_length?: number | null;
-
-      min_value?: number | null;
-
-      pattern?: string | null;
-
-      required?: boolean;
-    }
   }
 }
 
@@ -1889,6 +1155,8 @@ export interface SchemaListParams {
 
 export declare namespace Schemas {
   export {
+    type PropertyDefinition as PropertyDefinition,
+    type SearchConfigOutput as SearchConfigOutput,
     type UserGraphSchemaOutput as UserGraphSchemaOutput,
     type SchemaCreateResponse as SchemaCreateResponse,
     type SchemaRetrieveResponse as SchemaRetrieveResponse,
