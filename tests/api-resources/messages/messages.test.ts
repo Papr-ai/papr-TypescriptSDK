@@ -225,6 +225,7 @@ describe('resource messages', () => {
       organization_id: 'organization_id',
       process_messages: true,
       relationships_json: [{ foo: 'bar' }],
+      title: 'title',
     });
   });
 });

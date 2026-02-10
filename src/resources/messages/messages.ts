@@ -40,6 +40,7 @@ export class Messages extends APIResource {
    *     **Session Management**:
    *     - `sessionId` is required to group related messages
    *     - Use the same `sessionId` for an entire conversation
+   *     - **Optional `title`**: Set a human-readable title for the conversation (e.g., "Q4 Planning Session")
    *     - Retrieve conversation history using GET /messages/sessions/{sessionId}
    *
    * @example
@@ -168,6 +169,12 @@ export interface MessageStoreParams {
    * Optional array of relationships for Graph DB (Neo4j)
    */
   relationships_json?: Array<{ [key: string]: unknown }> | null;
+
+  /**
+   * Optional title for the conversation session. Sets the Chat.title in Parse Server
+   * for easy identification.
+   */
+  title?: string | null;
 }
 
 Messages.Sessions = Sessions;
