@@ -126,15 +126,26 @@ export namespace DocumentUploadResponse {
 export interface DocumentUploadParams {
   file: Uploadable;
 
-  end_user_id?: string | null;
+  /**
+   * Your application's user identifier. This is the primary way to identify users.
+   * Also accepts legacy 'end_user_id'.
+   */
+  external_user_id?: string | null;
 
   graph_override?: string | null;
 
   hierarchical_enabled?: boolean;
 
+  /**
+   * JSON-encoded memory policy. Includes mode ('auto'/'manual'), schema_id,
+   * node_constraints (applied in auto mode when present), and OMO fields (consent,
+   * risk, acl). This is the recommended way to configure memory processing.
+   */
+  memory_policy?: string | null;
+
   metadata?: string | null;
 
-  namespace?: string | null;
+  namespace_id?: string | null;
 
   /**
    * Preferred provider for document processing.
@@ -145,8 +156,10 @@ export interface DocumentUploadParams {
 
   schema_id?: string | null;
 
-  simple_schema_mode?: boolean;
-
+  /**
+   * DEPRECATED: Internal Papr Parse user ID. Most developers should use
+   * external_user_id.
+   */
   user_id?: string | null;
 
   webhook_secret?: string | null;

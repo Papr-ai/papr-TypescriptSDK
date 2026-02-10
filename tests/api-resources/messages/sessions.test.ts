@@ -1,16 +1,16 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Papr, { toFile } from '@papr/memory';
+import Papr from '@papr/memory';
 
 const client = new Papr({
   xAPIKey: 'My X API Key',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
-describe('resource document', () => {
+describe('resource sessions', () => {
   // Prism tests are disabled
-  test.skip('cancelProcessing', async () => {
-    const responsePromise = client.document.cancelProcessing('upload_id');
+  test.skip('compress', async () => {
+    const responsePromise = client.messages.sessions.compress('session_id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,8 +21,8 @@ describe('resource document', () => {
   });
 
   // Prism tests are disabled
-  test.skip('getStatus', async () => {
-    const responsePromise = client.document.getStatus('upload_id');
+  test.skip('process', async () => {
+    const responsePromise = client.messages.sessions.process('session_id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -33,10 +33,8 @@ describe('resource document', () => {
   });
 
   // Prism tests are disabled
-  test.skip('upload: only required params', async () => {
-    const responsePromise = client.document.upload({
-      file: await toFile(Buffer.from('# my file contents'), 'README.md'),
-    });
+  test.skip('retrieveHistory', async () => {
+    const responsePromise = client.messages.sessions.retrieveHistory('session_id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -47,21 +45,26 @@ describe('resource document', () => {
   });
 
   // Prism tests are disabled
-  test.skip('upload: required and optional params', async () => {
-    const response = await client.document.upload({
-      file: await toFile(Buffer.from('# my file contents'), 'README.md'),
-      external_user_id: 'external_user_id',
-      graph_override: 'graph_override',
-      hierarchical_enabled: true,
-      memory_policy: 'memory_policy',
-      metadata: 'metadata',
-      namespace_id: 'namespace_id',
-      preferred_provider: 'gemini',
-      property_overrides: 'property_overrides',
-      schema_id: 'schema_id',
-      user_id: 'user_id',
-      webhook_secret: 'webhook_secret',
-      webhook_url: 'webhook_url',
-    });
+  test.skip('retrieveHistory: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.messages.sessions.retrieveHistory(
+        'session_id',
+        { limit: 1, skip: 0 },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Prism tests are disabled
+  test.skip('retrieveStatus', async () => {
+    const responsePromise = client.messages.sessions.retrieveStatus('session_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
   });
 });

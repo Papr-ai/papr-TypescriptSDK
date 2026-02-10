@@ -1,16 +1,16 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-import Papr, { toFile } from '@papr/memory';
+import Papr from '@papr/memory';
 
 const client = new Papr({
   xAPIKey: 'My X API Key',
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
-describe('resource document', () => {
+describe('resource omo', () => {
   // Prism tests are disabled
-  test.skip('cancelProcessing', async () => {
-    const responsePromise = client.document.cancelProcessing('upload_id');
+  test.skip('exportMemories: only required params', async () => {
+    const responsePromise = client.omo.exportMemories({ memory_ids: ['string'] });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,8 +21,13 @@ describe('resource document', () => {
   });
 
   // Prism tests are disabled
-  test.skip('getStatus', async () => {
-    const responsePromise = client.document.getStatus('upload_id');
+  test.skip('exportMemories: required and optional params', async () => {
+    const response = await client.omo.exportMemories({ memory_ids: ['string'] });
+  });
+
+  // Prism tests are disabled
+  test.skip('exportMemoriesAsJson: only required params', async () => {
+    const responsePromise = client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -33,10 +38,13 @@ describe('resource document', () => {
   });
 
   // Prism tests are disabled
-  test.skip('upload: only required params', async () => {
-    const responsePromise = client.document.upload({
-      file: await toFile(Buffer.from('# my file contents'), 'README.md'),
-    });
+  test.skip('exportMemoriesAsJson: required and optional params', async () => {
+    const response = await client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
+  });
+
+  // Prism tests are disabled
+  test.skip('importMemories: only required params', async () => {
+    const responsePromise = client.omo.importMemories({ memories: [{ foo: 'bar' }] });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -47,21 +55,7 @@ describe('resource document', () => {
   });
 
   // Prism tests are disabled
-  test.skip('upload: required and optional params', async () => {
-    const response = await client.document.upload({
-      file: await toFile(Buffer.from('# my file contents'), 'README.md'),
-      external_user_id: 'external_user_id',
-      graph_override: 'graph_override',
-      hierarchical_enabled: true,
-      memory_policy: 'memory_policy',
-      metadata: 'metadata',
-      namespace_id: 'namespace_id',
-      preferred_provider: 'gemini',
-      property_overrides: 'property_overrides',
-      schema_id: 'schema_id',
-      user_id: 'user_id',
-      webhook_secret: 'webhook_secret',
-      webhook_url: 'webhook_url',
-    });
+  test.skip('importMemories: required and optional params', async () => {
+    const response = await client.omo.importMemories({ memories: [{ foo: 'bar' }], skip_duplicates: true });
   });
 });

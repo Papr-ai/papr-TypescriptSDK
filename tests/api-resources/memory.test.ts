@@ -58,6 +58,8 @@ describe('resource memory', () => {
   test.skip('add: required and optional params', async () => {
     const response = await client.memory.add({
       content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
+      enable_holographic: true,
+      format: 'format',
       skip_background_processing: true,
       context: [
         { content: "Let's discuss the Q4 project timeline with John", role: 'user' },
@@ -66,25 +68,157 @@ describe('resource memory', () => {
           role: 'assistant',
         },
       ],
+      external_user_id: 'external_user_id',
       graph_generation: {
         auto: {
           property_overrides: [
-            { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+            {
+              nodeLabel: 'User',
+              set: { id: 'bar', role: 'bar' },
+              match: { name: 'bar' },
+            },
           ],
           schema_id: 'schema_id',
-          simple_schema_mode: true,
         },
         manual: {
-          nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+          nodes: [
+            {
+              id: 'x',
+              label: 'x',
+              properties: { foo: 'bar' },
+            },
+          ],
           relationships: [
-            { relationship_type: 'x', source_node_id: 'x', target_node_id: 'x', properties: { foo: 'bar' } },
+            {
+              relationship_type: 'x',
+              source_node_id: 'x',
+              target_node_id: 'x',
+              properties: { foo: 'bar' },
+            },
           ],
         },
         mode: 'auto',
       },
+      link_to: 'string',
+      memory_policy: {
+        acl: {
+          read: ['external_user:alice_123', 'organization:org_acme'],
+          write: ['external_user:alice_123'],
+        },
+        consent: 'explicit',
+        edge_constraints: [
+          {
+            create: 'upsert',
+            direction: 'outgoing',
+            edge_type: 'x',
+            link_only: true,
+            on_miss: 'create',
+            search: {
+              mode: 'semantic',
+              properties: [
+                {
+                  name: 'Exact ID match',
+                  mode: 'semantic',
+                  threshold: 0,
+                  value: { mode: 'exact', name: 'id' },
+                },
+              ],
+              threshold: 0,
+              via_relationship: [
+                {
+                  name: 'Find via ASSIGNED_TO',
+                  summary: 'Find nodes assigned to a specific person',
+                  value: {
+                    edge_type: 'ASSIGNED_TO',
+                    target_search: {
+                      properties: [
+                        {
+                          name: 'email',
+                          mode: 'exact',
+                          value: 'alice@example.com',
+                        },
+                      ],
+                    },
+                    target_type: 'Person',
+                  },
+                },
+              ],
+            },
+            set: { foo: 'string' },
+            source_type: 'source_type',
+            target_type: 'target_type',
+            when: { foo: 'bar' },
+          },
+        ],
+        mode: 'auto',
+        node_constraints: [
+          {
+            create: 'upsert',
+            link_only: true,
+            node_type: 'x',
+            on_miss: 'create',
+            search: {
+              mode: 'semantic',
+              properties: [
+                {
+                  name: 'Exact ID match',
+                  mode: 'semantic',
+                  threshold: 0,
+                  value: { mode: 'exact', name: 'id' },
+                },
+              ],
+              threshold: 0,
+              via_relationship: [
+                {
+                  name: 'Find via ASSIGNED_TO',
+                  summary: 'Find nodes assigned to a specific person',
+                  value: {
+                    edge_type: 'ASSIGNED_TO',
+                    target_search: {
+                      properties: [
+                        {
+                          name: 'email',
+                          mode: 'exact',
+                          value: 'alice@example.com',
+                        },
+                      ],
+                    },
+                    target_type: 'Person',
+                  },
+                },
+              ],
+            },
+            set: { foo: 'string' },
+            when: { foo: 'bar' },
+          },
+        ],
+        nodes: [
+          {
+            id: 'txn_12345',
+            type: 'Transaction',
+            properties: {
+              amount: 'bar',
+              product: 'bar',
+              timestamp: 'bar',
+            },
+          },
+        ],
+        relationships: [
+          {
+            source: 'txn_12345',
+            target: 'product_latte',
+            type: 'PURCHASED',
+            properties: { foo: 'bar' },
+          },
+        ],
+        risk: 'none',
+        schema_id: 'schema_id',
+      },
       metadata: {
+        acl: { foo: ['string'] },
         assistantMessage: 'assistantMessage',
         category: 'preference',
+        consent: 'consent',
         conversationId: 'conv-123',
         createdAt: '2024-10-04T10:00:00Z',
         customMetadata: { foo: 'string' },
@@ -107,6 +241,7 @@ describe('resource memory', () => {
         relatedGoals: ['string'],
         relatedSteps: ['string'],
         relatedUseCases: ['string'],
+        risk: 'risk',
         role: 'user',
         role_read_access: ['string'],
         role_write_access: ['string'],
@@ -137,6 +272,7 @@ describe('resource memory', () => {
         },
       ],
       type: 'text',
+      user_id: 'user_id',
     });
   });
 
@@ -170,16 +306,26 @@ describe('resource memory', () => {
               role: 'assistant',
             },
           ],
+          external_user_id: 'external_user_id',
           graph_generation: {
             auto: {
               property_overrides: [
-                { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+                {
+                  nodeLabel: 'User',
+                  set: { id: 'bar', role: 'bar' },
+                  match: { name: 'bar' },
+                },
               ],
               schema_id: 'schema_id',
-              simple_schema_mode: true,
             },
             manual: {
-              nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+              nodes: [
+                {
+                  id: 'x',
+                  label: 'x',
+                  properties: { foo: 'bar' },
+                },
+              ],
               relationships: [
                 {
                   relationship_type: 'x',
@@ -191,9 +337,126 @@ describe('resource memory', () => {
             },
             mode: 'auto',
           },
+          link_to: 'string',
+          memory_policy: {
+            acl: {
+              read: ['external_user:alice_123', 'organization:org_acme'],
+              write: ['external_user:alice_123'],
+            },
+            consent: 'explicit',
+            edge_constraints: [
+              {
+                create: 'upsert',
+                direction: 'outgoing',
+                edge_type: 'x',
+                link_only: true,
+                on_miss: 'create',
+                search: {
+                  mode: 'semantic',
+                  properties: [
+                    {
+                      name: 'Exact ID match',
+                      mode: 'semantic',
+                      threshold: 0,
+                      value: { mode: 'exact', name: 'id' },
+                    },
+                  ],
+                  threshold: 0,
+                  via_relationship: [
+                    {
+                      name: 'Find via ASSIGNED_TO',
+                      summary: 'Find nodes assigned to a specific person',
+                      value: {
+                        edge_type: 'ASSIGNED_TO',
+                        target_search: {
+                          properties: [
+                            {
+                              name: 'email',
+                              mode: 'exact',
+                              value: 'alice@example.com',
+                            },
+                          ],
+                        },
+                        target_type: 'Person',
+                      },
+                    },
+                  ],
+                },
+                set: { foo: 'string' },
+                source_type: 'source_type',
+                target_type: 'target_type',
+                when: { foo: 'bar' },
+              },
+            ],
+            mode: 'auto',
+            node_constraints: [
+              {
+                create: 'upsert',
+                link_only: true,
+                node_type: 'x',
+                on_miss: 'create',
+                search: {
+                  mode: 'semantic',
+                  properties: [
+                    {
+                      name: 'Exact ID match',
+                      mode: 'semantic',
+                      threshold: 0,
+                      value: { mode: 'exact', name: 'id' },
+                    },
+                  ],
+                  threshold: 0,
+                  via_relationship: [
+                    {
+                      name: 'Find via ASSIGNED_TO',
+                      summary: 'Find nodes assigned to a specific person',
+                      value: {
+                        edge_type: 'ASSIGNED_TO',
+                        target_search: {
+                          properties: [
+                            {
+                              name: 'email',
+                              mode: 'exact',
+                              value: 'alice@example.com',
+                            },
+                          ],
+                        },
+                        target_type: 'Person',
+                      },
+                    },
+                  ],
+                },
+                set: { foo: 'string' },
+                when: { foo: 'bar' },
+              },
+            ],
+            nodes: [
+              {
+                id: 'txn_12345',
+                type: 'Transaction',
+                properties: {
+                  amount: 'bar',
+                  product: 'bar',
+                  timestamp: 'bar',
+                },
+              },
+            ],
+            relationships: [
+              {
+                source: 'txn_12345',
+                target: 'product_latte',
+                type: 'PURCHASED',
+                properties: { foo: 'bar' },
+              },
+            ],
+            risk: 'none',
+            schema_id: 'schema_id',
+          },
           metadata: {
+            acl: { foo: ['string'] },
             assistantMessage: 'assistantMessage',
             category: 'preference',
+            consent: 'consent',
             conversationId: 'conversationId',
             createdAt: '2024-03-21T10:00:00Z',
             customMetadata: { foo: 'string' },
@@ -203,7 +466,7 @@ describe('resource memory', () => {
             external_user_read_access: ['string'],
             external_user_write_access: ['string'],
             goalClassificationScores: [0],
-            hierarchical_structures: 'hierarchical_structures',
+            hierarchical_structures: 'string',
             location: 'location',
             namespace_id: 'namespace_id',
             namespace_read_access: ['string'],
@@ -216,6 +479,7 @@ describe('resource memory', () => {
             relatedGoals: ['string'],
             relatedSteps: ['string'],
             relatedUseCases: ['string'],
+            risk: 'risk',
             role: 'user',
             role_read_access: ['string'],
             role_write_access: ['string'],
@@ -246,6 +510,7 @@ describe('resource memory', () => {
             },
           ],
           type: 'text',
+          user_id: 'user_id',
         },
         {
           content: 'Follow-up tasks from the planning meeting',
@@ -256,16 +521,26 @@ describe('resource memory', () => {
               role: 'assistant',
             },
           ],
+          external_user_id: 'external_user_id',
           graph_generation: {
             auto: {
               property_overrides: [
-                { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+                {
+                  nodeLabel: 'User',
+                  set: { id: 'bar', role: 'bar' },
+                  match: { name: 'bar' },
+                },
               ],
               schema_id: 'schema_id',
-              simple_schema_mode: true,
             },
             manual: {
-              nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+              nodes: [
+                {
+                  id: 'x',
+                  label: 'x',
+                  properties: { foo: 'bar' },
+                },
+              ],
               relationships: [
                 {
                   relationship_type: 'x',
@@ -277,9 +552,126 @@ describe('resource memory', () => {
             },
             mode: 'auto',
           },
+          link_to: 'string',
+          memory_policy: {
+            acl: {
+              read: ['external_user:alice_123', 'organization:org_acme'],
+              write: ['external_user:alice_123'],
+            },
+            consent: 'explicit',
+            edge_constraints: [
+              {
+                create: 'upsert',
+                direction: 'outgoing',
+                edge_type: 'x',
+                link_only: true,
+                on_miss: 'create',
+                search: {
+                  mode: 'semantic',
+                  properties: [
+                    {
+                      name: 'Exact ID match',
+                      mode: 'semantic',
+                      threshold: 0,
+                      value: { mode: 'exact', name: 'id' },
+                    },
+                  ],
+                  threshold: 0,
+                  via_relationship: [
+                    {
+                      name: 'Find via ASSIGNED_TO',
+                      summary: 'Find nodes assigned to a specific person',
+                      value: {
+                        edge_type: 'ASSIGNED_TO',
+                        target_search: {
+                          properties: [
+                            {
+                              name: 'email',
+                              mode: 'exact',
+                              value: 'alice@example.com',
+                            },
+                          ],
+                        },
+                        target_type: 'Person',
+                      },
+                    },
+                  ],
+                },
+                set: { foo: 'string' },
+                source_type: 'source_type',
+                target_type: 'target_type',
+                when: { foo: 'bar' },
+              },
+            ],
+            mode: 'auto',
+            node_constraints: [
+              {
+                create: 'upsert',
+                link_only: true,
+                node_type: 'x',
+                on_miss: 'create',
+                search: {
+                  mode: 'semantic',
+                  properties: [
+                    {
+                      name: 'Exact ID match',
+                      mode: 'semantic',
+                      threshold: 0,
+                      value: { mode: 'exact', name: 'id' },
+                    },
+                  ],
+                  threshold: 0,
+                  via_relationship: [
+                    {
+                      name: 'Find via ASSIGNED_TO',
+                      summary: 'Find nodes assigned to a specific person',
+                      value: {
+                        edge_type: 'ASSIGNED_TO',
+                        target_search: {
+                          properties: [
+                            {
+                              name: 'email',
+                              mode: 'exact',
+                              value: 'alice@example.com',
+                            },
+                          ],
+                        },
+                        target_type: 'Person',
+                      },
+                    },
+                  ],
+                },
+                set: { foo: 'string' },
+                when: { foo: 'bar' },
+              },
+            ],
+            nodes: [
+              {
+                id: 'txn_12345',
+                type: 'Transaction',
+                properties: {
+                  amount: 'bar',
+                  product: 'bar',
+                  timestamp: 'bar',
+                },
+              },
+            ],
+            relationships: [
+              {
+                source: 'txn_12345',
+                target: 'product_latte',
+                type: 'PURCHASED',
+                properties: { foo: 'bar' },
+              },
+            ],
+            risk: 'none',
+            schema_id: 'schema_id',
+          },
           metadata: {
+            acl: { foo: ['string'] },
             assistantMessage: 'assistantMessage',
             category: 'preference',
+            consent: 'consent',
             conversationId: 'conversationId',
             createdAt: '2024-03-21T11:00:00Z',
             customMetadata: { foo: 'string' },
@@ -289,7 +681,7 @@ describe('resource memory', () => {
             external_user_read_access: ['string'],
             external_user_write_access: ['string'],
             goalClassificationScores: [0],
-            hierarchical_structures: 'hierarchical_structures',
+            hierarchical_structures: 'string',
             location: 'location',
             namespace_id: 'namespace_id',
             namespace_read_access: ['string'],
@@ -302,6 +694,7 @@ describe('resource memory', () => {
             relatedGoals: ['string'],
             relatedSteps: ['string'],
             relatedUseCases: ['string'],
+            risk: 'risk',
             role: 'user',
             role_read_access: ['string'],
             role_write_access: ['string'],
@@ -332,6 +725,7 @@ describe('resource memory', () => {
             },
           ],
           type: 'text',
+          user_id: 'user_id',
         },
       ],
       skip_background_processing: true,
@@ -340,18 +734,147 @@ describe('resource memory', () => {
       graph_generation: {
         auto: {
           property_overrides: [
-            { nodeLabel: 'User', set: { id: 'bar', role: 'bar' }, match: { name: 'bar' } },
+            {
+              nodeLabel: 'User',
+              set: { id: 'bar', role: 'bar' },
+              match: { name: 'bar' },
+            },
           ],
           schema_id: 'schema_id',
-          simple_schema_mode: true,
         },
         manual: {
-          nodes: [{ id: 'x', label: 'x', properties: { foo: 'bar' } }],
+          nodes: [
+            {
+              id: 'x',
+              label: 'x',
+              properties: { foo: 'bar' },
+            },
+          ],
           relationships: [
-            { relationship_type: 'x', source_node_id: 'x', target_node_id: 'x', properties: { foo: 'bar' } },
+            {
+              relationship_type: 'x',
+              source_node_id: 'x',
+              target_node_id: 'x',
+              properties: { foo: 'bar' },
+            },
           ],
         },
         mode: 'auto',
+      },
+      link_to: 'string',
+      memory_policy: {
+        acl: {
+          read: ['external_user:alice_123', 'organization:org_acme'],
+          write: ['external_user:alice_123'],
+        },
+        consent: 'explicit',
+        edge_constraints: [
+          {
+            create: 'upsert',
+            direction: 'outgoing',
+            edge_type: 'x',
+            link_only: true,
+            on_miss: 'create',
+            search: {
+              mode: 'semantic',
+              properties: [
+                {
+                  name: 'Exact ID match',
+                  mode: 'semantic',
+                  threshold: 0,
+                  value: { mode: 'exact', name: 'id' },
+                },
+              ],
+              threshold: 0,
+              via_relationship: [
+                {
+                  name: 'Find via ASSIGNED_TO',
+                  summary: 'Find nodes assigned to a specific person',
+                  value: {
+                    edge_type: 'ASSIGNED_TO',
+                    target_search: {
+                      properties: [
+                        {
+                          name: 'email',
+                          mode: 'exact',
+                          value: 'alice@example.com',
+                        },
+                      ],
+                    },
+                    target_type: 'Person',
+                  },
+                },
+              ],
+            },
+            set: { foo: 'string' },
+            source_type: 'source_type',
+            target_type: 'target_type',
+            when: { foo: 'bar' },
+          },
+        ],
+        mode: 'auto',
+        node_constraints: [
+          {
+            create: 'upsert',
+            link_only: true,
+            node_type: 'x',
+            on_miss: 'create',
+            search: {
+              mode: 'semantic',
+              properties: [
+                {
+                  name: 'Exact ID match',
+                  mode: 'semantic',
+                  threshold: 0,
+                  value: { mode: 'exact', name: 'id' },
+                },
+              ],
+              threshold: 0,
+              via_relationship: [
+                {
+                  name: 'Find via ASSIGNED_TO',
+                  summary: 'Find nodes assigned to a specific person',
+                  value: {
+                    edge_type: 'ASSIGNED_TO',
+                    target_search: {
+                      properties: [
+                        {
+                          name: 'email',
+                          mode: 'exact',
+                          value: 'alice@example.com',
+                        },
+                      ],
+                    },
+                    target_type: 'Person',
+                  },
+                },
+              ],
+            },
+            set: { foo: 'string' },
+            when: { foo: 'bar' },
+          },
+        ],
+        nodes: [
+          {
+            id: 'txn_12345',
+            type: 'Transaction',
+            properties: {
+              amount: 'bar',
+              product: 'bar',
+              timestamp: 'bar',
+            },
+          },
+        ],
+        relationships: [
+          {
+            source: 'txn_12345',
+            target: 'product_latte',
+            type: 'PURCHASED',
+            properties: { foo: 'bar' },
+          },
+        ],
+        risk: 'none',
+        schema_id: 'schema_id',
       },
       namespace_id: 'namespace_id',
       organization_id: 'organization_id',
@@ -378,7 +901,11 @@ describe('resource memory', () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
       client.memory.deleteAll(
-        { external_user_id: 'external_user_id', skip_parse: true, user_id: 'user_id' },
+        {
+          external_user_id: 'external_user_id',
+          skip_parse: true,
+          user_id: 'user_id',
+        },
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Papr.NotFoundError);
@@ -394,6 +921,22 @@ describe('resource memory', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Prism tests are disabled
+  test.skip('get: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.memory.get(
+        'memory_id',
+        {
+          exclude_flagged: true,
+          max_risk: 'max_risk',
+          require_consent: true,
+        },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(Papr.NotFoundError);
   });
 
   // Prism tests are disabled
@@ -421,9 +964,18 @@ describe('resource memory', () => {
       response_format: 'json',
       enable_agentic_graph: false,
       external_user_id: 'external_user_123',
+      holographic_config: {
+        enabled: true,
+        hcond_boost_factor: 0.12,
+        hcond_boost_threshold: 0.35,
+        hcond_penalty_factor: 0.06,
+        search_mode: 'post_search',
+      },
       metadata: {
+        acl: { foo: ['string'] },
         assistantMessage: 'assistantMessage',
         category: 'preference',
+        consent: 'consent',
         conversationId: 'conversationId',
         createdAt: 'createdAt',
         customMetadata: { foo: 'string' },
@@ -433,7 +985,7 @@ describe('resource memory', () => {
         external_user_read_access: ['string'],
         external_user_write_access: ['string'],
         goalClassificationScores: [0],
-        hierarchical_structures: 'hierarchical_structures',
+        hierarchical_structures: 'string',
         location: 'location',
         namespace_id: 'namespace_id',
         namespace_read_access: ['string'],
@@ -446,6 +998,7 @@ describe('resource memory', () => {
         relatedGoals: ['string'],
         relatedSteps: ['string'],
         relatedUseCases: ['string'],
+        risk: 'risk',
         role: 'user',
         role_read_access: ['string'],
         role_write_access: ['string'],
@@ -465,10 +1018,45 @@ describe('resource memory', () => {
         workspace_write_access: ['string'],
       },
       namespace_id: 'namespace_id',
+      omo_filter: {
+        exclude_consent: ['none'],
+        exclude_flagged: true,
+        exclude_risk: ['flagged'],
+        max_risk: 'sensitive',
+        min_consent: 'implicit',
+        require_consent: true,
+      },
       organization_id: 'organization_id',
       rank_results: true,
+      reranking_config: {
+        reranking_enabled: true,
+        reranking_model: 'gpt-5-nano',
+        reranking_provider: 'openai',
+      },
       schema_id: 'schema_id',
-      simple_schema_mode: true,
+      search_override: {
+        pattern: {
+          relationship_type: 'ASSOCIATED_WITH',
+          source_label: 'Memory',
+          target_label: 'Person',
+          direction: '->',
+        },
+        filters: [
+          {
+            node_type: 'Person',
+            operator: 'CONTAINS',
+            property_name: 'name',
+            value: 'John',
+          },
+          {
+            node_type: 'Memory',
+            operator: 'IN',
+            property_name: 'topics',
+            value: ['project', 'meeting'],
+          },
+        ],
+        return_properties: ['name', 'content', 'createdAt'],
+      },
       user_id: 'user_id',
       'Accept-Encoding': 'Accept-Encoding',
     });
