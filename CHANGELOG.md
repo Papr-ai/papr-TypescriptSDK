@@ -1,5 +1,66 @@
 # Changelog
 
+## 2.0.0 (2026-02-10)
+
+Full Changelog: [v1.20.0...v2.0.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.20.0...v2.0.0)
+
+### ⚠ BREAKING CHANGES
+
+* **mcp:** remove deprecated tool schemes
+* **mcp:** **Migration:** To migrate, simply modify the command used to invoke the MCP server. Currently, the only supported tool scheme is code mode. Now, starting the server with just `node /path/to/mcp/server` or `npx package-name` will invoke code tools: changing your command to one of these is likely all you will need to do.
+
+### Features
+
+* **api:** manual updates ([9695b79](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9695b79225384ca2e0c1df33a89f0109b94a9ae8))
+* **api:** manual updates ([f731057](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f7310579f8e84553bd31be1900e20e2e3a68b8b6))
+* **api:** manual updates ([e52a444](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e52a4446c0dee0bc2ec2497642be6819f65eb2b3))
+* **mcp:** add initial server instructions ([58c7198](https://github.com/Papr-ai/papr-TypescriptSDK/commit/58c71981a0aea350e899e644409685e4babd3cf1))
+
+
+### Bug Fixes
+
+* **client:** avoid memory leak with abort signals ([962fd69](https://github.com/Papr-ai/papr-TypescriptSDK/commit/962fd699e57ce9ffa8daa3bb6f238417a4b2d4bd))
+* **docs:** fix mcp installation instructions for remote servers ([0c4f023](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0c4f0235e5172f881e397a5855243675a80e8cbb))
+* **mcp:** add client instantiation options to code tool ([7ece07b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7ece07b3cc5f1b45e1d10b3d56449f7ff07c74ec))
+* **mcp:** allow falling back for required env variables ([fb9e77b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/fb9e77b8a2e0fa15dd4686e90bbd1b1eb081b0ec))
+* **mcp:** correct code tool api output types ([f0eafe6](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f0eafe6e17058cd0498c8319242d54b0270ca8df))
+* **mcp:** fix env parsing ([86ad362](https://github.com/Papr-ai/papr-TypescriptSDK/commit/86ad362d02f5593462a302a23274af94ad3458d8))
+* **mcp:** fix options parsing ([24ff28d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/24ff28db50d2aeebbbb87bbbab6755cf85bb7cdf))
+* **mcp:** pass base url to code tool ([22d4617](https://github.com/Papr-ai/papr-TypescriptSDK/commit/22d46175c5f64400f2d1658b85f4966c6c3e406e))
+* **mcp:** update code tool prompt ([59b7226](https://github.com/Papr-ai/papr-TypescriptSDK/commit/59b72263a9e9fdd5cc7c073ba7cec436d0347b5e))
+
+
+### Chores
+
+* break long lines in snippets into multiline ([2a2faa8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/2a2faa8c204f903a339382f200617fdc89c27635))
+* **ci:** upgrade `actions/github-script` ([440a94e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/440a94e88b09d8a8c969a87597a36393dd3b5caa))
+* **client:** do not parse responses with empty content-length ([a71adab](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a71adab6e141772708c09975e56357bd96bb163e))
+* **client:** restructure abort controller binding ([dbb3537](https://github.com/Papr-ai/papr-TypescriptSDK/commit/dbb35375df625e48b7e4fd49733aaaa1a4c2d9bc))
+* **internal:** codegen related update ([3fb9806](https://github.com/Papr-ai/papr-TypescriptSDK/commit/3fb9806a1458e916401657cac400ef129f28a691))
+* **internal:** codegen related update ([feca6b1](https://github.com/Papr-ai/papr-TypescriptSDK/commit/feca6b1148f84cbb5449f340886b64b122cc3350))
+* **internal:** codegen related update ([c811c41](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c811c411217a227abb9b954d0c9fdd9590ed58e1))
+* **internal:** codegen related update ([3f70656](https://github.com/Papr-ai/papr-TypescriptSDK/commit/3f70656dbb115d2d655db6ca73e6adbba7de8492))
+* **internal:** codegen related update ([6af674d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6af674d2e8b4b3a39b1c198cf22d7e76b9ae8f6a))
+* **internal:** codegen related update ([450e525](https://github.com/Papr-ai/papr-TypescriptSDK/commit/450e5255d9a5b1a74480f00068061e3fb9ae2244))
+* **internal:** codegen related update ([c518db5](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c518db56d0e2716d5a95d64e90b36c26021813ac))
+* **internal:** codegen related update ([a248c73](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a248c73daa3ec9f1367fbd3d1918bfa83874cddb))
+* **internal:** refactor flag parsing for MCP servers and add debug flag ([1b1f00c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/1b1f00cee88da353995e74f9ddbda605d68b1638))
+* **internal:** support oauth authorization code flow for MCP servers ([bab9dcf](https://github.com/Papr-ai/papr-TypescriptSDK/commit/bab9dcf51318d83bfbcc5f5aef312a0060ee26f9))
+* **internal:** update `actions/checkout` version ([8caa75a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/8caa75a84e8d2e93b6d54d2694cf235082e00488))
+* **internal:** update lock file ([4979360](https://github.com/Papr-ai/papr-TypescriptSDK/commit/497936031f454c504218ca667049dd0a8af813cc))
+* **internal:** upgrade babel, qs, js-yaml ([fe7fcf6](https://github.com/Papr-ai/papr-TypescriptSDK/commit/fe7fcf63eba8e23a941071bf51a6be4a0bc815cd))
+* **mcp:** add intent param to execute tool ([4adc95d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/4adc95dd538024e34b3f9cc7c408f8df3365a1f1))
+* **mcp:** pass intent param to execute handler ([9ba4fdd](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9ba4fdd990197721e60e68e7a0374c7e99043d68))
+* **mcp:** remove deprecated tool schemes ([f5c44b0](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f5c44b087ba99cbc6ad85eb7bd18d95c228f6b11))
+* **mcp:** up tsconfig lib version to es2022 ([c68f851](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c68f851313e97be75152f51cbb87c7b59bc5bc25))
+* **mcp:** update lockfile ([1a53317](https://github.com/Papr-ai/papr-TypescriptSDK/commit/1a533176cca5ff63d00de7a954e644e82b73b0df))
+* **mcp:** upgrade dependencies ([ee65209](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ee6520959151128b3e248a2dc296f34a04f25f25))
+
+
+### Documentation
+
+* prominently feature MCP server setup in root SDK readmes ([76e251c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/76e251c808152d96b27dd273bccb94c7deaf9cc6))
+
 ## 1.20.0 (2025-12-07)
 
 Full Changelog: [v1.19.0...v1.20.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.19.0...v1.20.0)
