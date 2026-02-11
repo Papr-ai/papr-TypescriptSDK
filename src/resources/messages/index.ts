@@ -3,9 +3,11 @@
 export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages';
 export {
   Sessions,
+  type SessionUpdateResponse,
   type SessionCompressResponse,
   type SessionProcessResponse,
   type SessionRetrieveHistoryResponse,
   type SessionRetrieveStatusResponse,
+  type SessionUpdateParams,
   type SessionRetrieveHistoryParams,
 } from './sessions';

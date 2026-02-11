@@ -9,6 +9,18 @@ const client = new Papr({
 
 describe('resource sessions', () => {
   // Prism tests are disabled
+  test.skip('update', async () => {
+    const responsePromise = client.messages.sessions.update('session_id', {});
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Prism tests are disabled
   test.skip('compress', async () => {
     const responsePromise = client.messages.sessions.compress('session_id');
     const rawResponse = await responsePromise.asResponse();
