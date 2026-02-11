@@ -138,6 +138,7 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/messages/sessions.ts">SessionUpdateResponse</a></code>
 - <code><a href="./src/resources/messages/sessions.ts">SessionCompressResponse</a></code>
 - <code><a href="./src/resources/messages/sessions.ts">SessionProcessResponse</a></code>
 - <code><a href="./src/resources/messages/sessions.ts">SessionRetrieveHistoryResponse</a></code>
@@ -145,6 +146,7 @@ Types:
 
 Methods:
 
+- <code title="patch /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">update</a>(sessionID, { ...params }) -> unknown</code>
 - <code title="get /v1/messages/sessions/{session_id}/compress">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">compress</a>(sessionID) -> SessionCompressResponse</code>
 - <code title="post /v1/messages/sessions/{session_id}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">process</a>(sessionID) -> unknown</code>
 - <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>

@@ -7,6 +7,34 @@ import { path } from '../../internal/utils/path';
 
 export class Sessions extends APIResource {
   /**
+   * Update session properties (e.g., title, metadata).
+   *
+   *     **Authentication Required**: Bearer token, API key, or session token
+   *
+   *     **Updatable Fields**:
+   *     - `title`: Update the conversation title
+   *     - `metadata`: Update session metadata (merged with existing)
+   *
+   *     **Example Request**:
+   *     ```json
+   *     {
+   *         "title": "Updated Session Title",
+   *         "metadata": {"custom_field": "value"}
+   *     }
+   *     ```
+   *
+   * @example
+   * ```ts
+   * const session = await client.messages.sessions.update(
+   *   'session_id',
+   * );
+   * ```
+   */
+  update(sessionID: string, body: SessionUpdateParams, options?: RequestOptions): APIPromise<unknown> {
+    return this._client.patch(path`/v1/messages/sessions/${sessionID}`, { body, ...options });
+  }
+
+  /**
    * Get compressed conversation context for a session.
    *
    *     Compress your conversation into hierarchical summaries with rich metadata,
@@ -126,6 +154,8 @@ export class Sessions extends APIResource {
     return this._client.get(path`/v1/messages/sessions/${sessionID}/status`, options);
   }
 }
+
+export type SessionUpdateResponse = unknown;
 
 /**
  * Response model for session summarization endpoint
@@ -292,6 +322,18 @@ export namespace SessionRetrieveHistoryResponse {
 
 export type SessionRetrieveStatusResponse = unknown;
 
+export interface SessionUpdateParams {
+  /**
+   * Metadata to merge with existing session metadata
+   */
+  metadata?: { [key: string]: unknown } | null;
+
+  /**
+   * New title for the session
+   */
+  title?: string | null;
+}
+
 export interface SessionRetrieveHistoryParams {
   /**
    * Maximum number of messages to return
@@ -306,10 +348,12 @@ export interface SessionRetrieveHistoryParams {
 
 export declare namespace Sessions {
   export {
+    type SessionUpdateResponse as SessionUpdateResponse,
     type SessionCompressResponse as SessionCompressResponse,
     type SessionProcessResponse as SessionProcessResponse,
     type SessionRetrieveHistoryResponse as SessionRetrieveHistoryResponse,
     type SessionRetrieveStatusResponse as SessionRetrieveStatusResponse,
+    type SessionUpdateParams as SessionUpdateParams,
     type SessionRetrieveHistoryParams as SessionRetrieveHistoryParams,
   };
 }

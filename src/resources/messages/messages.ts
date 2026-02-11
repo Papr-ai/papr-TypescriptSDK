@@ -10,6 +10,8 @@ import {
   SessionRetrieveHistoryParams,
   SessionRetrieveHistoryResponse,
   SessionRetrieveStatusResponse,
+  SessionUpdateParams,
+  SessionUpdateResponse,
   Sessions,
 } from './sessions';
 import { APIPromise } from '../../core/api-promise';
@@ -184,10 +186,12 @@ export declare namespace Messages {
 
   export {
     Sessions as Sessions,
+    type SessionUpdateResponse as SessionUpdateResponse,
     type SessionCompressResponse as SessionCompressResponse,
     type SessionProcessResponse as SessionProcessResponse,
     type SessionRetrieveHistoryResponse as SessionRetrieveHistoryResponse,
     type SessionRetrieveStatusResponse as SessionRetrieveStatusResponse,
+    type SessionUpdateParams as SessionUpdateParams,
     type SessionRetrieveHistoryParams as SessionRetrieveHistoryParams,
   };
 }

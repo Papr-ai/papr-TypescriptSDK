@@ -171,6 +171,12 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/messages',
   },
   {
+    clientCallName: 'client.messages.sessions.update',
+    fullyQualifiedName: 'messages.sessions.update',
+    httpMethod: 'patch',
+    httpPath: '/v1/messages/sessions/{session_id}',
+  },
+  {
     clientCallName: 'client.messages.sessions.compress',
     fullyQualifiedName: 'messages.sessions.compress',
     httpMethod: 'get',
