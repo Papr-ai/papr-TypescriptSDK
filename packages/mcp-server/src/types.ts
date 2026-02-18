@@ -42,10 +42,18 @@ export type ToolCallResult = {
   isError?: boolean;
 };
 
-export type HandlerFunction = (
-  client: Papr,
-  args: Record<string, unknown> | undefined,
-) => Promise<ToolCallResult>;
+export type McpRequestContext = {
+  client: Papr;
+  stainlessApiKey?: string | undefined;
+};
+
+export type HandlerFunction = ({
+  reqContext,
+  args,
+}: {
+  reqContext: McpRequestContext;
+  args: Record<string, unknown> | undefined;
+}) => Promise<ToolCallResult>;
 
 export function asTextContentResult(result: unknown): ToolCallResult {
   return {
