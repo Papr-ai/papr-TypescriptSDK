@@ -8,7 +8,7 @@ const client = new Papr({
 });
 
 describe('resource messages', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('store: only required params', async () => {
     const responsePromise = client.messages.store({
       content: 'string',
@@ -24,7 +24,7 @@ describe('resource messages', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('store: required and optional params', async () => {
     const response = await client.messages.store({
       content: 'string',

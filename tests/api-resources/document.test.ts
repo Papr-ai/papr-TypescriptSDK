@@ -8,7 +8,7 @@ const client = new Papr({
 });
 
 describe('resource document', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('cancelProcessing', async () => {
     const responsePromise = client.document.cancelProcessing('upload_id');
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource document', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('getStatus', async () => {
     const responsePromise = client.document.getStatus('upload_id');
     const rawResponse = await responsePromise.asResponse();
@@ -32,7 +32,7 @@ describe('resource document', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('upload: only required params', async () => {
     const responsePromise = client.document.upload({
       file: await toFile(Buffer.from('# my file contents'), 'README.md'),
@@ -46,7 +46,7 @@ describe('resource document', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('upload: required and optional params', async () => {
     const response = await client.document.upload({
       file: await toFile(Buffer.from('# my file contents'), 'README.md'),

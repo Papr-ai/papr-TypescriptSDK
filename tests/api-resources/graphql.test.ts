@@ -8,7 +8,7 @@ const client = new Papr({
 });
 
 describe('resource graphql', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('playground', async () => {
     const responsePromise = client.graphql.playground();
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource graphql', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('query', async () => {
     const responsePromise = client.graphql.query();
     const rawResponse = await responsePromise.asResponse();

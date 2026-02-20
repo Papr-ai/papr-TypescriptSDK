@@ -8,7 +8,7 @@ const client = new Papr({
 });
 
 describe('resource sync', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('getDelta', async () => {
     const responsePromise = client.sync.getDelta();
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource sync', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('getDelta: request options and params are passed correctly', async () => {
     // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
     await expect(
@@ -36,7 +36,7 @@ describe('resource sync', () => {
     ).rejects.toThrow(Papr.NotFoundError);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('getTiers', async () => {
     const responsePromise = client.sync.getTiers({});
     const rawResponse = await responsePromise.asResponse();

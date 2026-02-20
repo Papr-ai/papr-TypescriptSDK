@@ -8,7 +8,7 @@ const client = new Papr({
 });
 
 describe('resource omo', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('exportMemories: only required params', async () => {
     const responsePromise = client.omo.exportMemories({ memory_ids: ['string'] });
     const rawResponse = await responsePromise.asResponse();
@@ -20,12 +20,12 @@ describe('resource omo', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('exportMemories: required and optional params', async () => {
     const response = await client.omo.exportMemories({ memory_ids: ['string'] });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('exportMemoriesAsJson: only required params', async () => {
     const responsePromise = client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
     const rawResponse = await responsePromise.asResponse();
@@ -37,12 +37,12 @@ describe('resource omo', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('exportMemoriesAsJson: required and optional params', async () => {
     const response = await client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('importMemories: only required params', async () => {
     const responsePromise = client.omo.importMemories({ memories: [{ foo: 'bar' }] });
     const rawResponse = await responsePromise.asResponse();
@@ -54,7 +54,7 @@ describe('resource omo', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('importMemories: required and optional params', async () => {
     const response = await client.omo.importMemories({ memories: [{ foo: 'bar' }], skip_duplicates: true });
   });
