@@ -199,7 +199,7 @@ export interface EdgeConstraintInput {
 /**
  * A memory item in the knowledge base
  */
-export interface Memory {
+export interface MemoryObject {
   id: string;
 
   acl: { [key: string]: { [key: string]: boolean } };

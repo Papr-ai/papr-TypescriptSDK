@@ -980,7 +980,7 @@ export declare namespace Papr {
   export type ACLConfig = API.ACLConfig;
   export type AddMemoryItem = API.AddMemoryItem;
   export type EdgeConstraintInput = API.EdgeConstraintInput;
-  export type Memory = API.Memory;
+  export type MemoryObject = API.MemoryObject;
   export type MemoryPolicy = API.MemoryPolicy;
   export type NodeConstraintInput = API.NodeConstraintInput;
   export type NodeSpec = API.NodeSpec;

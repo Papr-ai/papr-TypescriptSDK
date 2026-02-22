@@ -78,12 +78,12 @@ export interface SyncGetTiersResponse {
   /**
    * Tier 0 items (goals/OKRs/use-cases)
    */
-  tier0?: Array<Shared.Memory>;
+  tier0?: Array<Shared.MemoryObject>;
 
   /**
    * Tier 1 items (hot memories)
    */
-  tier1?: Array<Shared.Memory>;
+  tier1?: Array<Shared.MemoryObject>;
 
   /**
    * Transition items between tiers

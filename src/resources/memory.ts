@@ -905,7 +905,7 @@ export namespace SearchResponse {
    * Return type for SearchResult
    */
   export interface Data {
-    memories: Array<Shared.Memory>;
+    memories: Array<Shared.MemoryObject>;
 
     nodes: Array<Data.Node>;
 
