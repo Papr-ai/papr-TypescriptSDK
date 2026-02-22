@@ -22,3 +22,4 @@ export {
 } from './core/error';
 
 export * from './resources';
+export * from './lib';
