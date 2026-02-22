@@ -53,11 +53,11 @@ describe('SearchMode', () => {
   });
 
   test('fuzzy mode with value', () => {
-    const sm = new SearchMode('fuzzy', 0.80, 'test value');
+    const sm = new SearchMode('fuzzy', 0.8, 'test value');
     expect(sm.toSearchProperty('name')).toEqual({
       name: 'name',
       mode: 'fuzzy',
-      threshold: 0.80,
+      threshold: 0.8,
       value: 'test value',
     });
   });
@@ -83,15 +83,15 @@ describe('exact/semantic/fuzzy helpers', () => {
   });
 
   test('semantic() custom threshold and value', () => {
-    const sm = semantic(0.90, 'auth bug');
-    expect(sm.threshold).toBe(0.90);
+    const sm = semantic(0.9, 'auth bug');
+    expect(sm.threshold).toBe(0.9);
     expect(sm.value).toBe('auth bug');
   });
 
   test('fuzzy() default threshold', () => {
     const sm = fuzzy();
     expect(sm.mode).toBe('fuzzy');
-    expect(sm.threshold).toBe(0.80);
+    expect(sm.threshold).toBe(0.8);
   });
 });
 
@@ -112,9 +112,9 @@ describe('PropertyRef', () => {
   });
 
   test('.semantic() chaining', () => {
-    const ref = new PropertyRef('Task', 'title').semantic(0.90, 'auth bug');
+    const ref = new PropertyRef('Task', 'title').semantic(0.9, 'auth bug');
     expect(ref._mode).toBe('semantic');
-    expect(ref._threshold).toBe(0.90);
+    expect(ref._threshold).toBe(0.9);
     expect(ref._value).toBe('auth bug');
   });
 
@@ -129,15 +129,15 @@ describe('PropertyRef', () => {
   });
 
   test('toLinkToString() with exact value', () => {
-    expect(
-      new PropertyRef('Task', 'id', 'exact', undefined, 'TASK-123').toLinkToString(),
-    ).toBe('Task:id=TASK-123');
+    expect(new PropertyRef('Task', 'id', 'exact', undefined, 'TASK-123').toLinkToString()).toBe(
+      'Task:id=TASK-123',
+    );
   });
 
   test('toLinkToString() with semantic value', () => {
-    expect(
-      new PropertyRef('Task', 'title', 'semantic', 0.85, 'auth bug').toLinkToString(),
-    ).toBe('Task:title~auth bug');
+    expect(new PropertyRef('Task', 'title', 'semantic', 0.85, 'auth bug').toLinkToString()).toBe(
+      'Task:title~auth bug',
+    );
   });
 
   test('toLinkToString() no value even with mode', () => {
@@ -151,15 +151,19 @@ describe('PropertyRef', () => {
   });
 
   test('toSearchProperty() with mode and threshold', () => {
-    expect(
-      new PropertyRef('Task', 'title', 'semantic', 0.85).toSearchProperty(),
-    ).toEqual({ name: 'title', mode: 'semantic', threshold: 0.85 });
+    expect(new PropertyRef('Task', 'title', 'semantic', 0.85).toSearchProperty()).toEqual({
+      name: 'title',
+      mode: 'semantic',
+      threshold: 0.85,
+    });
   });
 
   test('toSearchProperty() with value', () => {
-    expect(
-      new PropertyRef('Task', 'id', 'exact', undefined, 'T-1').toSearchProperty(),
-    ).toEqual({ name: 'id', mode: 'exact', value: 'T-1' });
+    expect(new PropertyRef('Task', 'id', 'exact', undefined, 'T-1').toSearchProperty()).toEqual({
+      name: 'id',
+      mode: 'exact',
+      value: 'T-1',
+    });
   });
 });
 

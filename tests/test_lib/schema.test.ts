@@ -14,7 +14,6 @@ import {
   NodeMetadata,
   SchemaMetadata,
   And,
-  Or,
   Not,
 } from '@papr/memory/lib';
 

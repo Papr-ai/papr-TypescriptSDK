@@ -46,13 +46,7 @@ export class NodeMetadata {
   public when: Record<string, unknown> | undefined;
   public set: Record<string, unknown> | undefined;
 
-  constructor(
-    name: string,
-    label?: string,
-    description?: string,
-    icon?: string,
-    color?: string,
-  ) {
+  constructor(name: string, label?: string, description?: string, icon?: string, color?: string) {
     this.name = name;
     this.label = label ?? name;
     this.description = description;
@@ -324,8 +318,7 @@ export function schema(
     for (const edgeDesc of config.edges) {
       // Use explicit name if set, otherwise generate from source/target
       const edgeName =
-        edgeDesc._name ??
-        `${edgeDesc.sourceType.toLowerCase()}_${edgeDesc.targetType.toLowerCase()}`;
+        edgeDesc._name ?? `${edgeDesc.sourceType.toLowerCase()}_${edgeDesc.targetType.toLowerCase()}`;
       edgeDesc._name = edgeName;
       meta.edges.set(edgeName, edgeDesc);
     }

@@ -124,7 +124,7 @@ export function semantic(threshold: number = 0.85, value?: unknown): SearchMode 
  * name: prop({ search: fuzzy(0.80) })
  * ```
  */
-export function fuzzy(threshold: number = 0.80, value?: unknown): SearchMode {
+export function fuzzy(threshold: number = 0.8, value?: unknown): SearchMode {
   return new SearchMode('fuzzy', threshold, value);
 }
 
@@ -173,7 +173,7 @@ export class PropertyRef {
   }
 
   /** Create a fuzzy-match version of this reference. */
-  fuzzy(threshold: number = 0.80, value?: unknown): PropertyRef {
+  fuzzy(threshold: number = 0.8, value?: unknown): PropertyRef {
     return new PropertyRef(this._nodeType, this._propName, 'fuzzy', threshold, value);
   }
 
@@ -240,14 +240,16 @@ export class PropDescriptor {
   /** Set by node() during construction. */
   public _ownerName: string | undefined;
 
-  constructor(options: {
-    type?: PropertyType;
-    required?: boolean;
-    description?: string;
-    enum_values?: string[];
-    default?: unknown;
-    search?: SearchMode;
-  } = {}) {
+  constructor(
+    options: {
+      type?: PropertyType;
+      required?: boolean;
+      description?: string;
+      enum_values?: string[];
+      default?: unknown;
+      search?: SearchMode;
+    } = {},
+  ) {
     this.type = options.type ?? 'string';
     this.required = options.required ?? false;
     this.description = options.description;
@@ -296,14 +298,16 @@ export class PropDescriptor {
  * });
  * ```
  */
-export function prop(options: {
-  type?: PropertyType;
-  required?: boolean;
-  description?: string;
-  enum_values?: string[];
-  default?: unknown;
-  search?: SearchMode;
-} = {}): PropDescriptor {
+export function prop(
+  options: {
+    type?: PropertyType;
+    required?: boolean;
+    description?: string;
+    enum_values?: string[];
+    default?: unknown;
+    search?: SearchMode;
+  } = {},
+): PropDescriptor {
   return new PropDescriptor(options);
 }
 

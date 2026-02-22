@@ -171,9 +171,7 @@ function buildRelationshipType(
 
   const relType: Record<string, unknown> = {
     name: relName,
-    label: edgeName
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (c) => c.toUpperCase()),
+    label: edgeName.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
     allowed_source_types: [edgeDesc.sourceType],
     allowed_target_types: [edgeDesc.targetType],
   };
@@ -224,12 +222,14 @@ function buildRelationshipType(
  * await client.memory.add({ content: "...", memory_policy: policy });
  * ```
  */
-export function buildMemoryPolicy(options: {
-  nodeConstraints?: Array<Record<string, unknown>>;
-  edgeConstraints?: Array<Record<string, unknown>>;
-  schemaId?: string;
-  mode?: 'auto' | 'manual';
-} = {}): MemoryPolicy {
+export function buildMemoryPolicy(
+  options: {
+    nodeConstraints?: Array<Record<string, unknown>>;
+    edgeConstraints?: Array<Record<string, unknown>>;
+    schemaId?: string;
+    mode?: 'auto' | 'manual';
+  } = {},
+): MemoryPolicy {
   const policy: Record<string, unknown> = {};
   if (options.mode !== undefined) {
     policy['mode'] = options.mode;

@@ -16,15 +16,9 @@ describe('And', () => {
   });
 
   test('nested Or', () => {
-    const a = new And(
-      new Or({ status: 'active' }, { status: 'pending' }),
-      { team: 'security' },
-    );
+    const a = new And(new Or({ status: 'active' }, { status: 'pending' }), { team: 'security' });
     expect(a.toDict()).toEqual({
-      _and: [
-        { _or: [{ status: 'active' }, { status: 'pending' }] },
-        { team: 'security' },
-      ],
+      _and: [{ _or: [{ status: 'active' }, { status: 'pending' }] }, { team: 'security' }],
     });
   });
 });
@@ -79,20 +73,11 @@ describe('Composability', () => {
 
   test('deep nesting', () => {
     const condition = new Or(
-      new And(
-        { a: 1 },
-        new Not({ b: 2 }),
-      ),
-      new And(
-        { c: 3 },
-        new Or({ d: 4 }, { e: 5 }),
-      ),
+      new And({ a: 1 }, new Not({ b: 2 })),
+      new And({ c: 3 }, new Or({ d: 4 }, { e: 5 })),
     );
     expect(condition.toDict()).toEqual({
-      _or: [
-        { _and: [{ a: 1 }, { _not: { b: 2 } }] },
-        { _and: [{ c: 3 }, { _or: [{ d: 4 }, { e: 5 }] }] },
-      ],
+      _or: [{ _and: [{ a: 1 }, { _not: { b: 2 } }] }, { _and: [{ c: 3 }, { _or: [{ d: 4 }, { e: 5 }] }] }],
     });
   });
 });

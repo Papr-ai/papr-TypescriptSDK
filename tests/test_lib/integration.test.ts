@@ -29,7 +29,6 @@ import {
   SchemaMetadata,
   PropDescriptor,
   SearchMode,
-  EdgeDescriptor,
   fuzzy,
 } from '@papr/memory/lib';
 
@@ -38,7 +37,7 @@ describe('DeepTrust-style Security Schema', () => {
     'TacticDef',
     {
       id: prop({ search: exact() }),
-      name: prop({ required: true, search: semantic(0.90) }),
+      name: prop({ required: true, search: semantic(0.9) }),
       description: prop(),
     },
     lookup(),
@@ -80,7 +79,7 @@ describe('DeepTrust-style Security Schema', () => {
     edges: [
       edge(SecurityBehavior, TacticDef, {
         name: 'mitigates',
-        search: [TacticDef.id.exact(), TacticDef.name.semantic(0.90)],
+        search: [TacticDef.id.exact(), TacticDef.name.semantic(0.9)],
         create: 'lookup',
       }),
       edge(SecurityBehavior, Alert, {
@@ -121,9 +120,7 @@ describe('DeepTrust-style Security Schema', () => {
     expect(behavior.constraint.create).toBe('upsert');
     expect(behavior.resolution_policy).toBe('upsert');
     expect(behavior.required_properties).toEqual(['description']);
-    expect(behavior.properties['severity'].enum_values).toEqual([
-      'low', 'medium', 'high', 'critical',
-    ]);
+    expect(behavior.properties['severity'].enum_values).toEqual(['low', 'medium', 'high', 'critical']);
   });
 
   test('Alert has constraint with when/set', () => {
@@ -176,9 +173,7 @@ describe('DeepTrust-style Security Schema', () => {
   });
 
   test('buildLinkTo with semantic value', () => {
-    const result = buildLinkTo(
-      TacticDef.name.semantic(0.90, 'credential access'),
-    );
+    const result = buildLinkTo(TacticDef.name.semantic(0.9, 'credential access'));
     expect(result).toBe('TacticDef:name~credential access');
   });
 });
@@ -207,7 +202,7 @@ describe('Conversation Schema', () => {
     'Product',
     {
       sku: prop({ search: exact() }),
-      name: prop({ search: semantic(0.90) }),
+      name: prop({ search: semantic(0.9) }),
     },
     lookup(),
   );
@@ -245,14 +240,8 @@ describe('Conversation Schema', () => {
   });
 
   test('buildLinkTo integration', () => {
-    const link = buildLinkTo(
-      Customer.email.exact('john@example.com'),
-      Conversation.topic,
-    );
-    expect(link).toEqual([
-      'Customer:email=john@example.com',
-      'Conversation:topic',
-    ]);
+    const link = buildLinkTo(Customer.email.exact('john@example.com'), Conversation.topic);
+    expect(link).toEqual(['Customer:email=john@example.com', 'Conversation:topic']);
   });
 });
 

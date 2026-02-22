@@ -24,10 +24,7 @@ describe('buildLinkTo()', () => {
   });
 
   test('multiple refs return array', () => {
-    const refs = [
-      new PropertyRef('Task', 'title'),
-      new PropertyRef('Person', 'email'),
-    ];
+    const refs = [new PropertyRef('Task', 'title'), new PropertyRef('Person', 'email')];
     expect(buildLinkTo(...refs)).toEqual(['Task:title', 'Person:email']);
   });
 
@@ -44,26 +41,31 @@ describe('buildLinkTo()', () => {
   test('mixed values', () => {
     const result = buildLinkTo(
       new PropertyRef('Alert', 'alert_id', 'exact', undefined, 'ALERT-001'),
-      new PropertyRef('TacticDef', 'name', 'semantic', 0.90, 'credential access'),
+      new PropertyRef('TacticDef', 'name', 'semantic', 0.9, 'credential access'),
     );
-    expect(result).toEqual([
-      'Alert:alert_id=ALERT-001',
-      'TacticDef:name~credential access',
-    ]);
+    expect(result).toEqual(['Alert:alert_id=ALERT-001', 'TacticDef:name~credential access']);
   });
 });
 
 describe('buildSchemaParams()', () => {
   test('basic schema', () => {
-    const Person = node('Person', {
-      email: prop({ search: exact() }),
-      name: prop({ required: true, search: semantic(0.90) }),
-    }, lookup());
+    const Person = node(
+      'Person',
+      {
+        email: prop({ search: exact() }),
+        name: prop({ required: true, search: semantic(0.9) }),
+      },
+      lookup(),
+    );
 
-    const Task = node('Task', {
-      title: prop({ required: true, search: semantic(0.85) }),
-      status: prop({ enum_values: ['open', 'done'] }),
-    }, upsert());
+    const Task = node(
+      'Task',
+      {
+        title: prop({ required: true, search: semantic(0.85) }),
+        status: prop({ enum_values: ['open', 'done'] }),
+      },
+      upsert(),
+    );
 
     const s = schema('test_schema', {
       nodes: [Person, Task],
@@ -79,10 +81,14 @@ describe('buildSchemaParams()', () => {
   });
 
   test('node type properties', () => {
-    const Task = node('Task', {
-      title: prop({ required: true, search: semantic(0.85) }),
-      status: prop({ enum_values: ['open', 'done'] }),
-    }, upsert());
+    const Task = node(
+      'Task',
+      {
+        title: prop({ required: true, search: semantic(0.85) }),
+        status: prop({ enum_values: ['open', 'done'] }),
+      },
+      upsert(),
+    );
 
     const s = schema('test', { nodes: [Task] });
     const params = buildSchemaParams(s);
@@ -102,9 +108,13 @@ describe('buildSchemaParams()', () => {
   });
 
   test('lookup constraint', () => {
-    const Ref = node('Ref', {
-      id: prop({ search: exact() }),
-    }, lookup());
+    const Ref = node(
+      'Ref',
+      {
+        id: prop({ search: exact() }),
+      },
+      lookup(),
+    );
 
     const s = schema('test', { nodes: [Ref] });
     const params = buildSchemaParams(s);
@@ -115,9 +125,13 @@ describe('buildSchemaParams()', () => {
   });
 
   test('resolve with on_miss', () => {
-    const Req = node('Req', {
-      id: prop({ search: exact() }),
-    }, resolve({ onMiss: 'error' }));
+    const Req = node(
+      'Req',
+      {
+        id: prop({ search: exact() }),
+      },
+      resolve({ onMiss: 'error' }),
+    );
 
     const s = schema('test', { nodes: [Req] });
     const params = buildSchemaParams(s);
@@ -186,10 +200,14 @@ describe('buildSchemaParams()', () => {
   });
 
   test('edge with search properties', () => {
-    const TacticDef = node('TacticDef', {
-      id: prop({ search: exact() }),
-      name: prop({ search: semantic(0.90) }),
-    }, lookup());
+    const TacticDef = node(
+      'TacticDef',
+      {
+        id: prop({ search: exact() }),
+        name: prop({ search: semantic(0.9) }),
+      },
+      lookup(),
+    );
 
     const Behavior = node('Behavior', {
       desc: prop(),
@@ -200,7 +218,7 @@ describe('buildSchemaParams()', () => {
       edges: [
         edge(Behavior, TacticDef, {
           name: 'mitigates',
-          search: [TacticDef.id.exact(), TacticDef.name.semantic(0.90)],
+          search: [TacticDef.id.exact(), TacticDef.name.semantic(0.9)],
           create: 'lookup',
         }),
       ],
@@ -218,7 +236,7 @@ describe('buildSchemaParams()', () => {
     expect(rel.constraint.search.properties[1]).toEqual({
       name: 'name',
       mode: 'semantic',
-      threshold: 0.90,
+      threshold: 0.9,
     });
   });
 });
@@ -243,10 +261,12 @@ describe('buildMemoryPolicy()', () => {
   test('with node constraints', () => {
     const policy = buildMemoryPolicy({
       schemaId: 'test',
-      nodeConstraints: [{
-        node_type: 'Task',
-        create: 'upsert',
-      }],
+      nodeConstraints: [
+        {
+          node_type: 'Task',
+          create: 'upsert',
+        },
+      ],
     });
     expect(policy.schema_id).toBe('test');
     expect(policy.node_constraints).toHaveLength(1);
@@ -254,10 +274,12 @@ describe('buildMemoryPolicy()', () => {
 
   test('with edge constraints', () => {
     const policy = buildMemoryPolicy({
-      edgeConstraints: [{
-        edge_type: 'MITIGATES',
-        create: 'lookup',
-      }],
+      edgeConstraints: [
+        {
+          edge_type: 'MITIGATES',
+          create: 'lookup',
+        },
+      ],
     });
     expect(policy.edge_constraints).toHaveLength(1);
   });
@@ -291,9 +313,7 @@ describe('serializeSetValues()', () => {
   });
 
   test('Auto(prompt) replaced with mode+prompt dict', () => {
-    expect(
-      serializeSetValues({ summary: new Auto('Summarize briefly') }),
-    ).toEqual({
+    expect(serializeSetValues({ summary: new Auto('Summarize briefly') })).toEqual({
       summary: { mode: 'auto', prompt: 'Summarize briefly' },
     });
   });
