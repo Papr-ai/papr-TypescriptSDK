@@ -1,5 +1,32 @@
 # Changelog
 
+## 2.1.0 (2026-02-22)
+
+Full Changelog: [v2.0.0...v2.1.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.0.0...v2.1.0)
+
+### Features
+
+* **api:** manual updates ([f4a62d0](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f4a62d0085b7d5770ebe8249f89f47aeb29f9d2a))
+
+
+### Bug Fixes
+
+* **mcp:** initialize SDK lazily to avoid failing the connection on init errors ([f147869](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f1478690e2aa78da1a4aef93f972139af1b6cc86))
+* rename Memory interface to MemoryObject to resolve name collision ([594e05e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/594e05ecf66f78b289ba30f3c74829ad56128996))
+
+
+### Chores
+
+* **internal/client:** fix form-urlencoded requests ([c842e8c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c842e8cc98eda97183266b5fc7344f2de590ffa1))
+* **internal:** allow setting x-stainless-api-key header on mcp server requests ([6e1f628](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6e1f628e25b5e0e75b712d5e4881719a12bec986))
+* **internal:** avoid type checking errors with ts-reset ([3fdbf9d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/3fdbf9d8c89c35c097ed85cd9ef33dd030828347))
+* **internal:** cache fetch instruction calls in MCP server ([8bdb218](https://github.com/Papr-ai/papr-TypescriptSDK/commit/8bdb218629efaf108b7ad3d09494119e397b3e9e))
+* **internal:** improve layout of generated MCP server files ([4e45057](https://github.com/Papr-ai/papr-TypescriptSDK/commit/4e45057d3fce032414b56c45cc83a1a24e23b8d8))
+* **internal:** remove mock server code ([217dd10](https://github.com/Papr-ai/papr-TypescriptSDK/commit/217dd10db72959367a2cd86741149bcfd705a6b7))
+* **mcp:** correctly update version in sync with sdk ([a47f00e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a47f00e135aa81a00b5a10418f16a41df3474940))
+* **mcp:** forward STAINLESS_API_KEY to docs search endpoint ([c2fdd1c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/c2fdd1c66edbbc98b3e135c2e8cf2602063cf477))
+* update mock server docs ([0a3021e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0a3021e4c72c7b451f02b483a51ef839ea458c83))
+
 ## 2.0.0 (2026-02-10)
 
 Full Changelog: [v1.20.0...v2.0.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v1.20.0...v2.0.0)

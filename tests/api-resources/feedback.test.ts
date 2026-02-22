@@ -8,7 +8,7 @@ const client = new Papr({
 });
 
 describe('resource feedback', () => {
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('getByID', async () => {
     const responsePromise = client.feedback.getByID('feedback_id');
     const rawResponse = await responsePromise.asResponse();
@@ -20,7 +20,7 @@ describe('resource feedback', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('submit: only required params', async () => {
     const responsePromise = client.feedback.submit({
       feedbackData: { feedbackSource: 'inline', feedbackType: 'thumbs_up' },
@@ -35,7 +35,7 @@ describe('resource feedback', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('submit: required and optional params', async () => {
     const response = await client.feedback.submit({
       feedbackData: {
@@ -67,7 +67,7 @@ describe('resource feedback', () => {
     });
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('submitBatch: only required params', async () => {
     const responsePromise = client.feedback.submitBatch({
       feedback_items: [
@@ -86,7 +86,7 @@ describe('resource feedback', () => {
     expect(dataAndResponse.response).toBe(rawResponse);
   });
 
-  // Prism tests are disabled
+  // Mock server tests are disabled
   test.skip('submitBatch: required and optional params', async () => {
     const response = await client.feedback.submitBatch({
       feedback_items: [
