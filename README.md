@@ -61,6 +61,216 @@ const userResponse: Papr.UserResponse = await client.user.create(params);
 
 Documentation for each method, request param, and response field are available in docstrings and will appear on hover in most modern editors.
 
+## Graph Schemas & Memory Policies
+
+Schemas define the structure of your knowledge graph. When you add memories, the engine uses the schema to extract entities from the content, match them to existing nodes, and build relationships automatically.
+
+### 1. Define a Schema
+
+<!-- prettier-ignore -->
+```ts
+import {
+  schema, node, lookup, upsert, constraint,
+  prop, edge, exact, semantic, Auto,
+  buildSchemaParams,
+} from '@papr/memory/lib';
+
+const Person = node("Person", {
+  name: prop({ required: true, search: semantic(0.90) }),
+  email: prop({ search: exact() }),
+}, lookup()); // Only match existing people, never create new ones
+
+const Task = node("Task", {
+  title: prop({ required: true, search: semantic(0.85) }),
+  status: prop({ enum_values: ["open", "in_progress", "done"] }),
+}, upsert(), constraint({ // Create or update tasks as they're mentioned
+  set: { status: new Auto() }, // LLM infers status from memory content
+}));
+
+const ProjectSchema = schema("project_tracker", {
+  nodes: [Person, Task],
+  edges: [edge(Person, Task, { name: "works_on", create: "upsert" })],
+});
+
+// Register the schema once
+const params = buildSchemaParams(ProjectSchema);
+await client.schemas.create(params);
+```
+
+### 2. Just Add Memories
+
+Once the schema is registered, just pass your content. The engine auto-detects the matching schema and applies the policies you defined:
+
+<!-- prettier-ignore -->
+```ts
+// Meeting transcript - just pass the content
+await client.memory.add({
+  content: "John (john@papr.ai) mentioned he fixed the authentication bug. It's now resolved.",
+});
+```
+
+That's it. Here's what happens automatically:
+
+1. **Schema matching** - The engine detects that this content matches the `project_tracker` schema (it contains a person and a task)
+2. **Entity extraction** - Identifies "John" / "john@papr.ai" as a Person and "authentication bug" as a Task
+3. **Node matching** - Finds the existing Task whose `title` semantically matches "authentication bug" (0.85 threshold) and the Person whose `email` exactly matches "john@papr.ai"
+4. **Resolution policies** - Task is `upsert()` so it gets updated. Person is `lookup()` so it only matches existing people, never creates new ones
+5. **Constraints** - `constraint({ set: { status: new Auto() } })` tells the LLM to infer status from context. Since the content says "fixed" and "resolved", it sets `status: "done"`. Use `new Auto("prompt")` to provide per-field extraction guidance (e.g. `new Auto("Summarize in 1-2 sentences")`)
+6. **Edge creation** - A `WORKS_ON` edge is created between John and the task
+
+> **Tip:** Include identifiers like emails or IDs in your content (e.g. `"John (john@papr.ai)"`) to help the engine match the right nodes via `exact()` search properties.
+
+### 3. More Control with `link_to`
+
+For cases where you want to explicitly direct which nodes to match, use `buildLinkTo`:
+
+<!-- prettier-ignore -->
+```ts
+import { buildLinkTo } from '@papr/memory/lib';
+
+// Tell the engine exactly which properties to search
+await client.memory.add({
+  content: "The authentication bug is now resolved.",
+  link_to: buildLinkTo(
+    Task.title,  // -> "Task:title" (semantic match from schema)
+  ),
+});
+
+// Pin to a specific value when you know it
+await client.memory.add({
+  content: "Sprint update: auth module is done.",
+  link_to: buildLinkTo(
+    Task.title.exact("Fix authentication bug"),
+    Person.email.exact("john@papr.ai"),
+  ),
+});
+// -> link_to: ["Task:title=Fix authentication bug", "Person:email=john@papr.ai"]
+```
+
+### 4. Memory-Level Policy Overrides
+
+Schema defines the default behavior. For specific memories that need different handling, override per-memory with `memory_policy`:
+
+<!-- prettier-ignore -->
+```ts
+import { buildMemoryPolicy, serializeSetValues, Auto } from '@papr/memory/lib';
+
+// Override: force exact match and set priority for this specific memory
+await client.memory.add({
+  content: "TASK-456 is now critical priority",
+  memory_policy: buildMemoryPolicy({
+    schemaId: "project_tracker",
+    nodeConstraints: [{
+      node_type: "Task",
+      create: "upsert",
+      search: { properties: [{ name: "title", mode: "exact" }] },
+      set: serializeSetValues({ priority: new Auto() }),
+    }],
+  }),
+});
+```
+
+### Resolution Policies
+
+| Policy | Behavior | Use Case |
+|--------|----------|----------|
+| `upsert()` | Create if not found, update if exists | Dynamic entities (tasks, conversations, events) |
+| `lookup()` | Only match existing nodes, never create | Controlled data (people from directory, product catalog) |
+| `resolve({ onMiss: "error" })` | Fail if not found | Strict validation (required references) |
+
+### Search Modes
+
+<!-- prettier-ignore -->
+```ts
+const Ref = node("Ref", {
+  id:    prop({ search: exact() }),           // Exact string match
+  title: prop({ search: semantic(0.85) }),    // Embedding similarity (threshold 0.85)
+  name:  prop({ search: fuzzy(0.80) }),       // Levenshtein distance (threshold 0.80)
+});
+```
+
+### Conditional Constraints
+
+<!-- prettier-ignore -->
+```ts
+import { And, Or, Not, Auto } from '@papr/memory/lib';
+
+const Alert = node("Alert", {
+  alert_id: prop({ search: exact() }),
+  title: prop({ required: true, search: semantic(0.85) }),
+  severity: prop(),
+  status: prop(),
+  flagged: prop(),
+  summary: prop(),
+}, upsert(), constraint({
+  when: new And(
+    new Or({ severity: "high" }, { severity: "critical" }),
+    new Not({ status: "resolved" }),
+  ),
+  set: {
+    flagged: true,
+    summary: new Auto("Summarize the security incident in 1-2 sentences"),
+  }, // Auto("prompt") guides LLM extraction; Auto() with no args also works
+}));
+```
+
+### Complete Example: Security Monitoring
+
+<!-- prettier-ignore -->
+```ts
+import {
+  schema, node, lookup, upsert, resolve, constraint,
+  prop, edge, exact, semantic, Auto,
+  buildSchemaParams, buildLinkTo,
+} from '@papr/memory/lib';
+
+const TacticDef = node("TacticDef", {
+  id: prop({ search: exact() }),
+  name: prop({ required: true, search: semantic(0.90) }),
+}, lookup()); // MITRE ATT&CK tactic (pre-loaded reference data)
+
+const SecurityBehavior = node("SecurityBehavior", {
+  description: prop({ required: true, search: semantic(0.85) }),
+  severity: prop({ enum_values: ["low", "medium", "high", "critical"] }),
+}, upsert());
+
+const Alert = node("Alert", {
+  alert_id: prop({ search: exact() }),
+  title: prop({ required: true, search: semantic(0.85) }),
+  severity: prop(),
+  flagged: prop(),
+  reviewed_by: prop(),
+}, upsert(), constraint({
+  when: { severity: "critical" },
+  set: { flagged: true, reviewed_by: new Auto() },
+}));
+
+const SecuritySchema = schema("security_monitoring", {
+  nodes: [TacticDef, SecurityBehavior, Alert],
+  edges: [
+    edge(SecurityBehavior, TacticDef, {
+      name: "mitigates",
+      search: [TacticDef.id.exact(), TacticDef.name.semantic(0.90)],
+      create: "lookup",
+    }),
+    edge(SecurityBehavior, Alert, { name: "triggers", create: "upsert" }),
+  ],
+});
+
+// Register schema
+const params = buildSchemaParams(SecuritySchema);
+await client.schemas.create(params);
+
+// Add memory - graph is built automatically
+await client.memory.add({
+  content: "Detected credential stuffing attack targeting admin accounts",
+  link_to: buildLinkTo(
+    TacticDef.name.semantic(0.90, "credential access"),
+    Alert.title,
+  ),
+});
+```
+
 ## File uploads
 
 Request parameters that correspond to file uploads can be passed in many different forms:
