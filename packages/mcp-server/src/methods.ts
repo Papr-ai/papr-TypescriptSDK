@@ -83,6 +83,18 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/memory/{memory_id}',
   },
   {
+    clientCallName: 'client.memory.retrieveBatchStatus',
+    fullyQualifiedName: 'memory.retrieveBatchStatus',
+    httpMethod: 'get',
+    httpPath: '/v1/memory/batch/status/{batch_id}',
+  },
+  {
+    clientCallName: 'client.memory.retrieveStatus',
+    fullyQualifiedName: 'memory.retrieveStatus',
+    httpMethod: 'get',
+    httpPath: '/v1/memory/status/{memory_id}',
+  },
+  {
     clientCallName: 'client.memory.search',
     fullyQualifiedName: 'memory.search',
     httpMethod: 'post',
@@ -231,6 +243,84 @@ export const sdkMethods: SdkMethod[] = [
     fullyQualifiedName: 'sync.getTiers',
     httpMethod: 'post',
     httpPath: '/v1/sync/tiers',
+  },
+  {
+    clientCallName: 'client.namespace.create',
+    fullyQualifiedName: 'namespace.create',
+    httpMethod: 'post',
+    httpPath: '/v1/namespace',
+  },
+  {
+    clientCallName: 'client.namespace.retrieve',
+    fullyQualifiedName: 'namespace.retrieve',
+    httpMethod: 'get',
+    httpPath: '/v1/namespace/{namespace_id}',
+  },
+  {
+    clientCallName: 'client.namespace.update',
+    fullyQualifiedName: 'namespace.update',
+    httpMethod: 'put',
+    httpPath: '/v1/namespace/{namespace_id}',
+  },
+  {
+    clientCallName: 'client.namespace.list',
+    fullyQualifiedName: 'namespace.list',
+    httpMethod: 'get',
+    httpPath: '/v1/namespace',
+  },
+  {
+    clientCallName: 'client.namespace.delete',
+    fullyQualifiedName: 'namespace.delete',
+    httpMethod: 'delete',
+    httpPath: '/v1/namespace/{namespace_id}',
+  },
+  {
+    clientCallName: 'client.frequencies.retrieve',
+    fullyQualifiedName: 'frequencies.retrieve',
+    httpMethod: 'get',
+    httpPath: '/v1/frequencies/{frequency_schema_id}',
+  },
+  {
+    clientCallName: 'client.frequencies.list',
+    fullyQualifiedName: 'frequencies.list',
+    httpMethod: 'get',
+    httpPath: '/v1/frequencies',
+  },
+  {
+    clientCallName: 'client.holographic.extractMetadata',
+    fullyQualifiedName: 'holographic.extractMetadata',
+    httpMethod: 'post',
+    httpPath: '/v1/holographic/metadata',
+  },
+  {
+    clientCallName: 'client.holographic.rerank',
+    fullyQualifiedName: 'holographic.rerank',
+    httpMethod: 'post',
+    httpPath: '/v1/holographic/rerank',
+  },
+  {
+    clientCallName: 'client.holographic.transform.create',
+    fullyQualifiedName: 'holographic.transform.create',
+    httpMethod: 'post',
+    httpPath: '/v1/holographic/transform',
+  },
+  {
+    clientCallName: 'client.holographic.transform.createBatch',
+    fullyQualifiedName: 'holographic.transform.createBatch',
+    httpMethod: 'post',
+    httpPath: '/v1/holographic/transform/batch',
+  },
+  {
+    clientCallName: 'client.holographic.domains.create',
+    fullyQualifiedName: 'holographic.domains.create',
+    httpMethod: 'post',
+    httpPath: '/v1/holographic/domains',
+  },
+  {
+    clientCallName: 'client.holographic.domains.list',
+    fullyQualifiedName: 'holographic.domains.list',
+    httpMethod: 'get',
+    httpPath: '/v1/holographic/domains',
   },
 ];
 

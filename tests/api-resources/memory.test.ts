@@ -945,6 +945,30 @@ describe('resource memory', () => {
   });
 
   // Mock server tests are disabled
+  test.skip('retrieveBatchStatus', async () => {
+    const responsePromise = client.memory.retrieveBatchStatus('batch_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('retrieveStatus', async () => {
+    const responsePromise = client.memory.retrieveStatus('memory_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
   test.skip('search: only required params', async () => {
     const responsePromise = client.memory.search({
       query:
