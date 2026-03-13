@@ -127,10 +127,22 @@ export interface DocumentUploadParams {
   file: Uploadable;
 
   /**
+   * If True, applies holographic neural transforms and stores in holographic
+   * collection
+   */
+  enable_holographic?: boolean;
+
+  /**
    * Your application's user identifier. This is the primary way to identify users.
    * Also accepts legacy 'end_user_id'.
    */
   external_user_id?: string | null;
+
+  /**
+   * Frequency schema for holographic embedding (e.g. 'cosqa', 'scifact'). Required
+   * when enable_holographic=True. Call GET /v1/frequencies to see available schemas.
+   */
+  frequency_schema_id?: string | null;
 
   graph_override?: string | null;
 

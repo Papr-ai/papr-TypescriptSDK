@@ -31,10 +31,15 @@ export class Memory extends APIResource {
    */
   update(
     memoryID: string,
-    body: MemoryUpdateParams,
+    params: MemoryUpdateParams,
     options?: RequestOptions,
   ): APIPromise<MemoryUpdateResponse> {
-    return this._client.put(path`/v1/memory/${memoryID}`, { body, ...options });
+    const { enable_holographic, frequency_schema_id, ...body } = params;
+    return this._client.put(path`/v1/memory/${memoryID}`, {
+      query: { enable_holographic, frequency_schema_id },
+      body,
+      ...options,
+    });
   }
 
   /**
@@ -97,9 +102,24 @@ export class Memory extends APIResource {
    * ```
    */
   add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
-    const { enable_holographic, format, skip_background_processing, ...body } = params;
+    const {
+      enable_holographic,
+      format,
+      frequency_schema_id,
+      skip_background_processing,
+      webhook_secret,
+      webhook_url,
+      ...body
+    } = params;
     return this._client.post('/v1/memory', {
-      query: { enable_holographic, format, skip_background_processing },
+      query: {
+        enable_holographic,
+        format,
+        frequency_schema_id,
+        skip_background_processing,
+        webhook_secret,
+        webhook_url,
+      },
       body,
       ...options,
     });
@@ -137,8 +157,12 @@ export class Memory extends APIResource {
    * ```
    */
   addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<BatchMemoryResponse> {
-    const { skip_background_processing, ...body } = params;
-    return this._client.post('/v1/memory/batch', { query: { skip_background_processing }, body, ...options });
+    const { enable_holographic, frequency_schema_id, skip_background_processing, ...body } = params;
+    return this._client.post('/v1/memory/batch', {
+      query: { enable_holographic, frequency_schema_id, skip_background_processing },
+      body,
+      ...options,
+    });
   }
 
   /**
@@ -362,8 +386,9 @@ export interface AddMemory {
   namespace_id?: string | null;
 
   /**
-   * Optional organization ID for multi-tenant memory scoping. When provided, memory
-   * is associated with this organization.
+   * @deprecated DEPRECATED - Internal only. Auto-populated from API key scope. Do
+   * not set manually. The organization is resolved automatically from the API key's
+   * associated organization.
    */
   organization_id?: string | null;
 
@@ -456,6 +481,12 @@ export namespace AutoGraphGeneration {
 }
 
 export interface BatchMemoryResponse {
+  /**
+   * Batch tracking ID for status polling via GET /v1/memory/batch/status/{batch_id}
+   * and WebSocket updates
+   */
+  batch_id?: string | null;
+
   /**
    * HTTP status code for the batch operation
    */
@@ -556,6 +587,10 @@ export namespace HTTPValidationError {
     msg: string;
 
     type: string;
+
+    ctx?: unknown;
+
+    input?: unknown;
   }
 }
 
@@ -1040,6 +1075,8 @@ export interface MemoryDeleteResponse {
 
 export namespace MemoryDeleteResponse {
   export interface DeletionStatus {
+    holographic?: boolean;
+
     neo4j?: boolean;
 
     parse?: boolean;
@@ -1052,22 +1089,34 @@ export namespace MemoryDeleteResponse {
 
 export interface MemoryUpdateParams {
   /**
-   * The new content of the memory item
+   * Query param: If True, re-processes holographic neural transforms after content
+   * update
+   */
+  enable_holographic?: boolean;
+
+  /**
+   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
+   * 'scifact').
+   */
+  frequency_schema_id?: string | null;
+
+  /**
+   * Body param: The new content of the memory item
    */
   content?: string | null;
 
   /**
-   * Updated context for the memory item
+   * Body param: Updated context for the memory item
    */
   context?: Array<ContextItem> | null;
 
   /**
-   * Graph generation configuration
+   * Body param: Graph generation configuration
    */
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Shorthand DSL for node/edge constraints. Expands to
+   * Body param: Shorthand DSL for node/edge constraints. Expands to
    * memory_policy.node_constraints and edge_constraints. Formats: - String:
    * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
    * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
@@ -1080,7 +1129,7 @@ export interface MemoryUpdateParams {
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
   /**
-   * Unified memory processing policy.
+   * Body param: Unified memory processing policy.
    *
    * This is the SINGLE source of truth for how a memory should be processed,
    * combining graph generation control AND OMO (Open Memory Object) safety
@@ -1105,29 +1154,29 @@ export interface MemoryUpdateParams {
   memory_policy?: Shared.MemoryPolicy | null;
 
   /**
-   * Metadata for memory request
+   * Body param: Metadata for memory request
    */
   metadata?: MemoryMetadata | null;
 
   /**
-   * Optional namespace ID for multi-tenant memory scoping. When provided, update is
-   * scoped to memories within this namespace.
+   * Body param: Optional namespace ID for multi-tenant memory scoping. When
+   * provided, update is scoped to memories within this namespace.
    */
   namespace_id?: string | null;
 
   /**
-   * Optional organization ID for multi-tenant memory scoping. When provided, update
-   * is scoped to memories within this organization.
+   * Body param: Optional organization ID for multi-tenant memory scoping. When
+   * provided, update is scoped to memories within this organization.
    */
   organization_id?: string | null;
 
   /**
-   * Updated relationships for Graph DB (neo4J)
+   * Body param: Updated relationships for Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
 
   /**
-   * Valid memory types
+   * Body param: Valid memory types
    */
   type?: MemoryType | null;
 }
@@ -1158,9 +1207,28 @@ export interface MemoryAddParams {
   format?: string | null;
 
   /**
+   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
+   * 'scifact'). Required when enable_holographic=True. Call GET /v1/frequencies to
+   * see available schemas.
+   */
+  frequency_schema_id?: string | null;
+
+  /**
    * Query param: If True, skips adding background tasks for processing
    */
   skip_background_processing?: boolean;
+
+  /**
+   * Query param: Secret for webhook HMAC authentication. Sent as X-Webhook-Secret
+   * header and used to generate X-Webhook-Signature.
+   */
+  webhook_secret?: string | null;
+
+  /**
+   * Query param: Webhook URL to notify when background processing completes.
+   * Receives POST with {event, memory_id, status, completed_at}.
+   */
+  webhook_url?: string | null;
 
   /**
    * Body param: Conversation history context for this memory. Use for providing
@@ -1231,8 +1299,9 @@ export interface MemoryAddParams {
   namespace_id?: string | null;
 
   /**
-   * Body param: Optional organization ID for multi-tenant memory scoping. When
-   * provided, memory is associated with this organization.
+   * @deprecated Body param: DEPRECATED - Internal only. Auto-populated from API key
+   * scope. Do not set manually. The organization is resolved automatically from the
+   * API key's associated organization.
    */
   organization_id?: string | null;
 
@@ -1261,6 +1330,19 @@ export interface MemoryAddBatchParams {
    * Body param: List of memory items to add in batch
    */
   memories: Array<AddMemory>;
+
+  /**
+   * Query param: If True, applies holographic neural transforms and stores in
+   * holographic collection
+   */
+  enable_holographic?: boolean;
+
+  /**
+   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
+   * 'scifact'). Required when enable_holographic=True. Call GET /v1/frequencies to
+   * see available schemas.
+   */
+  frequency_schema_id?: string | null;
 
   /**
    * Query param: If True, skips adding background tasks for processing
@@ -1329,8 +1411,9 @@ export interface MemoryAddBatchParams {
   namespace_id?: string | null;
 
   /**
-   * Body param: Optional organization ID for multi-tenant batch memory scoping. When
-   * provided, all memories in the batch are associated with this organization.
+   * @deprecated Body param: DEPRECATED - Internal only. Auto-populated from API key
+   * scope. Do not set manually. The organization is resolved automatically from the
+   * API key's associated organization.
    */
   organization_id?: string | null;
 
@@ -1506,6 +1589,42 @@ export interface MemorySearchParams {
   schema_id?: string | null;
 
   /**
+   * Body param: Simplified Access Control List configuration.
+   *
+   * Aligned with Open Memory Object (OMO) standard. See:
+   * https://github.com/anthropics/open-memory-object
+   *
+   * **Supported Entity Prefixes:**
+   *
+   * | Prefix           | Description           | Validation                           |
+   * | ---------------- | --------------------- | ------------------------------------ |
+   * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+   * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+   * | `organization:`  | Organization ID       | Validated against your organizations |
+   * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+   * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+   * | `role:`          | Parse role ID         | Validated against your roles         |
+   *
+   * **Examples:**
+   *
+   * ```python
+   * acl = ACLConfig(
+   *     read=["external_user:alice_123", "organization:org_acme"],
+   *     write=["external_user:alice_123"]
+   * )
+   * ```
+   *
+   * **Validation Rules:**
+   *
+   * - Internal entities (user, organization, namespace, workspace, role) are
+   *   validated
+   * - External entities (external_user) are NOT validated - your app is responsible
+   * - Invalid internal entities will return an error
+   * - Unprefixed values default to `external_user:` for backwards compatibility
+   */
+  search_acl?: Shared.ACLConfig | null;
+
+  /**
    * Body param: Complete search override specification provided by developer
    */
   search_override?: MemorySearchParams.SearchOverride | null;
@@ -1537,6 +1656,13 @@ export namespace MemorySearchParams {
     enabled?: boolean;
 
     /**
+     * Frequency schema for holographic scoring. Use full ID (e.g.
+     * 'code_search:cosqa:2.0.0') or shorthand (e.g. 'cosqa'). Call GET /v1/frequencies
+     * to see available schemas and shortcuts.
+     */
+    frequency_schema_id?: string | null;
+
+    /**
      * Maximum boost to add for high alignment (0.0-0.5)
      */
     hcond_boost_factor?: number;
@@ -1550,6 +1676,13 @@ export namespace MemorySearchParams {
      * Maximum penalty for low alignment (0.0-0.5)
      */
     hcond_penalty_factor?: number;
+
+    /**
+     * Scoring method for holographic search results. Default: 'egr_rerank' (highest
+     * accuracy, requires GPU). Options include: baseline, caesar8, egr_rerank, and
+     * 160+ others. If null, uses the schema's default_scoring_method.
+     */
+    scoring_method?: string | null;
 
     /**
      * Search mode: 'disabled' (off), 'integrated' (search transformed embeddings),
