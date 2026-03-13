@@ -60,7 +60,10 @@ describe('resource memory', () => {
       content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
       enable_holographic: true,
       format: 'format',
+      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
+      webhook_secret: 'webhook_secret',
+      webhook_url: 'webhook_url',
       context: [
         { content: "Let's discuss the Q4 project timeline with John", role: 'user' },
         {
@@ -728,6 +731,8 @@ describe('resource memory', () => {
           user_id: 'user_id',
         },
       ],
+      enable_holographic: true,
+      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
       batch_size: 10,
       external_user_id: 'external_user_abcde',
@@ -966,9 +971,11 @@ describe('resource memory', () => {
       external_user_id: 'external_user_123',
       holographic_config: {
         enabled: true,
+        frequency_schema_id: 'cosqa',
         hcond_boost_factor: 0.12,
         hcond_boost_threshold: 0.35,
         hcond_penalty_factor: 0.06,
+        scoring_method: 'egr_rerank',
         search_mode: 'post_search',
       },
       metadata: {
@@ -1034,6 +1041,10 @@ describe('resource memory', () => {
         reranking_provider: 'openai',
       },
       schema_id: 'schema_id',
+      search_acl: {
+        read: ['external_user:alice_123', 'organization:org_acme'],
+        write: ['external_user:alice_123'],
+      },
       search_override: {
         pattern: {
           relationship_type: 'ASSOCIATED_WITH',

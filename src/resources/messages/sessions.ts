@@ -103,7 +103,7 @@ export class Sessions extends APIResource {
    *
    *     **Pagination**:
    *     - Use `limit` and `skip` parameters for pagination
-   *     - Messages are returned in chronological order (oldest first)
+   *     - Messages are returned in **reverse chronological order** (newest first)
    *     - `total_count` indicates total messages in the session
    *
    *     **Summaries** (if available):
