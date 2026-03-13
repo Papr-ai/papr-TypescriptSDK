@@ -60,7 +60,7 @@ $ yarn link @papr/memory
 # With pnpm
 $ pnpm link --global
 $ cd ../my-package
-$ pnpm link -—global @papr/memory
+$ pnpm link --global @papr/memory
 ```
 
 ## Running tests
