@@ -39,6 +39,7 @@ Types:
 - <code><a href="./src/resources/memory.ts">AddMemory</a></code>
 - <code><a href="./src/resources/memory.ts">AddMemoryResponse</a></code>
 - <code><a href="./src/resources/memory.ts">AutoGraphGeneration</a></code>
+- <code><a href="./src/resources/memory.ts">BatchMemoryError</a></code>
 - <code><a href="./src/resources/memory.ts">BatchMemoryResponse</a></code>
 - <code><a href="./src/resources/memory.ts">ContextItem</a></code>
 - <code><a href="./src/resources/memory.ts">GraphGeneration</a></code>
@@ -48,6 +49,7 @@ Types:
 - <code><a href="./src/resources/memory.ts">MemoryType</a></code>
 - <code><a href="./src/resources/memory.ts">RelationshipItem</a></code>
 - <code><a href="./src/resources/memory.ts">SearchResponse</a></code>
+- <code><a href="./src/resources/memory.ts">SearchResult</a></code>
 - <code><a href="./src/resources/memory.ts">MemoryUpdateResponse</a></code>
 - <code><a href="./src/resources/memory.ts">MemoryDeleteResponse</a></code>
 
@@ -138,6 +140,7 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/messages/sessions.ts">ConversationSummaryResponse</a></code>
 - <code><a href="./src/resources/messages/sessions.ts">SessionUpdateResponse</a></code>
 - <code><a href="./src/resources/messages/sessions.ts">SessionCompressResponse</a></code>
 - <code><a href="./src/resources/messages/sessions.ts">SessionProcessResponse</a></code>

@@ -155,6 +155,36 @@ export class Sessions extends APIResource {
   }
 }
 
+/**
+ * Hierarchical conversation summaries for context window compression
+ */
+export interface ConversationSummaryResponse {
+  /**
+   * When summaries were last updated
+   */
+  last_updated?: string | null;
+
+  /**
+   * Full session summary
+   */
+  long_term?: string | null;
+
+  /**
+   * Summary of last ~100 messages
+   */
+  medium_term?: string | null;
+
+  /**
+   * Summary of last 15 messages
+   */
+  short_term?: string | null;
+
+  /**
+   * Key topics discussed
+   */
+  topics?: Array<string>;
+}
+
 export type SessionUpdateResponse = unknown;
 
 /**
@@ -180,44 +210,12 @@ export interface SessionCompressResponse {
   /**
    * Hierarchical conversation summaries
    */
-  summaries: SessionCompressResponse.Summaries;
+  summaries: ConversationSummaryResponse;
 
   /**
    * Number of messages summarized (only present if just generated)
    */
   message_count?: number | null;
-}
-
-export namespace SessionCompressResponse {
-  /**
-   * Hierarchical conversation summaries
-   */
-  export interface Summaries {
-    /**
-     * When summaries were last updated
-     */
-    last_updated?: string | null;
-
-    /**
-     * Full session summary
-     */
-    long_term?: string | null;
-
-    /**
-     * Summary of last ~100 messages
-     */
-    medium_term?: string | null;
-
-    /**
-     * Summary of last 15 messages
-     */
-    short_term?: string | null;
-
-    /**
-     * Key topics discussed
-     */
-    topics?: Array<string>;
-  }
 }
 
 export type SessionProcessResponse = unknown;
@@ -250,7 +248,7 @@ export interface SessionRetrieveHistoryResponse {
   /**
    * Hierarchical conversation summaries for context window compression
    */
-  summaries?: SessionRetrieveHistoryResponse.Summaries | null;
+  summaries?: ConversationSummaryResponse | null;
 }
 
 export namespace SessionRetrieveHistoryResponse {
@@ -288,36 +286,6 @@ export namespace SessionRetrieveHistoryResponse {
      */
     processing_status?: string;
   }
-
-  /**
-   * Hierarchical conversation summaries for context window compression
-   */
-  export interface Summaries {
-    /**
-     * When summaries were last updated
-     */
-    last_updated?: string | null;
-
-    /**
-     * Full session summary
-     */
-    long_term?: string | null;
-
-    /**
-     * Summary of last ~100 messages
-     */
-    medium_term?: string | null;
-
-    /**
-     * Summary of last 15 messages
-     */
-    short_term?: string | null;
-
-    /**
-     * Key topics discussed
-     */
-    topics?: Array<string>;
-  }
 }
 
 export type SessionRetrieveStatusResponse = unknown;
@@ -348,6 +316,7 @@ export interface SessionRetrieveHistoryParams {
 
 export declare namespace Sessions {
   export {
+    type ConversationSummaryResponse as ConversationSummaryResponse,
     type SessionUpdateResponse as SessionUpdateResponse,
     type SessionCompressResponse as SessionCompressResponse,
     type SessionProcessResponse as SessionProcessResponse,

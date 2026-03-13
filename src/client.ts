@@ -39,6 +39,7 @@ import {
   AddMemory,
   AddMemoryResponse,
   AutoGraphGeneration,
+  BatchMemoryError,
   BatchMemoryResponse,
   ContextItem,
   GraphGeneration,
@@ -58,6 +59,7 @@ import {
   MemoryUpdateResponse,
   RelationshipItem,
   SearchResponse,
+  SearchResult,
 } from './resources/memory';
 import {
   Omo,
@@ -890,6 +892,7 @@ export declare namespace Papr {
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
     type AutoGraphGeneration as AutoGraphGeneration,
+    type BatchMemoryError as BatchMemoryError,
     type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
     type GraphGeneration as GraphGeneration,
@@ -899,6 +902,7 @@ export declare namespace Papr {
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
     type SearchResponse as SearchResponse,
+    type SearchResult as SearchResult,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
     type MemoryUpdateParams as MemoryUpdateParams,

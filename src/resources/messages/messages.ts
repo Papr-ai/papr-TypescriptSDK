@@ -5,6 +5,7 @@ import * as MemoryAPI from '../memory';
 import * as Shared from '../shared';
 import * as SessionsAPI from './sessions';
 import {
+  ConversationSummaryResponse,
   SessionCompressResponse,
   SessionProcessResponse,
   SessionRetrieveHistoryParams,
@@ -186,6 +187,7 @@ export declare namespace Messages {
 
   export {
     Sessions as Sessions,
+    type ConversationSummaryResponse as ConversationSummaryResponse,
     type SessionUpdateResponse as SessionUpdateResponse,
     type SessionCompressResponse as SessionCompressResponse,
     type SessionProcessResponse as SessionProcessResponse,
