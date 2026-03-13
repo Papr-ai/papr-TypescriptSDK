@@ -20,7 +20,7 @@ export const newMcpServer = async (stainlessApiKey: string | undefined) =>
   new McpServer(
     {
       name: 'papr_memory_api',
-      version: '2.1.1',
+      version: '2.2.0',
     },
     {
       instructions: await getInstructions(stainlessApiKey),

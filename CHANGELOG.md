@@ -1,5 +1,39 @@
 # Changelog
 
+## 2.2.0 (2026-03-13)
+
+Full Changelog: [v2.1.1...v2.2.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.1.1...v2.2.0)
+
+### Features
+
+* **api:** manual updates ([6f834e9](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6f834e9d51634c7b899d789dabf593462f7835aa))
+* **mcp:** add an option to disable code tool ([5679471](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5679471ff34053950077757ea71277ad30577d0a))
+
+
+### Bug Fixes
+
+* **client:** preserve URL params already embedded in path ([42aa971](https://github.com/Papr-ai/papr-TypescriptSDK/commit/42aa971e363622c6eef561f9191297e70005b8ae))
+* **docs/contributing:** correct pnpm link command ([a4f8d23](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a4f8d23ef361cfda7354ea3595ad5bc875fce1df))
+* **mcp:** update prompt ([7899bad](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7899badb4e2b2ca0da3fdd683c2ed0a33b7c47b3))
+
+
+### Chores
+
+* **ci:** skip uploading artifacts on stainless-internal branches ([5472793](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5472793a9ced6da8e55d137ff8595ca5d738264b))
+* **internal:** bump @modelcontextprotocol/sdk, @hono/node-server, and minimatch ([0a8cfb8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0a8cfb8aafc9fa445024ee64a0dcdf840aab218f))
+* **internal:** codegen related update ([9b60c23](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9b60c232b6b2b6236b8d07b43304bf2cb48b7101))
+* **internal:** codegen related update ([4b32fa2](https://github.com/Papr-ai/papr-TypescriptSDK/commit/4b32fa20dbdc5e2e65abcf3ed16cbaaa77c5115f))
+* **internal:** fix MCP Dockerfiles so they can be built without buildkit ([b6ad5a9](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b6ad5a91c1710fae9ba80162da1e25767ed137bb))
+* **internal:** fix MCP Dockerfiles so they can be built without buildkit ([524fc88](https://github.com/Papr-ai/papr-TypescriptSDK/commit/524fc88c7cc192dc6652d8c7f956af0d432f32c0))
+* **internal:** make MCP code execution location configurable via a flag ([e5cdf22](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e5cdf22667533d367d4cc5bd8184992a055ae610))
+* **internal:** move stringifyQuery implementation to internal function ([ab20b9d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ab20b9d1906daead07ae32e43cb12e5837c84c7f))
+* **internal:** update dependencies to address dependabot vulnerabilities ([8178497](https://github.com/Papr-ai/papr-TypescriptSDK/commit/81784974cb65762b120dbe7acdcbf232a9cbdc47))
+* **internal:** upgrade @modelcontextprotocol/sdk and hono ([97f7a22](https://github.com/Papr-ai/papr-TypescriptSDK/commit/97f7a22d3857c215c77ad9ec4469f27dada4d3d0))
+* **internal:** use x-stainless-mcp-client-envs header for MCP remote code tool calls ([0766152](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0766152d298e7db99ec55a16c440e14d37acc54a))
+* **mcp-server:** improve instructions ([ac20e96](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ac20e965175ad56f25280982da51a58712276194))
+* **mcp-server:** return access instructions for 404 without API key ([7670ecf](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7670ecf8b31b9620ced7a8e4e3cbc72e838806e9))
+* update placeholder string ([172fbdc](https://github.com/Papr-ai/papr-TypescriptSDK/commit/172fbdc4d893868f7bd0d3c79a87d880f8e33587))
+
 ## 2.1.1 (2026-02-23)
 
 Full Changelog: [v2.1.0...v2.1.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.1.0...v2.1.1)
