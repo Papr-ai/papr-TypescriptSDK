@@ -3,6 +3,7 @@
 export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages';
 export {
   Sessions,
+  type ConversationSummaryResponse,
   type SessionUpdateResponse,
   type SessionCompressResponse,
   type SessionProcessResponse,

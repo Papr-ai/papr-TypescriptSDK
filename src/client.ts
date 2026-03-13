@@ -34,11 +34,13 @@ import {
   FeedbackSubmitParams,
   ParsePointer,
 } from './resources/feedback';
+import { Frequencies, FrequencyListResponse, FrequencyRetrieveResponse } from './resources/frequencies';
 import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
 import {
   AddMemory,
   AddMemoryResponse,
   AutoGraphGeneration,
+  BatchMemoryError,
   BatchMemoryResponse,
   ContextItem,
   GraphGeneration,
@@ -52,13 +54,28 @@ import {
   MemoryDeleteResponse,
   MemoryGetParams,
   MemoryMetadata,
+  MemoryRetrieveBatchStatusResponse,
+  MemoryRetrieveStatusResponse,
   MemorySearchParams,
   MemoryType,
   MemoryUpdateParams,
   MemoryUpdateResponse,
   RelationshipItem,
   SearchResponse,
+  SearchResult,
 } from './resources/memory';
+import {
+  Namespace,
+  NamespaceCreateParams,
+  NamespaceCreateResponse,
+  NamespaceDeleteParams,
+  NamespaceDeleteResponse,
+  NamespaceListParams,
+  NamespaceListResponse,
+  NamespaceRetrieveResponse,
+  NamespaceUpdateParams,
+  NamespaceUpdateResponse,
+} from './resources/namespace';
 import {
   Omo,
   OmoExportMemoriesAsJsonParams,
@@ -102,6 +119,13 @@ import {
   UserType,
   UserUpdateParams,
 } from './resources/user';
+import {
+  Holographic,
+  HolographicExtractMetadataParams,
+  HolographicExtractMetadataResponse,
+  HolographicRerankParams,
+  HolographicRerankResponse,
+} from './resources/holographic/holographic';
 import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
@@ -856,6 +880,9 @@ export class Papr {
   messages: API.Messages = new API.Messages(this);
   omo: API.Omo = new API.Omo(this);
   sync: API.Sync = new API.Sync(this);
+  namespace: API.Namespace = new API.Namespace(this);
+  frequencies: API.Frequencies = new API.Frequencies(this);
+  holographic: API.Holographic = new API.Holographic(this);
 }
 
 Papr.User = User;
@@ -867,6 +894,9 @@ Papr.Graphql = Graphql;
 Papr.Messages = Messages;
 Papr.Omo = Omo;
 Papr.Sync = Sync;
+Papr.Namespace = Namespace;
+Papr.Frequencies = Frequencies;
+Papr.Holographic = Holographic;
 
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
@@ -890,6 +920,7 @@ export declare namespace Papr {
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
     type AutoGraphGeneration as AutoGraphGeneration,
+    type BatchMemoryError as BatchMemoryError,
     type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
     type GraphGeneration as GraphGeneration,
@@ -899,8 +930,11 @@ export declare namespace Papr {
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
     type SearchResponse as SearchResponse,
+    type SearchResult as SearchResult,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
+    type MemoryRetrieveBatchStatusResponse as MemoryRetrieveBatchStatusResponse,
+    type MemoryRetrieveStatusResponse as MemoryRetrieveStatusResponse,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,
@@ -972,6 +1006,33 @@ export declare namespace Papr {
     type SyncGetTiersResponse as SyncGetTiersResponse,
     type SyncGetDeltaParams as SyncGetDeltaParams,
     type SyncGetTiersParams as SyncGetTiersParams,
+  };
+
+  export {
+    Namespace as Namespace,
+    type NamespaceCreateResponse as NamespaceCreateResponse,
+    type NamespaceRetrieveResponse as NamespaceRetrieveResponse,
+    type NamespaceUpdateResponse as NamespaceUpdateResponse,
+    type NamespaceListResponse as NamespaceListResponse,
+    type NamespaceDeleteResponse as NamespaceDeleteResponse,
+    type NamespaceCreateParams as NamespaceCreateParams,
+    type NamespaceUpdateParams as NamespaceUpdateParams,
+    type NamespaceListParams as NamespaceListParams,
+    type NamespaceDeleteParams as NamespaceDeleteParams,
+  };
+
+  export {
+    Frequencies as Frequencies,
+    type FrequencyRetrieveResponse as FrequencyRetrieveResponse,
+    type FrequencyListResponse as FrequencyListResponse,
+  };
+
+  export {
+    Holographic as Holographic,
+    type HolographicExtractMetadataResponse as HolographicExtractMetadataResponse,
+    type HolographicRerankResponse as HolographicRerankResponse,
+    type HolographicExtractMetadataParams as HolographicExtractMetadataParams,
+    type HolographicRerankParams as HolographicRerankParams,
   };
 
   export type ACLConfig = API.ACLConfig;

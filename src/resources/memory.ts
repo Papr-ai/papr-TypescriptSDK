@@ -226,6 +226,52 @@ export class Memory extends APIResource {
   }
 
   /**
+   * Get processing status for a batch of memories.
+   *
+   *     Returns overall batch progress and per-memory status breakdown.
+   *     The `batch_id` is returned in the POST /v1/memory/batch response.
+   *
+   *     For real-time updates, connect to WebSocket at `/ws/memory-status`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.memory.retrieveBatchStatus(
+   *   'batch_id',
+   * );
+   * ```
+   */
+  retrieveBatchStatus(
+    batchID: string,
+    options?: RequestOptions,
+  ): APIPromise<MemoryRetrieveBatchStatusResponse> {
+    return this._client.get(path`/v1/memory/batch/status/${batchID}`, options);
+  }
+
+  /**
+   * Get processing status for a memory item.
+   *
+   *     Returns the current processing lifecycle stage:
+   *     - `queued` — Accepted, waiting to be processed
+   *     - `quick_saved` — Quick add complete (stored in DB + vector store), background processing pending
+   *     - `processing` — Background processing in progress (graph indexing, Neo4j nodes, enrichment)
+   *     - `completed` — All processing finished
+   *     - `failed` — Processing failed
+   *
+   *     Use this endpoint to poll for completion after adding a memory.
+   *     For real-time updates, connect to WebSocket at `/ws/memory-status/{memory_id}`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.memory.retrieveStatus(
+   *   'memory_id',
+   * );
+   * ```
+   */
+  retrieveStatus(memoryID: string, options?: RequestOptions): APIPromise<MemoryRetrieveStatusResponse> {
+    return this._client.get(path`/v1/memory/status/${memoryID}`, options);
+  }
+
+  /**
    * Search through memories with authentication required.
    *
    *     **Authentication Required**:
@@ -480,6 +526,18 @@ export namespace AutoGraphGeneration {
   }
 }
 
+export interface BatchMemoryError {
+  error: string;
+
+  index: number;
+
+  code?: number | null;
+
+  details?: unknown;
+
+  status?: string | null;
+}
+
 export interface BatchMemoryResponse {
   /**
    * Batch tracking ID for status polling via GET /v1/memory/batch/status/{batch_id}
@@ -505,7 +563,7 @@ export interface BatchMemoryResponse {
   /**
    * List of errors for failed items
    */
-  errors?: Array<BatchMemoryResponse.Error>;
+  errors?: Array<BatchMemoryError>;
 
   /**
    * Human-readable status message
@@ -531,20 +589,6 @@ export interface BatchMemoryResponse {
   total_storage_size?: number;
 
   total_successful?: number;
-}
-
-export namespace BatchMemoryResponse {
-  export interface Error {
-    error: string;
-
-    index: number;
-
-    code?: number | null;
-
-    details?: unknown;
-
-    status?: string | null;
-  }
 }
 
 /**
@@ -911,7 +955,7 @@ export interface SearchResponse {
   /**
    * Return type for SearchResult
    */
-  data?: SearchResponse.Data | null;
+  data?: SearchResult | null;
 
   /**
    * Additional error details or context
@@ -935,44 +979,42 @@ export interface SearchResponse {
   status?: string;
 }
 
-export namespace SearchResponse {
+/**
+ * Return type for SearchResult
+ */
+export interface SearchResult {
+  memories: Array<Shared.MemoryObject>;
+
+  nodes: Array<SearchResult.Node>;
+
   /**
-   * Return type for SearchResult
+   * List of UserGraphSchema IDs used in this response. Use GET /v1/schemas/{id} to
+   * get full schema definitions.
    */
-  export interface Data {
-    memories: Array<Shared.MemoryObject>;
+  schemas_used?: Array<string> | null;
+}
 
-    nodes: Array<Data.Node>;
+export namespace SearchResult {
+  /**
+   * Public-facing node structure - supports both system and custom schema nodes
+   */
+  export interface Node {
+    /**
+     * Node type label - can be system type (Memory, Person, etc.) or custom type from
+     * UserGraphSchema
+     */
+    label: string;
 
     /**
-     * List of UserGraphSchema IDs used in this response. Use GET /v1/schemas/{id} to
-     * get full schema definitions.
+     * Node properties - structure depends on node type and schema
      */
-    schemas_used?: Array<string> | null;
-  }
+    properties: { [key: string]: unknown };
 
-  export namespace Data {
     /**
-     * Public-facing node structure - supports both system and custom schema nodes
+     * Reference to UserGraphSchema ID for custom nodes. Use GET
+     * /v1/schemas/{schema_id} to get full schema definition. Null for system nodes.
      */
-    export interface Node {
-      /**
-       * Node type label - can be system type (Memory, Person, etc.) or custom type from
-       * UserGraphSchema
-       */
-      label: string;
-
-      /**
-       * Node properties - structure depends on node type and schema
-       */
-      properties: { [key: string]: unknown };
-
-      /**
-       * Reference to UserGraphSchema ID for custom nodes. Use GET
-       * /v1/schemas/{schema_id} to get full schema definition. Null for system nodes.
-       */
-      schema_id?: string | null;
-    }
+    schema_id?: string | null;
   }
 }
 
@@ -1086,6 +1128,10 @@ export namespace MemoryDeleteResponse {
     qdrant?: boolean;
   }
 }
+
+export type MemoryRetrieveBatchStatusResponse = { [key: string]: unknown };
+
+export type MemoryRetrieveStatusResponse = { [key: string]: unknown };
 
 export interface MemoryUpdateParams {
   /**
@@ -1840,6 +1886,7 @@ export declare namespace Memory {
     type AddMemory as AddMemory,
     type AddMemoryResponse as AddMemoryResponse,
     type AutoGraphGeneration as AutoGraphGeneration,
+    type BatchMemoryError as BatchMemoryError,
     type BatchMemoryResponse as BatchMemoryResponse,
     type ContextItem as ContextItem,
     type GraphGeneration as GraphGeneration,
@@ -1849,8 +1896,11 @@ export declare namespace Memory {
     type MemoryType as MemoryType,
     type RelationshipItem as RelationshipItem,
     type SearchResponse as SearchResponse,
+    type SearchResult as SearchResult,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
+    type MemoryRetrieveBatchStatusResponse as MemoryRetrieveBatchStatusResponse,
+    type MemoryRetrieveStatusResponse as MemoryRetrieveStatusResponse,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,
