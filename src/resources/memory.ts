@@ -226,6 +226,52 @@ export class Memory extends APIResource {
   }
 
   /**
+   * Get processing status for a batch of memories.
+   *
+   *     Returns overall batch progress and per-memory status breakdown.
+   *     The `batch_id` is returned in the POST /v1/memory/batch response.
+   *
+   *     For real-time updates, connect to WebSocket at `/ws/memory-status`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.memory.retrieveBatchStatus(
+   *   'batch_id',
+   * );
+   * ```
+   */
+  retrieveBatchStatus(
+    batchID: string,
+    options?: RequestOptions,
+  ): APIPromise<MemoryRetrieveBatchStatusResponse> {
+    return this._client.get(path`/v1/memory/batch/status/${batchID}`, options);
+  }
+
+  /**
+   * Get processing status for a memory item.
+   *
+   *     Returns the current processing lifecycle stage:
+   *     - `queued` — Accepted, waiting to be processed
+   *     - `quick_saved` — Quick add complete (stored in DB + vector store), background processing pending
+   *     - `processing` — Background processing in progress (graph indexing, Neo4j nodes, enrichment)
+   *     - `completed` — All processing finished
+   *     - `failed` — Processing failed
+   *
+   *     Use this endpoint to poll for completion after adding a memory.
+   *     For real-time updates, connect to WebSocket at `/ws/memory-status/{memory_id}`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.memory.retrieveStatus(
+   *   'memory_id',
+   * );
+   * ```
+   */
+  retrieveStatus(memoryID: string, options?: RequestOptions): APIPromise<MemoryRetrieveStatusResponse> {
+    return this._client.get(path`/v1/memory/status/${memoryID}`, options);
+  }
+
+  /**
    * Search through memories with authentication required.
    *
    *     **Authentication Required**:
@@ -1083,6 +1129,10 @@ export namespace MemoryDeleteResponse {
   }
 }
 
+export type MemoryRetrieveBatchStatusResponse = { [key: string]: unknown };
+
+export type MemoryRetrieveStatusResponse = { [key: string]: unknown };
+
 export interface MemoryUpdateParams {
   /**
    * Query param: If True, re-processes holographic neural transforms after content
@@ -1849,6 +1899,8 @@ export declare namespace Memory {
     type SearchResult as SearchResult,
     type MemoryUpdateResponse as MemoryUpdateResponse,
     type MemoryDeleteResponse as MemoryDeleteResponse,
+    type MemoryRetrieveBatchStatusResponse as MemoryRetrieveBatchStatusResponse,
+    type MemoryRetrieveStatusResponse as MemoryRetrieveStatusResponse,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
     type MemoryAddParams as MemoryAddParams,

@@ -18,7 +18,15 @@ export {
   type FeedbackSubmitParams,
   type FeedbackSubmitBatchParams,
 } from './feedback';
+export { Frequencies, type FrequencyRetrieveResponse, type FrequencyListResponse } from './frequencies';
 export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
+export {
+  Holographic,
+  type HolographicExtractMetadataResponse,
+  type HolographicRerankResponse,
+  type HolographicExtractMetadataParams,
+  type HolographicRerankParams,
+} from './holographic/holographic';
 export {
   Memory,
   type AddMemory,
@@ -37,6 +45,8 @@ export {
   type SearchResult,
   type MemoryUpdateResponse,
   type MemoryDeleteResponse,
+  type MemoryRetrieveBatchStatusResponse,
+  type MemoryRetrieveStatusResponse,
   type MemoryUpdateParams,
   type MemoryDeleteParams,
   type MemoryAddParams,
@@ -46,6 +56,18 @@ export {
   type MemorySearchParams,
 } from './memory';
 export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
+export {
+  Namespace,
+  type NamespaceCreateResponse,
+  type NamespaceRetrieveResponse,
+  type NamespaceUpdateResponse,
+  type NamespaceListResponse,
+  type NamespaceDeleteResponse,
+  type NamespaceCreateParams,
+  type NamespaceUpdateParams,
+  type NamespaceListParams,
+  type NamespaceDeleteParams,
+} from './namespace';
 export {
   Omo,
   type OmoExportMemoriesResponse,
