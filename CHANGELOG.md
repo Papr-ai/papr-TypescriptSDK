@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.1 (2026-03-14)
+
+Full Changelog: [v2.3.0...v2.3.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.0...v2.3.1)
+
+### Chores
+
+* **internal:** make generated MCP servers compatible with Cloudflare worker environments ([366d83f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/366d83f6b9185cf5bc3b4157143c04b5af114f92))
+* **internal:** support x-stainless-mcp-client-envs header in MCP servers ([73092a8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/73092a803b98ba3e23ed0322e4304c5dc1e409ab))
+
 ## 2.3.0 (2026-03-13)
 
 Full Changelog: [v2.2.0...v2.3.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.2.0...v2.3.0)
