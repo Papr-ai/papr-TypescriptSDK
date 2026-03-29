@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.3.2 (2026-03-28)
+
+Full Changelog: [v2.3.1...v2.3.2](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.1...v2.3.2)
+
+### Chores
+
+* **ci:** escape input path in publish-npm workflow ([02c8eca](https://github.com/Papr-ai/papr-TypescriptSDK/commit/02c8eca282953c7bcece3e6018c6eb9fcc8c5092))
+* **ci:** skip lint on metadata-only changes ([996ed98](https://github.com/Papr-ai/papr-TypescriptSDK/commit/996ed98df6ee30e2e9292ef8caaf828688942e0a))
+* **internal:** codegen related update ([20cf17f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/20cf17f29e99398f1d27697901eb3dda7a5a5411))
+* **internal:** fix MCP server TS errors that occur with required client options ([0fed897](https://github.com/Papr-ai/papr-TypescriptSDK/commit/0fed8975f48d21a9040b224f24da5fc8f5ea5fda))
+* **internal:** support custom-instructions-path flag in MCP servers ([a4faaa0](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a4faaa06e79a2000daf5f402aecbe785b98d7c94))
+* **internal:** support local docs search in MCP servers ([1c5e459](https://github.com/Papr-ai/papr-TypescriptSDK/commit/1c5e45956435414fe655d3d394935ed119174e6e))
+* **internal:** support x-stainless-mcp-client-permissions headers in MCP servers ([7361a9c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7361a9ceea0c3d619cef69b1c7a4ced2a798b337))
+* **internal:** tweak CI branches ([5e820e7](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5e820e7c3d7132e6eb4ec8ffe3840c0d2083ec3f))
+* **internal:** update gitignore ([824ee94](https://github.com/Papr-ai/papr-TypescriptSDK/commit/824ee949a4ad7053d2c89d4e8f396ccf167520ed))
+
 ## 2.3.1 (2026-03-14)
 
 Full Changelog: [v2.3.0...v2.3.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.0...v2.3.1)
