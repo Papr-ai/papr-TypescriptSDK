@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.3 (2026-03-31)
+
+Full Changelog: [v2.3.2...v2.3.3](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.2...v2.3.3)
+
+### Chores
+
+* **internal:** improve local docs search for MCP servers ([d7e4a6c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/d7e4a6c396a13b64f0bf55ae92ed5d36b9ddd1c4))
+* **mcp-server:** add support for session id, forward client info ([8ba5c6b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/8ba5c6b32621b34bbdf9196543983b3e47621acb))
+
 ## 2.3.2 (2026-03-28)
 
 Full Changelog: [v2.3.1...v2.3.2](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.1...v2.3.2)
