@@ -28,7 +28,7 @@ export const newMcpServer = async ({
   new McpServer(
     {
       name: 'papr_memory_api',
-      version: '2.3.2',
+      version: '2.3.3',
     },
     {
       instructions: await getInstructions({ stainlessApiKey, customInstructionsPath }),
@@ -46,6 +46,8 @@ export async function initMcpServer(params: {
   mcpOptions?: McpOptions;
   stainlessApiKey?: string | undefined;
   upstreamClientEnvs?: Record<string, string> | undefined;
+  mcpSessionId?: string | undefined;
+  mcpClientInfo?: { name: string; version: string } | undefined;
 }) {
   const server = params.server instanceof McpServer ? params.server.server : params.server;
 
@@ -134,6 +136,8 @@ export async function initMcpServer(params: {
         client,
         stainlessApiKey: params.stainlessApiKey ?? params.mcpOptions?.stainlessApiKey,
         upstreamClientEnvs: params.upstreamClientEnvs,
+        mcpSessionId: params.mcpSessionId,
+        mcpClientInfo: params.mcpClientInfo,
       },
       args,
     });
