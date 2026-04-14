@@ -738,7 +738,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       typescript: {
         method: 'client.document.upload',
         example:
-          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.document.upload({ file: fs.createReadStream('path/to/file') });\n\nconsole.log(response.document_status);",
+          "import fs from 'fs';\nimport Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.document.upload({ file: fs.createReadStream('path/to/file') });\n\nconsole.log(response.document_status);",
       },
     },
   },
