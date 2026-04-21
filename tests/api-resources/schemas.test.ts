@@ -72,7 +72,13 @@ describe('resource schemas', () => {
                 },
               ],
             },
-            set: { foo: 'string' },
+            set: {
+              foo: {
+                mode: 'auto',
+                prompt: 'Summarize in 1-2 sentences',
+                text_mode: 'merge',
+              },
+            },
             when: { foo: 'bar' },
           },
           description: 'description',
@@ -145,7 +151,13 @@ describe('resource schemas', () => {
                 },
               ],
             },
-            set: { foo: 'string' },
+            set: {
+              foo: {
+                mode: 'auto',
+                prompt: 'Summarize in 1-2 sentences',
+                text_mode: 'merge',
+              },
+            },
             source_type: 'source_type',
             target_type: 'target_type',
             when: { foo: 'bar' },

@@ -134,6 +134,12 @@ export namespace HolographicRerankResponse {
       score: number;
 
       /**
+       * Per-frequency-field alignment scores (when
+       * options.include_frequency_scores=true).
+       */
+      frequency_scores?: { [key: string]: number } | null;
+
+      /**
        * Original retrieval score if provided
        */
       original_score?: number | null;
@@ -151,6 +157,11 @@ export interface HolographicExtractMetadataParams {
    * Text content for metadata extraction
    */
   content: string;
+
+  /**
+   * Optional context metadata (createdAt, sourceType, etc.) to improve extraction.
+   */
+  context_metadata?: { [key: string]: unknown } | null;
 
   /**
    * Domain for frequency schema
@@ -196,6 +207,19 @@ export interface HolographicRerankParams {
   query_embedding?: Array<number> | null;
 
   /**
+   * Pre-computed query metadata embeddings from a prior /transform call (keyed by
+   * frequency string, e.g. '0.1'). Required for full HCond scoring with phase
+   * alignment.
+   */
+  query_metadata_embeddings?: { [key: string]: Array<number> } | null;
+
+  /**
+   * Pre-computed query phases from a prior /transform call. If provided alongside
+   * query_embedding, skips LLM extraction entirely (hot path).
+   */
+  query_phases?: Array<number> | null;
+
+  /**
    * Number of results to return
    */
   top_k?: number;
@@ -224,9 +248,21 @@ export namespace HolographicRerankParams {
     content?: string | null;
 
     /**
+     * Optional context metadata for cold-path LLM extraction (createdAt, sourceType,
+     * etc.)
+     */
+    context_metadata?: { [key: string]: unknown } | null;
+
+    /**
      * Base embedding. If missing and content provided, computed server-side.
      */
     embedding?: Array<number> | null;
+
+    /**
+     * Pre-computed SBERT metadata embeddings from a prior /transform call (keyed by
+     * frequency string, e.g. '0.1'). Enables full HCond scoring.
+     */
+    metadata_embeddings?: { [key: string]: Array<number> } | null;
 
     /**
      * Pre-computed phases from a prior /transform call. Enables fast path.
@@ -244,9 +280,33 @@ export namespace HolographicRerankParams {
    */
   export interface Options {
     /**
+     * Cross-encoder model name. Options: 'BAAI/bge-reranker-v2-m3' (fast, default),
+     * 'Qwen/Qwen3-Reranker-0.6B' (balanced), 'Qwen/Qwen3-Reranker-4B' (best quality).
+     */
+    cross_encoder_model?: string;
+
+    /**
+     * Weight for cross-encoder score in final blend. final = (1 - weight) _ hcond +
+     * weight _ cross_encoder. Default 0.3.
+     */
+    cross_encoder_weight?: number;
+
+    /**
      * Ensemble method: 'auto' (recommended), 'caesar_8', or 'caesar_9'
      */
     ensemble?: 'auto' | 'caesar_8' | 'caesar_9';
+
+    /**
+     * Filter candidates by minimum per-frequency-field score. Keys are field names
+     * (e.g. 'date', 'entity'), values are min scores [0, 1].
+     */
+    frequency_filters?: { [key: string]: number } | null;
+
+    /**
+     * Include per-frequency-field alignment scores (e.g. date: 0.92, entity: 0.45).
+     * Requires return_scores=true to take effect.
+     */
+    include_frequency_scores?: boolean;
 
     /**
      * Include per-method score breakdown in response
@@ -259,7 +319,8 @@ export namespace HolographicRerankParams {
     scoring_method?: string | null;
 
     /**
-     * Enable cross-encoder scoring. Requires content on candidates.
+     * Enable cross-encoder scoring. Requires content on candidates. Adds ~20-50ms per
+     * candidate but improves ranking quality by 3-8%%.
      */
     use_cross_encoder?: boolean;
   }

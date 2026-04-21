@@ -49,9 +49,9 @@ export class Messages extends APIResource {
    * @example
    * ```ts
    * const response = await client.messages.store({
-   *   content: 'string',
+   *   content: 'Can you help me plan the Q4 product roadmap?',
    *   role: 'user',
-   *   sessionId: 'sessionId',
+   *   sessionId: 'session_123',
    * });
    * ```
    */

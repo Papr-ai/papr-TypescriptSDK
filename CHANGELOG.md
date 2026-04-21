@@ -1,5 +1,39 @@
 # Changelog
 
+## 2.4.0 (2026-04-21)
+
+Full Changelog: [v2.3.3...v2.4.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.3...v2.4.0)
+
+### Features
+
+* **api:** manual updates ([e3e7f20](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e3e7f20494951e4ad15c61a1e66b200c5d355d12))
+
+
+### Bug Fixes
+
+* **ci:** correct JSON double-escaping in publish workflow ([967f3bc](https://github.com/Papr-ai/papr-TypescriptSDK/commit/967f3bcd766f7a5757aaf4d08766dd3ee8fbc44e))
+
+
+### Chores
+
+* fix example snippet imports ([f2239bd](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f2239bd18c97ba32b3747508d12f6ad87abc89a2))
+* **internal:** codegen related update ([6f31ad4](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6f31ad4cd68d89b7f7291a850663d415ff23c508))
+* **internal:** codegen related update ([a2b73f8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a2b73f898af8a8d1b47f7924aa4046d11da02c69))
+* **internal:** fix MCP docker image builds in yarn projects ([ae97d36](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ae97d36b908b64ab192ae65a38920dc994b3f4f3))
+* **internal:** fix MCP server import ordering ([32e65ef](https://github.com/Papr-ai/papr-TypescriptSDK/commit/32e65effdeca910ff04b2372b43f5db44128412f))
+* **internal:** improve local docs search for MCP servers ([f8950ad](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f8950adf3fceedbf27055c49398b661700ff7a83))
+* **internal:** show error causes in MCP servers when running in local mode ([adcc859](https://github.com/Papr-ai/papr-TypescriptSDK/commit/adcc859d0a51c2057251d847be3d024945b7aa9c))
+* **internal:** support type annotations when running MCP in local execution mode ([52014b2](https://github.com/Papr-ai/papr-TypescriptSDK/commit/52014b26bd010685fc897250fd8b095327a7e7a4))
+* **internal:** use link instead of file in MCP server package.json files ([e5c2069](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e5c2069187e96e7b372def9b6b37913a0ffa2c27))
+* **mcp-server:** increase local docs search result count from 5 to 10 ([cda7226](https://github.com/Papr-ai/papr-TypescriptSDK/commit/cda7226c81c0d9f929abc13335554913a367c3db))
+* **mcp-server:** log client info ([cc1648a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/cc1648ac0d293fbffe95bf1e84acfd240eec8dfa))
+
+
+### Documentation
+
+* improve examples ([b95c79f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b95c79f3374e49bc976db322a2c9feb42489a379))
+* update examples ([feb258d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/feb258da0d90f3f60547ff6a69d13396a0d2151c))
+
 ## 2.3.3 (2026-03-31)
 
 Full Changelog: [v2.3.2...v2.3.3](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.2...v2.3.3)

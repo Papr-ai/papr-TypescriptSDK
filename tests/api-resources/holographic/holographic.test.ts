@@ -24,6 +24,7 @@ describe('resource holographic', () => {
   test.skip('extractMetadata: required and optional params', async () => {
     const response = await client.holographic.extractMetadata({
       content: 'content',
+      context_metadata: { foo: 'bar' },
       domain: 'domain',
       frequency_schema_id: 'frequency_schema_id',
     });
@@ -51,14 +52,18 @@ describe('resource holographic', () => {
         {
           id: 'doc_1',
           content: 'Troponin is a cardiac biomarker released during myocardial injury...',
+          context_metadata: { foo: 'bar' },
           embedding: [0],
+          metadata_embeddings: { foo: [0] },
           phases: [0],
           score: 0,
         },
         {
           id: 'doc_2',
           content: 'Aspirin reduces platelet aggregation...',
+          context_metadata: { foo: 'bar' },
           embedding: [0],
+          metadata_embeddings: { foo: [0] },
           phases: [0],
           score: 0,
         },
@@ -67,12 +72,18 @@ describe('resource holographic', () => {
       domain: 'biomedical',
       frequency_schema_id: 'frequency_schema_id',
       options: {
+        cross_encoder_model: 'cross_encoder_model',
+        cross_encoder_weight: 0,
         ensemble: 'auto',
+        frequency_filters: { foo: 0 },
+        include_frequency_scores: true,
         return_scores: true,
         scoring_method: 'scoring_method',
         use_cross_encoder: true,
       },
       query_embedding: [0],
+      query_metadata_embeddings: { foo: [0] },
+      query_phases: [0],
       top_k: 10,
     });
   });

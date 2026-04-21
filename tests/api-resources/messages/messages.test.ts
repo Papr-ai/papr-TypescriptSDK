@@ -11,9 +11,9 @@ describe('resource messages', () => {
   // Mock server tests are disabled
   test.skip('store: only required params', async () => {
     const responsePromise = client.messages.store({
-      content: 'string',
+      content: 'Can you help me plan the Q4 product roadmap?',
       role: 'user',
-      sessionId: 'sessionId',
+      sessionId: 'session_123',
     });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
@@ -27,9 +27,9 @@ describe('resource messages', () => {
   // Mock server tests are disabled
   test.skip('store: required and optional params', async () => {
     const response = await client.messages.store({
-      content: 'string',
+      content: 'Can you help me plan the Q4 product roadmap?',
       role: 'user',
-      sessionId: 'sessionId',
+      sessionId: 'session_123',
       context: [{ foo: 'bar' }],
       graph_generation: {
         auto: {
@@ -105,7 +105,13 @@ describe('resource messages', () => {
                 },
               ],
             },
-            set: { foo: 'string' },
+            set: {
+              foo: {
+                mode: 'auto',
+                prompt: 'Summarize in 1-2 sentences',
+                text_mode: 'merge',
+              },
+            },
             source_type: 'source_type',
             target_type: 'target_type',
             when: { foo: 'bar' },
@@ -149,7 +155,13 @@ describe('resource messages', () => {
                 },
               ],
             },
-            set: { foo: 'string' },
+            set: {
+              foo: {
+                mode: 'auto',
+                prompt: 'Summarize in 1-2 sentences',
+                text_mode: 'merge',
+              },
+            },
             when: { foo: 'bar' },
           },
         ],
@@ -190,7 +202,7 @@ describe('resource messages', () => {
         external_user_write_access: ['string'],
         goalClassificationScores: [0],
         hierarchical_structures: 'string',
-        location: 'location',
+        location: 'Office',
         namespace_id: 'namespace_id',
         namespace_read_access: ['string'],
         namespace_write_access: ['string'],
@@ -210,7 +222,7 @@ describe('resource messages', () => {
         sourceType: 'sourceType',
         sourceUrl: 'sourceUrl',
         stepClassificationScores: [0],
-        topics: ['string'],
+        topics: ['product', 'planning', 'roadmap'],
         upload_id: 'upload_id',
         useCaseClassificationScores: [0],
         user_id: 'user_id',
@@ -225,7 +237,7 @@ describe('resource messages', () => {
       organization_id: 'organization_id',
       process_messages: true,
       relationships_json: [{ foo: 'bar' }],
-      title: 'title',
+      title: 'Q4 Product Planning',
     });
   });
 });
