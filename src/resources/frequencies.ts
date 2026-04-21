@@ -1,6 +1,7 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
+import * as FrequenciesAPI from './frequencies';
 import { APIPromise } from '../core/api-promise';
 import { RequestOptions } from '../internal/request-options';
 import { path } from '../internal/utils/path';
@@ -25,13 +26,108 @@ export class Frequencies extends APIResource {
 }
 
 /**
+ * Single frequency band definition.
+ */
+export interface FrequencyFieldResponse {
+  /**
+   * Frequency in Hz (brain-inspired band)
+   */
+  frequency_hz: number;
+
+  /**
+   * Field name extracted at this frequency
+   */
+  name: string;
+
+  /**
+   * Field type: ENUM, FREE_TEXT, NUMERIC, DATE, MULTI_VALUE
+   */
+  type: string;
+
+  /**
+   * Human-readable field description
+   */
+  description?: string;
+
+  /**
+   * Default weight for this frequency band
+   */
+  weight?: number;
+}
+
+/**
+ * Operational configuration for a frequency schema.
+ */
+export interface SchemaConfigResponse {
+  /**
+   * Contrast enhancement gamma
+   */
+  contrast_gamma?: number;
+
+  /**
+   * Cross-encoder reranking model
+   */
+  cross_encoder_model?: string;
+
+  /**
+   * Number of candidates for cross-encoder reranking
+   */
+  cross_encoder_topk?: number;
+
+  /**
+   * Default scoring method for this schema
+   */
+  default_scoring_method?: string;
+
+  /**
+   * Path to DSPy-optimized extractor model (null = use direct LLM)
+   */
+  dspy_model_path?: string | null;
+
+  /**
+   * Enable entailment-gated reranking (EGR)
+   */
+  enable_entailment_rerank?: boolean;
+
+  /**
+   * LLM model for metadata extraction
+   */
+  llm_metadata_model?: string;
+
+  /**
+   * Over-fetch count from Qdrant for reranking
+   */
+  qdrant_topk?: number;
+
+  /**
+   * Enable query-adaptive frequency weights
+   */
+  use_adaptive_weights?: boolean;
+
+  /**
+   * Enable complex interference scoring (PDCI, SFI)
+   */
+  use_complex_interference?: boolean;
+
+  /**
+   * Enable sparse frequency weights
+   */
+  use_sparse_weights?: boolean;
+
+  /**
+   * Frequency weight mode (legacy_sparse, code_search_v2, hybrid_optimized_v2)
+   */
+  weight_mode?: string;
+}
+
+/**
  * Full frequency schema with fields and config.
  */
 export interface FrequencyRetrieveResponse {
   /**
    * Operational configuration
    */
-  config: FrequencyRetrieveResponse.Config;
+  config: SchemaConfigResponse;
 
   /**
    * Domain (e.g. code_search, biomedical)
@@ -41,7 +137,7 @@ export interface FrequencyRetrieveResponse {
   /**
    * Frequency band definitions
    */
-  frequencies: Array<FrequencyRetrieveResponse.Frequency>;
+  frequencies: Array<FrequencyFieldResponse>;
 
   /**
    * Schema name
@@ -69,103 +165,6 @@ export interface FrequencyRetrieveResponse {
   description?: string;
 }
 
-export namespace FrequencyRetrieveResponse {
-  /**
-   * Operational configuration
-   */
-  export interface Config {
-    /**
-     * Contrast enhancement gamma
-     */
-    contrast_gamma?: number;
-
-    /**
-     * Cross-encoder reranking model
-     */
-    cross_encoder_model?: string;
-
-    /**
-     * Number of candidates for cross-encoder reranking
-     */
-    cross_encoder_topk?: number;
-
-    /**
-     * Default scoring method for this schema
-     */
-    default_scoring_method?: string;
-
-    /**
-     * Path to DSPy-optimized extractor model (null = use direct LLM)
-     */
-    dspy_model_path?: string | null;
-
-    /**
-     * Enable entailment-gated reranking (EGR)
-     */
-    enable_entailment_rerank?: boolean;
-
-    /**
-     * LLM model for metadata extraction
-     */
-    llm_metadata_model?: string;
-
-    /**
-     * Over-fetch count from Qdrant for reranking
-     */
-    qdrant_topk?: number;
-
-    /**
-     * Enable query-adaptive frequency weights
-     */
-    use_adaptive_weights?: boolean;
-
-    /**
-     * Enable complex interference scoring (PDCI, SFI)
-     */
-    use_complex_interference?: boolean;
-
-    /**
-     * Enable sparse frequency weights
-     */
-    use_sparse_weights?: boolean;
-
-    /**
-     * Frequency weight mode (legacy_sparse, code_search_v2, hybrid_optimized_v2)
-     */
-    weight_mode?: string;
-  }
-
-  /**
-   * Single frequency band definition.
-   */
-  export interface Frequency {
-    /**
-     * Frequency in Hz (brain-inspired band)
-     */
-    frequency_hz: number;
-
-    /**
-     * Field name extracted at this frequency
-     */
-    name: string;
-
-    /**
-     * Field type: ENUM, FREE_TEXT, NUMERIC, DATE, MULTI_VALUE
-     */
-    type: string;
-
-    /**
-     * Human-readable field description
-     */
-    description?: string;
-
-    /**
-     * Default weight for this frequency band
-     */
-    weight?: number;
-  }
-}
-
 /**
  * Response for listing all frequency schemas.
  */
@@ -190,7 +189,7 @@ export namespace FrequencyListResponse {
     /**
      * Operational configuration
      */
-    config: Schema.Config;
+    config: FrequenciesAPI.SchemaConfigResponse;
 
     /**
      * Domain (e.g. code_search, biomedical)
@@ -200,7 +199,7 @@ export namespace FrequencyListResponse {
     /**
      * Frequency band definitions
      */
-    frequencies: Array<Schema.Frequency>;
+    frequencies: Array<FrequenciesAPI.FrequencyFieldResponse>;
 
     /**
      * Schema name
@@ -227,107 +226,12 @@ export namespace FrequencyListResponse {
      */
     description?: string;
   }
-
-  export namespace Schema {
-    /**
-     * Operational configuration
-     */
-    export interface Config {
-      /**
-       * Contrast enhancement gamma
-       */
-      contrast_gamma?: number;
-
-      /**
-       * Cross-encoder reranking model
-       */
-      cross_encoder_model?: string;
-
-      /**
-       * Number of candidates for cross-encoder reranking
-       */
-      cross_encoder_topk?: number;
-
-      /**
-       * Default scoring method for this schema
-       */
-      default_scoring_method?: string;
-
-      /**
-       * Path to DSPy-optimized extractor model (null = use direct LLM)
-       */
-      dspy_model_path?: string | null;
-
-      /**
-       * Enable entailment-gated reranking (EGR)
-       */
-      enable_entailment_rerank?: boolean;
-
-      /**
-       * LLM model for metadata extraction
-       */
-      llm_metadata_model?: string;
-
-      /**
-       * Over-fetch count from Qdrant for reranking
-       */
-      qdrant_topk?: number;
-
-      /**
-       * Enable query-adaptive frequency weights
-       */
-      use_adaptive_weights?: boolean;
-
-      /**
-       * Enable complex interference scoring (PDCI, SFI)
-       */
-      use_complex_interference?: boolean;
-
-      /**
-       * Enable sparse frequency weights
-       */
-      use_sparse_weights?: boolean;
-
-      /**
-       * Frequency weight mode (legacy_sparse, code_search_v2, hybrid_optimized_v2)
-       */
-      weight_mode?: string;
-    }
-
-    /**
-     * Single frequency band definition.
-     */
-    export interface Frequency {
-      /**
-       * Frequency in Hz (brain-inspired band)
-       */
-      frequency_hz: number;
-
-      /**
-       * Field name extracted at this frequency
-       */
-      name: string;
-
-      /**
-       * Field type: ENUM, FREE_TEXT, NUMERIC, DATE, MULTI_VALUE
-       */
-      type: string;
-
-      /**
-       * Human-readable field description
-       */
-      description?: string;
-
-      /**
-       * Default weight for this frequency band
-       */
-      weight?: number;
-    }
-  }
 }
 
 export declare namespace Frequencies {
   export {
+    type FrequencyFieldResponse as FrequencyFieldResponse,
+    type SchemaConfigResponse as SchemaConfigResponse,
     type FrequencyRetrieveResponse as FrequencyRetrieveResponse,
     type FrequencyListResponse as FrequencyListResponse,
   };

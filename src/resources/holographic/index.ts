@@ -15,6 +15,7 @@ export {
 } from './holographic';
 export {
   Transform,
+  type TransformData,
   type TransformCreateResponse,
   type TransformCreateBatchResponse,
   type TransformCreateParams,

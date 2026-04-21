@@ -1,6 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 export * from './shared';
+export { AI, type AIGetUsageResponse } from './ai/ai';
+export { Callback, type CallbackProcessResponse } from './callback';
 export {
   Document,
   type DocumentCancelProcessingResponse,
@@ -18,7 +20,13 @@ export {
   type FeedbackSubmitParams,
   type FeedbackSubmitBatchParams,
 } from './feedback';
-export { Frequencies, type FrequencyRetrieveResponse, type FrequencyListResponse } from './frequencies';
+export {
+  Frequencies,
+  type FrequencyFieldResponse,
+  type SchemaConfigResponse,
+  type FrequencyRetrieveResponse,
+  type FrequencyListResponse,
+} from './frequencies';
 export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
 export {
   Holographic,
@@ -27,6 +35,9 @@ export {
   type HolographicExtractMetadataParams,
   type HolographicRerankParams,
 } from './holographic/holographic';
+export { Login, type LoginInitiateResponse } from './login';
+export { Logout, type LogoutPerformResponse } from './logout';
+export { Me, type MeRetrieveResponse } from './me';
 export {
   Memory,
   type AddMemory,
@@ -58,6 +69,9 @@ export {
 export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
 export {
   Namespace,
+  type InstanceConfigItem,
+  type NamespaceItem,
+  type Neo4jInstanceConfigItem,
   type NamespaceCreateResponse,
   type NamespaceRetrieveResponse,
   type NamespaceUpdateResponse,
@@ -67,7 +81,7 @@ export {
   type NamespaceUpdateParams,
   type NamespaceListParams,
   type NamespaceDeleteParams,
-} from './namespace';
+} from './namespace/namespace';
 export {
   Omo,
   type OmoExportMemoriesResponse,
@@ -77,6 +91,7 @@ export {
   type OmoExportMemoriesAsJsonParams,
   type OmoImportMemoriesParams,
 } from './omo';
+export { Organization } from './organization/organization';
 export {
   Schemas,
   type PropertyDefinition,
@@ -98,6 +113,8 @@ export {
   type SyncGetDeltaParams,
   type SyncGetTiersParams,
 } from './sync';
+export { Telemetry, type TelemetryTrackEventResponse, type TelemetryTrackEventParams } from './telemetry';
+export { Token, type TokenCreateResponse } from './token';
 export {
   User,
   type UserResponse,

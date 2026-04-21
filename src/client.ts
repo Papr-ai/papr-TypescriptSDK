@@ -17,6 +17,7 @@ import * as Errors from './core/error';
 import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
+import { Callback, CallbackProcessResponse } from './resources/callback';
 import {
   Document,
   DocumentCancelProcessingResponse,
@@ -34,8 +35,17 @@ import {
   FeedbackSubmitParams,
   ParsePointer,
 } from './resources/feedback';
-import { Frequencies, FrequencyListResponse, FrequencyRetrieveResponse } from './resources/frequencies';
+import {
+  Frequencies,
+  FrequencyFieldResponse,
+  FrequencyListResponse,
+  FrequencyRetrieveResponse,
+  SchemaConfigResponse,
+} from './resources/frequencies';
 import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
+import { Login, LoginInitiateResponse } from './resources/login';
+import { Logout, LogoutPerformResponse } from './resources/logout';
+import { Me, MeRetrieveResponse } from './resources/me';
 import {
   AddMemory,
   AddMemoryResponse,
@@ -64,18 +74,6 @@ import {
   SearchResponse,
   SearchResult,
 } from './resources/memory';
-import {
-  Namespace,
-  NamespaceCreateParams,
-  NamespaceCreateResponse,
-  NamespaceDeleteParams,
-  NamespaceDeleteResponse,
-  NamespaceListParams,
-  NamespaceListResponse,
-  NamespaceRetrieveResponse,
-  NamespaceUpdateParams,
-  NamespaceUpdateResponse,
-} from './resources/namespace';
 import {
   Omo,
   OmoExportMemoriesAsJsonParams,
@@ -106,6 +104,8 @@ import {
   SyncGetTiersParams,
   SyncGetTiersResponse,
 } from './resources/sync';
+import { Telemetry, TelemetryTrackEventParams, TelemetryTrackEventResponse } from './resources/telemetry';
+import { Token, TokenCreateResponse } from './resources/token';
 import {
   User,
   UserCreateBatchParams,
@@ -119,6 +119,7 @@ import {
   UserType,
   UserUpdateParams,
 } from './resources/user';
+import { AI, AIGetUsageResponse } from './resources/ai/ai';
 import {
   Holographic,
   HolographicExtractMetadataParams,
@@ -127,6 +128,22 @@ import {
   HolographicRerankResponse,
 } from './resources/holographic/holographic';
 import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
+import {
+  InstanceConfigItem,
+  Namespace,
+  NamespaceCreateParams,
+  NamespaceCreateResponse,
+  NamespaceDeleteParams,
+  NamespaceDeleteResponse,
+  NamespaceItem,
+  NamespaceListParams,
+  NamespaceListResponse,
+  NamespaceRetrieveResponse,
+  NamespaceUpdateParams,
+  NamespaceUpdateResponse,
+  Neo4jInstanceConfigItem,
+} from './resources/namespace/namespace';
+import { Organization } from './resources/organization/organization';
 import { type Fetch } from './internal/builtin-types';
 import { HeadersLike, NullableHeaders, buildHeaders } from './internal/headers';
 import { FinalRequestOptions, RequestOptions } from './internal/request-options';
@@ -883,6 +900,14 @@ export class Papr {
   namespace: API.Namespace = new API.Namespace(this);
   frequencies: API.Frequencies = new API.Frequencies(this);
   holographic: API.Holographic = new API.Holographic(this);
+  organization: API.Organization = new API.Organization(this);
+  ai: API.AI = new API.AI(this);
+  telemetry: API.Telemetry = new API.Telemetry(this);
+  login: API.Login = new API.Login(this);
+  callback: API.Callback = new API.Callback(this);
+  token: API.Token = new API.Token(this);
+  me: API.Me = new API.Me(this);
+  logout: API.Logout = new API.Logout(this);
 }
 
 Papr.User = User;
@@ -897,6 +922,14 @@ Papr.Sync = Sync;
 Papr.Namespace = Namespace;
 Papr.Frequencies = Frequencies;
 Papr.Holographic = Holographic;
+Papr.Organization = Organization;
+Papr.AI = AI;
+Papr.Telemetry = Telemetry;
+Papr.Login = Login;
+Papr.Callback = Callback;
+Papr.Token = Token;
+Papr.Me = Me;
+Papr.Logout = Logout;
 
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
@@ -1010,6 +1043,9 @@ export declare namespace Papr {
 
   export {
     Namespace as Namespace,
+    type InstanceConfigItem as InstanceConfigItem,
+    type NamespaceItem as NamespaceItem,
+    type Neo4jInstanceConfigItem as Neo4jInstanceConfigItem,
     type NamespaceCreateResponse as NamespaceCreateResponse,
     type NamespaceRetrieveResponse as NamespaceRetrieveResponse,
     type NamespaceUpdateResponse as NamespaceUpdateResponse,
@@ -1023,6 +1059,8 @@ export declare namespace Papr {
 
   export {
     Frequencies as Frequencies,
+    type FrequencyFieldResponse as FrequencyFieldResponse,
+    type SchemaConfigResponse as SchemaConfigResponse,
     type FrequencyRetrieveResponse as FrequencyRetrieveResponse,
     type FrequencyListResponse as FrequencyListResponse,
   };
@@ -1034,6 +1072,26 @@ export declare namespace Papr {
     type HolographicExtractMetadataParams as HolographicExtractMetadataParams,
     type HolographicRerankParams as HolographicRerankParams,
   };
+
+  export { Organization as Organization };
+
+  export { AI as AI, type AIGetUsageResponse as AIGetUsageResponse };
+
+  export {
+    Telemetry as Telemetry,
+    type TelemetryTrackEventResponse as TelemetryTrackEventResponse,
+    type TelemetryTrackEventParams as TelemetryTrackEventParams,
+  };
+
+  export { Login as Login, type LoginInitiateResponse as LoginInitiateResponse };
+
+  export { Callback as Callback, type CallbackProcessResponse as CallbackProcessResponse };
+
+  export { Token as Token, type TokenCreateResponse as TokenCreateResponse };
+
+  export { Me as Me, type MeRetrieveResponse as MeRetrieveResponse };
+
+  export { Logout as Logout, type LogoutPerformResponse as LogoutPerformResponse };
 
   export type ACLConfig = API.ACLConfig;
   export type AddMemoryItem = API.AddMemoryItem;

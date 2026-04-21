@@ -189,24 +189,43 @@ Methods:
 
 Types:
 
-- <code><a href="./src/resources/namespace.ts">NamespaceCreateResponse</a></code>
-- <code><a href="./src/resources/namespace.ts">NamespaceRetrieveResponse</a></code>
-- <code><a href="./src/resources/namespace.ts">NamespaceUpdateResponse</a></code>
-- <code><a href="./src/resources/namespace.ts">NamespaceListResponse</a></code>
-- <code><a href="./src/resources/namespace.ts">NamespaceDeleteResponse</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">InstanceConfigItem</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceItem</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">Neo4jInstanceConfigItem</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceCreateResponse</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceRetrieveResponse</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceUpdateResponse</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceListResponse</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceDeleteResponse</a></code>
 
 Methods:
 
-- <code title="post /v1/namespace">client.namespace.<a href="./src/resources/namespace.ts">create</a>({ ...params }) -> NamespaceCreateResponse</code>
-- <code title="get /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace.ts">retrieve</a>(namespaceID) -> NamespaceRetrieveResponse</code>
-- <code title="put /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace.ts">update</a>(namespaceID, { ...params }) -> NamespaceUpdateResponse</code>
-- <code title="get /v1/namespace">client.namespace.<a href="./src/resources/namespace.ts">list</a>({ ...params }) -> NamespaceListResponse</code>
-- <code title="delete /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace.ts">delete</a>(namespaceID, { ...params }) -> NamespaceDeleteResponse</code>
+- <code title="post /v1/namespace">client.namespace.<a href="./src/resources/namespace/namespace.ts">create</a>({ ...params }) -> NamespaceCreateResponse</code>
+- <code title="get /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">retrieve</a>(namespaceID) -> NamespaceRetrieveResponse</code>
+- <code title="put /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">update</a>(namespaceID, { ...params }) -> NamespaceUpdateResponse</code>
+- <code title="get /v1/namespace">client.namespace.<a href="./src/resources/namespace/namespace.ts">list</a>({ ...params }) -> NamespaceListResponse</code>
+- <code title="delete /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">delete</a>(namespaceID, { ...params }) -> NamespaceDeleteResponse</code>
+
+## Instance
+
+Types:
+
+- <code><a href="./src/resources/namespace/instance.ts">InstanceRetrieveResponse</a></code>
+- <code><a href="./src/resources/namespace/instance.ts">InstanceUpdateResponse</a></code>
+- <code><a href="./src/resources/namespace/instance.ts">InstanceDeleteResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">retrieve</a>(namespaceID) -> InstanceRetrieveResponse</code>
+- <code title="put /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">update</a>(namespaceID, { ...params }) -> InstanceUpdateResponse</code>
+- <code title="delete /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">delete</a>(namespaceID) -> InstanceDeleteResponse</code>
 
 # Frequencies
 
 Types:
 
+- <code><a href="./src/resources/frequencies.ts">FrequencyFieldResponse</a></code>
+- <code><a href="./src/resources/frequencies.ts">SchemaConfigResponse</a></code>
 - <code><a href="./src/resources/frequencies.ts">FrequencyRetrieveResponse</a></code>
 - <code><a href="./src/resources/frequencies.ts">FrequencyListResponse</a></code>
 
@@ -231,6 +250,7 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/holographic/transform.ts">TransformData</a></code>
 - <code><a href="./src/resources/holographic/transform.ts">TransformCreateResponse</a></code>
 - <code><a href="./src/resources/holographic/transform.ts">TransformCreateBatchResponse</a></code>
 
@@ -250,3 +270,133 @@ Methods:
 
 - <code title="post /v1/holographic/domains">client.holographic.domains.<a href="./src/resources/holographic/domains.ts">create</a>({ ...params }) -> DomainCreateResponse</code>
 - <code title="get /v1/holographic/domains">client.holographic.domains.<a href="./src/resources/holographic/domains.ts">list</a>() -> DomainListResponse</code>
+
+# Organization
+
+## Instance
+
+Types:
+
+- <code><a href="./src/resources/organization/instance.ts">InstanceRetrieveResponse</a></code>
+- <code><a href="./src/resources/organization/instance.ts">InstanceUpdateResponse</a></code>
+- <code><a href="./src/resources/organization/instance.ts">InstanceDeleteResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">retrieve</a>() -> InstanceRetrieveResponse</code>
+- <code title="put /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">update</a>({ ...params }) -> InstanceUpdateResponse</code>
+- <code title="delete /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">delete</a>() -> InstanceDeleteResponse</code>
+
+# AI
+
+Types:
+
+- <code><a href="./src/resources/ai/ai.ts">AIGetUsageResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/ai/usage">client.ai.<a href="./src/resources/ai/ai.ts">getUsage</a>() -> unknown</code>
+
+## OpenAI
+
+Types:
+
+- <code><a href="./src/resources/ai/openai/openai.ts">OpenAICreateResponseResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/ai/openai/responses">client.ai.openai.<a href="./src/resources/ai/openai/openai.ts">createResponse</a>() -> unknown</code>
+
+### Chat
+
+Types:
+
+- <code><a href="./src/resources/ai/openai/chat.ts">ChatCreateCompletionResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/ai/openai/chat/completions">client.ai.openai.chat.<a href="./src/resources/ai/openai/chat.ts">createCompletion</a>() -> unknown</code>
+
+## Anthropic
+
+Types:
+
+- <code><a href="./src/resources/ai/anthropic.ts">AnthropicSendMessageResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/ai/anthropic/messages">client.ai.anthropic.<a href="./src/resources/ai/anthropic.ts">sendMessage</a>() -> unknown</code>
+
+## Google
+
+### Models
+
+Types:
+
+- <code><a href="./src/resources/ai/google/models.ts">ModelGenerateContentResponse</a></code>
+- <code><a href="./src/resources/ai/google/models.ts">ModelStreamGenerateContentResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/ai/google/models/{model_id}:generateContent">client.ai.google.models.<a href="./src/resources/ai/google/models.ts">generateContent</a>(modelID) -> unknown</code>
+- <code title="post /v1/ai/google/models/{model_id}:streamGenerateContent">client.ai.google.models.<a href="./src/resources/ai/google/models.ts">streamGenerateContent</a>(modelID) -> unknown</code>
+
+# Telemetry
+
+Types:
+
+- <code><a href="./src/resources/telemetry.ts">TelemetryTrackEventResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/telemetry/events">client.telemetry.<a href="./src/resources/telemetry.ts">trackEvent</a>({ ...params }) -> TelemetryTrackEventResponse</code>
+
+# Login
+
+Types:
+
+- <code><a href="./src/resources/login.ts">LoginInitiateResponse</a></code>
+
+Methods:
+
+- <code title="get /login">client.login.<a href="./src/resources/login.ts">initiate</a>() -> LoginInitiateResponse</code>
+
+# Callback
+
+Types:
+
+- <code><a href="./src/resources/callback.ts">CallbackProcessResponse</a></code>
+
+Methods:
+
+- <code title="get /callback">client.callback.<a href="./src/resources/callback.ts">process</a>() -> CallbackProcessResponse</code>
+
+# Token
+
+Types:
+
+- <code><a href="./src/resources/token.ts">TokenCreateResponse</a></code>
+
+Methods:
+
+- <code title="post /token">client.token.<a href="./src/resources/token.ts">create</a>() -> TokenCreateResponse</code>
+
+# Me
+
+Types:
+
+- <code><a href="./src/resources/me.ts">MeRetrieveResponse</a></code>
+
+Methods:
+
+- <code title="get /me">client.me.<a href="./src/resources/me.ts">retrieve</a>() -> MeRetrieveResponse</code>
+
+# Logout
+
+Types:
+
+- <code><a href="./src/resources/logout.ts">LogoutPerformResponse</a></code>
+
+Methods:
+
+- <code title="get /logout">client.logout.<a href="./src/resources/logout.ts">perform</a>() -> LogoutPerformResponse</code>
