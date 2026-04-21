@@ -193,9 +193,9 @@ export class Memory extends APIResource {
     params: MemoryDeleteAllParams | null | undefined = {},
     options?: RequestOptions,
   ): APIPromise<BatchMemoryResponse> {
-    const { external_user_id, skip_parse, user_id } = params ?? {};
+    const { external_user_id, namespace_id, skip_parse, user_id } = params ?? {};
     return this._client.delete('/v1/memory/all', {
-      query: { external_user_id, skip_parse, user_id },
+      query: { external_user_id, namespace_id, skip_parse, user_id },
       ...options,
     });
   }
@@ -1491,6 +1491,11 @@ export interface MemoryDeleteAllParams {
   external_user_id?: string | null;
 
   /**
+   * Optional namespace ID to scope deletion to
+   */
+  namespace_id?: string | null;
+
+  /**
    * Skip Parse Server deletion
    */
   skip_parse?: boolean;
@@ -1702,6 +1707,16 @@ export namespace MemorySearchParams {
     enabled?: boolean;
 
     /**
+     * Filter results by minimum alignment on specific frequency dimensions. Keys are
+     * field names (e.g., 'programming_domain', 'primary_operation'), values are
+     * minimum alignment scores (0.0-1.0). Example: {'programming_domain': 0.8,
+     * 'primary_operation': 0.7} Only returns results that match at least 80% on domain
+     * AND 70% on operation. Call GET /v1/frequencies to see available field names for
+     * each schema.
+     */
+    frequency_filters?: { [key: string]: number } | null;
+
+    /**
      * Frequency schema for holographic scoring. Use full ID (e.g.
      * 'code_search:cosqa:2.0.0') or shorthand (e.g. 'cosqa'). Call GET /v1/frequencies
      * to see available schemas and shortcuts.
@@ -1722,6 +1737,14 @@ export namespace MemorySearchParams {
      * Maximum penalty for low alignment (0.0-0.5)
      */
     hcond_penalty_factor?: number;
+
+    /**
+     * If true, each result includes a per-frequency score breakdown showing how well
+     * the query matched the document on each dimension (e.g., programming_domain:
+     * 0.95, primary_operation: 0.72). Useful for understanding WHY a result ranked
+     * high or low.
+     */
+    include_frequency_scores?: boolean;
 
     /**
      * Scoring method for holographic search results. Default: 'egr_rerank' (highest

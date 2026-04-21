@@ -137,6 +137,11 @@ export namespace NamespaceCreateResponse {
     environment_type?: string | null;
 
     /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    instance_config?: Data.InstanceConfig | null;
+
+    /**
      * Whether namespace is active
      */
     is_active?: boolean | null;
@@ -177,6 +182,60 @@ export namespace NamespaceCreateResponse {
     updatedAt?: string | null;
 
     [k: string]: unknown;
+  }
+
+  export namespace Data {
+    /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    export interface InstanceConfig {
+      /**
+       * Cloud provider
+       */
+      provider: string;
+
+      /**
+       * Cloud region
+       */
+      region: string;
+
+      /**
+       * Where this config was resolved from: 'namespace' or 'organization'
+       */
+      scope: string;
+
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      neo4j?: InstanceConfig.Neo4j | null;
+    }
+
+    export namespace InstanceConfig {
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      export interface Neo4j {
+        /**
+         * Neo4j bolt connection URL
+         */
+        bolt_url: string;
+
+        /**
+         * Masked password (e.g. '\*\*\*\*ab12')
+         */
+        password_masked: string;
+
+        /**
+         * Neo4j username
+         */
+        username: string;
+
+        /**
+         * Neo4j GraphQL endpoint URL
+         */
+        graphql_endpoint?: string | null;
+      }
+    }
   }
 }
 
@@ -226,6 +285,11 @@ export namespace NamespaceRetrieveResponse {
     environment_type?: string | null;
 
     /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    instance_config?: Data.InstanceConfig | null;
+
+    /**
      * Whether namespace is active
      */
     is_active?: boolean | null;
@@ -266,6 +330,60 @@ export namespace NamespaceRetrieveResponse {
     updatedAt?: string | null;
 
     [k: string]: unknown;
+  }
+
+  export namespace Data {
+    /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    export interface InstanceConfig {
+      /**
+       * Cloud provider
+       */
+      provider: string;
+
+      /**
+       * Cloud region
+       */
+      region: string;
+
+      /**
+       * Where this config was resolved from: 'namespace' or 'organization'
+       */
+      scope: string;
+
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      neo4j?: InstanceConfig.Neo4j | null;
+    }
+
+    export namespace InstanceConfig {
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      export interface Neo4j {
+        /**
+         * Neo4j bolt connection URL
+         */
+        bolt_url: string;
+
+        /**
+         * Masked password (e.g. '\*\*\*\*ab12')
+         */
+        password_masked: string;
+
+        /**
+         * Neo4j username
+         */
+        username: string;
+
+        /**
+         * Neo4j GraphQL endpoint URL
+         */
+        graphql_endpoint?: string | null;
+      }
+    }
   }
 }
 
@@ -315,6 +433,11 @@ export namespace NamespaceUpdateResponse {
     environment_type?: string | null;
 
     /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    instance_config?: Data.InstanceConfig | null;
+
+    /**
      * Whether namespace is active
      */
     is_active?: boolean | null;
@@ -355,6 +478,60 @@ export namespace NamespaceUpdateResponse {
     updatedAt?: string | null;
 
     [k: string]: unknown;
+  }
+
+  export namespace Data {
+    /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    export interface InstanceConfig {
+      /**
+       * Cloud provider
+       */
+      provider: string;
+
+      /**
+       * Cloud region
+       */
+      region: string;
+
+      /**
+       * Where this config was resolved from: 'namespace' or 'organization'
+       */
+      scope: string;
+
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      neo4j?: InstanceConfig.Neo4j | null;
+    }
+
+    export namespace InstanceConfig {
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      export interface Neo4j {
+        /**
+         * Neo4j bolt connection URL
+         */
+        bolt_url: string;
+
+        /**
+         * Masked password (e.g. '\*\*\*\*ab12')
+         */
+        password_masked: string;
+
+        /**
+         * Neo4j username
+         */
+        username: string;
+
+        /**
+         * Neo4j GraphQL endpoint URL
+         */
+        graphql_endpoint?: string | null;
+      }
+    }
   }
 }
 
@@ -419,6 +596,11 @@ export namespace NamespaceListResponse {
     environment_type?: string | null;
 
     /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    instance_config?: Data.InstanceConfig | null;
+
+    /**
      * Whether namespace is active
      */
     is_active?: boolean | null;
@@ -459,6 +641,60 @@ export namespace NamespaceListResponse {
     updatedAt?: string | null;
 
     [k: string]: unknown;
+  }
+
+  export namespace Data {
+    /**
+     * Instance configuration — response model for GET endpoints.
+     */
+    export interface InstanceConfig {
+      /**
+       * Cloud provider
+       */
+      provider: string;
+
+      /**
+       * Cloud region
+       */
+      region: string;
+
+      /**
+       * Where this config was resolved from: 'namespace' or 'organization'
+       */
+      scope: string;
+
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      neo4j?: InstanceConfig.Neo4j | null;
+    }
+
+    export namespace InstanceConfig {
+      /**
+       * Neo4j instance configuration — response (password masked).
+       */
+      export interface Neo4j {
+        /**
+         * Neo4j bolt connection URL
+         */
+        bolt_url: string;
+
+        /**
+         * Masked password (e.g. '\*\*\*\*ab12')
+         */
+        password_masked: string;
+
+        /**
+         * Neo4j username
+         */
+        username: string;
+
+        /**
+         * Neo4j GraphQL endpoint URL
+         */
+        graphql_endpoint?: string | null;
+      }
+    }
   }
 }
 

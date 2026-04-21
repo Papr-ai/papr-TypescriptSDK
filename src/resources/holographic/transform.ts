@@ -235,6 +235,12 @@ export interface TransformCreateParams {
   embedding: Array<number>;
 
   /**
+   * Optional context metadata (createdAt, sourceType, customMetadata, etc.) to
+   * improve LLM extraction accuracy, especially for dates and entities.
+   */
+  context_metadata?: { [key: string]: unknown } | null;
+
+  /**
    * Domain for frequency schema selection (e.g. 'biomedical', 'code', 'general')
    */
   domain?: string | null;
@@ -311,6 +317,11 @@ export namespace TransformCreateBatchParams {
      * Base embedding vector
      */
     embedding: Array<number>;
+
+    /**
+     * Optional context metadata for this item (createdAt, sourceType, etc.)
+     */
+    context_metadata?: { [key: string]: unknown } | null;
   }
 }
 
