@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.5.0 (2026-04-23)
+
+Full Changelog: [v2.4.0...v2.5.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.4.0...v2.5.0)
+
+### Features
+
+* **api:** manual updates ([f9fd8da](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f9fd8da057a5f6133a32c97a5041f77b85f5bf48))
+
+
+### Chores
+
+* **internal:** more robust bootstrap script ([262e059](https://github.com/Papr-ai/papr-TypescriptSDK/commit/262e059a11ac7b49dddad6b8d0fd4aab402cadb7))
+
 ## 2.4.0 (2026-04-21)
 
 Full Changelog: [v2.3.3...v2.4.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.3.3...v2.4.0)
