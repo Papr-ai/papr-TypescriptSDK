@@ -10,6 +10,7 @@ import {
   TransformCreateBatchResponse,
   TransformCreateParams,
   TransformCreateResponse,
+  TransformData,
 } from './transform';
 import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
@@ -339,6 +340,7 @@ export declare namespace Holographic {
 
   export {
     Transform as Transform,
+    type TransformData as TransformData,
     type TransformCreateResponse as TransformCreateResponse,
     type TransformCreateBatchResponse as TransformCreateBatchResponse,
     type TransformCreateParams as TransformCreateParams,

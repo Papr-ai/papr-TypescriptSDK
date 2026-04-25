@@ -1414,9 +1414,9 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       'rate_limits?: object;',
     ],
     response:
-      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }',
+      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }',
     markdown:
-      "## create\n\n`client.namespace.create(name: string, environment_type?: 'development' | 'staging' | 'production', is_active?: boolean, rate_limits?: object): { code?: number; data?: object; details?: object; error?: string; status?: string; }`\n\n**post** `/v1/namespace`\n\nCreate a new namespace within the developer's organization.\n\n### Parameters\n\n- `name: string`\n  Namespace name (e.g., 'acme-production')\n\n- `environment_type?: 'development' | 'staging' | 'production'`\n  Environment type: development, staging, production\n\n- `is_active?: boolean`\n  Whether this namespace is active\n\n- `rate_limits?: object`\n  Rate limits for this namespace (None values inherit from organization)\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }`\n  Response for single-namespace operations (create, get, update).\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespace = await client.namespace.create({ name: 'acme-production' });\n\nconsole.log(namespace);\n```",
+      "## create\n\n`client.namespace.create(name: string, environment_type?: 'development' | 'staging' | 'production', is_active?: boolean, rate_limits?: object): { code?: number; data?: namespace_item; details?: object; error?: string; status?: string; }`\n\n**post** `/v1/namespace`\n\nCreate a new namespace within the developer's organization.\n\n### Parameters\n\n- `name: string`\n  Namespace name (e.g., 'acme-production')\n\n- `environment_type?: 'development' | 'staging' | 'production'`\n  Environment type: development, staging, production\n\n- `is_active?: boolean`\n  Whether this namespace is active\n\n- `rate_limits?: object`\n  Rate limits for this namespace (None values inherit from organization)\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }`\n  Response for single-namespace operations (create, get, update).\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespace = await client.namespace.create({ name: 'acme-production' });\n\nconsole.log(namespace);\n```",
     perLanguage: {
       http: {
         example:
@@ -1444,9 +1444,9 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     qualified: 'client.namespace.list',
     params: ['limit?: number;', 'skip?: number;'],
     response:
-      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }[]; details?: object; error?: string; page?: number; page_size?: number; status?: string; total?: number; }',
+      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }[]; details?: object; error?: string; page?: number; page_size?: number; status?: string; total?: number; }',
     markdown:
-      "## list\n\n`client.namespace.list(limit?: number, skip?: number): { code?: number; data?: object[]; details?: object; error?: string; page?: number; page_size?: number; status?: string; total?: number; }`\n\n**get** `/v1/namespace`\n\nList namespaces for the developer's organization.\n\n### Parameters\n\n- `limit?: number`\n  Max items to return\n\n- `skip?: number`\n  Number of items to skip\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }[]; details?: object; error?: string; page?: number; page_size?: number; status?: string; total?: number; }`\n  Response for listing namespaces with pagination.\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }[]`\n  - `details?: object`\n  - `error?: string`\n  - `page?: number`\n  - `page_size?: number`\n  - `status?: string`\n  - `total?: number`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespaces = await client.namespace.list();\n\nconsole.log(namespaces);\n```",
+      "## list\n\n`client.namespace.list(limit?: number, skip?: number): { code?: number; data?: namespace_item[]; details?: object; error?: string; page?: number; page_size?: number; status?: string; total?: number; }`\n\n**get** `/v1/namespace`\n\nList namespaces for the developer's organization.\n\n### Parameters\n\n- `limit?: number`\n  Max items to return\n\n- `skip?: number`\n  Number of items to skip\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }[]; details?: object; error?: string; page?: number; page_size?: number; status?: string; total?: number; }`\n  Response for listing namespaces with pagination.\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }[]`\n  - `details?: object`\n  - `error?: string`\n  - `page?: number`\n  - `page_size?: number`\n  - `status?: string`\n  - `total?: number`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespaces = await client.namespace.list();\n\nconsole.log(namespaces);\n```",
     perLanguage: {
       http: {
         example: 'curl https://memory.papr.ai/v1/namespace \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
@@ -1473,9 +1473,9 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     qualified: 'client.namespace.retrieve',
     params: ['namespace_id: string;'],
     response:
-      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }',
+      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }',
     markdown:
-      "## retrieve\n\n`client.namespace.retrieve(namespace_id: string): { code?: number; data?: object; details?: object; error?: string; status?: string; }`\n\n**get** `/v1/namespace/{namespace_id}`\n\nRetrieve a single namespace by ID.\n\n### Parameters\n\n- `namespace_id: string`\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }`\n  Response for single-namespace operations (create, get, update).\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespace = await client.namespace.retrieve('namespace_id');\n\nconsole.log(namespace);\n```",
+      "## retrieve\n\n`client.namespace.retrieve(namespace_id: string): { code?: number; data?: namespace_item; details?: object; error?: string; status?: string; }`\n\n**get** `/v1/namespace/{namespace_id}`\n\nRetrieve a single namespace by ID.\n\n### Parameters\n\n- `namespace_id: string`\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }`\n  Response for single-namespace operations (create, get, update).\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespace = await client.namespace.retrieve('namespace_id');\n\nconsole.log(namespace);\n```",
     perLanguage: {
       http: {
         example:
@@ -1509,9 +1509,9 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       'rate_limits?: object;',
     ],
     response:
-      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }',
+      '{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }',
     markdown:
-      "## update\n\n`client.namespace.update(namespace_id: string, environment_type?: 'development' | 'staging' | 'production', is_active?: boolean, name?: string, rate_limits?: object): { code?: number; data?: object; details?: object; error?: string; status?: string; }`\n\n**put** `/v1/namespace/{namespace_id}`\n\nUpdate an existing namespace.\n\n### Parameters\n\n- `namespace_id: string`\n\n- `environment_type?: 'development' | 'staging' | 'production'`\n  Environment types for namespaces\n\n- `is_active?: boolean`\n  Whether this namespace is active\n\n- `name?: string`\n  Updated namespace name\n\n- `rate_limits?: object`\n  Updated rate limits (None values inherit from organization)\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: object; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }`\n  Response for single-namespace operations (create, get, update).\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespace = await client.namespace.update('namespace_id');\n\nconsole.log(namespace);\n```",
+      "## update\n\n`client.namespace.update(namespace_id: string, environment_type?: 'development' | 'staging' | 'production', is_active?: boolean, name?: string, rate_limits?: object): { code?: number; data?: namespace_item; details?: object; error?: string; status?: string; }`\n\n**put** `/v1/namespace/{namespace_id}`\n\nUpdate an existing namespace.\n\n### Parameters\n\n- `namespace_id: string`\n\n- `environment_type?: 'development' | 'staging' | 'production'`\n  Environment types for namespaces\n\n- `is_active?: boolean`\n  Whether this namespace is active\n\n- `name?: string`\n  Updated namespace name\n\n- `rate_limits?: object`\n  Updated rate limits (None values inherit from organization)\n\n### Returns\n\n- `{ code?: number; data?: { createdAt?: string; environment_type?: string; instance_config?: instance_config_item; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }; details?: object; error?: string; status?: string; }`\n  Response for single-namespace operations (create, get, update).\n\n  - `code?: number`\n  - `data?: { createdAt?: string; environment_type?: string; instance_config?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; is_active?: boolean; memoriesCount?: number; name?: string; objectId?: string; organization_id?: string; rate_limits?: object; storageCount?: number; updatedAt?: string; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst namespace = await client.namespace.update('namespace_id');\n\nconsole.log(namespace);\n```",
     perLanguage: {
       http: {
         example:
@@ -1566,6 +1566,103 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     },
   },
   {
+    name: 'update',
+    endpoint: '/v1/namespace/{namespace_id}/instance',
+    httpMethod: 'put',
+    summary: 'Set Namespace Instance Config',
+    description: 'Set dedicated instance configuration for a namespace.',
+    stainlessPath: '(resource) namespace.instance > (method) update',
+    qualified: 'client.namespace.instance.update',
+    params: [
+      'namespace_id: string;',
+      'validate?: boolean;',
+      'neo4j?: { bolt_url: string; password: string; graphql_endpoint?: string; username?: string; };',
+      'provider?: string;',
+      'region?: string;',
+    ],
+    response:
+      '{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }',
+    markdown:
+      "## update\n\n`client.namespace.instance.update(namespace_id: string, validate?: boolean, neo4j?: { bolt_url: string; password: string; graphql_endpoint?: string; username?: string; }, provider?: string, region?: string): { code?: number; data?: instance_config_item; details?: object; error?: string; status?: string; }`\n\n**put** `/v1/namespace/{namespace_id}/instance`\n\nSet dedicated instance configuration for a namespace.\n\n### Parameters\n\n- `namespace_id: string`\n\n- `validate?: boolean`\n  Test connection before saving\n\n- `neo4j?: { bolt_url: string; password: string; graphql_endpoint?: string; username?: string; }`\n  Neo4j AuraDB instance configuration — input (plain password).\n  - `bolt_url: string`\n    Neo4j bolt connection URL (e.g. 'neo4j+s://xxxxx.databases.neo4j.io')\n  - `password: string`\n    Neo4j password (encrypted before storage)\n  - `graphql_endpoint?: string`\n    Neo4j hosted GraphQL endpoint URL (e.g. 'https://xxxxx-graphql.production-orch-xxxx.neo4j.io/graphql')\n  - `username?: string`\n    Neo4j username\n\n- `provider?: string`\n  Cloud provider (only 'gcp' supported today)\n\n- `region?: string`\n  Cloud region (only 'us-west1' supported today)\n\n### Returns\n\n- `{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }`\n  Standard response envelope for instance config operations.\n\n  - `code?: number`\n  - `data?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst instance = await client.namespace.instance.update('namespace_id');\n\nconsole.log(instance);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          }\n        }\'',
+      },
+      python: {
+        method: 'namespace.instance.update',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.namespace.instance.update(\n    namespace_id="namespace_id",\n)\nprint(instance.code)',
+      },
+      typescript: {
+        method: 'client.namespace.instance.update',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.namespace.instance.update('namespace_id');\n\nconsole.log(instance.code);",
+      },
+    },
+  },
+  {
+    name: 'retrieve',
+    endpoint: '/v1/namespace/{namespace_id}/instance',
+    httpMethod: 'get',
+    summary: 'Get Namespace Instance Config',
+    description:
+      'Get resolved instance configuration for a namespace (namespace > org). Passwords are masked.',
+    stainlessPath: '(resource) namespace.instance > (method) retrieve',
+    qualified: 'client.namespace.instance.retrieve',
+    params: ['namespace_id: string;'],
+    response:
+      '{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }',
+    markdown:
+      "## retrieve\n\n`client.namespace.instance.retrieve(namespace_id: string): { code?: number; data?: instance_config_item; details?: object; error?: string; status?: string; }`\n\n**get** `/v1/namespace/{namespace_id}/instance`\n\nGet resolved instance configuration for a namespace (namespace > org). Passwords are masked.\n\n### Parameters\n\n- `namespace_id: string`\n\n### Returns\n\n- `{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }`\n  Standard response envelope for instance config operations.\n\n  - `code?: number`\n  - `data?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst instance = await client.namespace.instance.retrieve('namespace_id');\n\nconsole.log(instance);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'namespace.instance.retrieve',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.namespace.instance.retrieve(\n    "namespace_id",\n)\nprint(instance.code)',
+      },
+      typescript: {
+        method: 'client.namespace.instance.retrieve',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.namespace.instance.retrieve('namespace_id');\n\nconsole.log(instance.code);",
+      },
+    },
+  },
+  {
+    name: 'delete',
+    endpoint: '/v1/namespace/{namespace_id}/instance',
+    httpMethod: 'delete',
+    summary: 'Delete Namespace Instance Config',
+    description: 'Remove dedicated instance configuration from a namespace (reverts to org or shared).',
+    stainlessPath: '(resource) namespace.instance > (method) delete',
+    qualified: 'client.namespace.instance.delete',
+    params: ['namespace_id: string;'],
+    response:
+      '{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }',
+    markdown:
+      "## delete\n\n`client.namespace.instance.delete(namespace_id: string): { code?: number; data?: instance_config_item; details?: object; error?: string; status?: string; }`\n\n**delete** `/v1/namespace/{namespace_id}/instance`\n\nRemove dedicated instance configuration from a namespace (reverts to org or shared).\n\n### Parameters\n\n- `namespace_id: string`\n\n### Returns\n\n- `{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }`\n  Standard response envelope for instance config operations.\n\n  - `code?: number`\n  - `data?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst instance = await client.namespace.instance.delete('namespace_id');\n\nconsole.log(instance);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'namespace.instance.delete',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.namespace.instance.delete(\n    "namespace_id",\n)\nprint(instance.code)',
+      },
+      typescript: {
+        method: 'client.namespace.instance.delete',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.namespace.instance.delete('namespace_id');\n\nconsole.log(instance.code);",
+      },
+    },
+  },
+  {
     name: 'list',
     endpoint: '/v1/frequencies',
     httpMethod: 'get',
@@ -1575,9 +1672,9 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     stainlessPath: '(resource) frequencies > (method) list',
     qualified: 'client.frequencies.list',
     response:
-      '{ schemas: { config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }[]; total: number; shortcuts?: object; success?: boolean; }',
+      '{ schemas: { config: object; domain: string; frequencies: object[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }[]; total: number; shortcuts?: object; success?: boolean; }',
     markdown:
-      "## list\n\n`client.frequencies.list(): { schemas: object[]; total: number; shortcuts?: object; success?: boolean; }`\n\n**get** `/v1/frequencies`\n\nReturns all built-in frequency schemas with their field definitions and operational configuration. Use the schema_id or a shorthand alias when adding or searching memories with holographic embedding enabled.\n\n### Returns\n\n- `{ schemas: { config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }[]; total: number; shortcuts?: object; success?: boolean; }`\n  Response for listing all frequency schemas.\n\n  - `schemas: { config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }[]`\n  - `total: number`\n  - `shortcuts?: object`\n  - `success?: boolean`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst frequencies = await client.frequencies.list();\n\nconsole.log(frequencies);\n```",
+      "## list\n\n`client.frequencies.list(): { schemas: object[]; total: number; shortcuts?: object; success?: boolean; }`\n\n**get** `/v1/frequencies`\n\nReturns all built-in frequency schemas with their field definitions and operational configuration. Use the schema_id or a shorthand alias when adding or searching memories with holographic embedding enabled.\n\n### Returns\n\n- `{ schemas: { config: object; domain: string; frequencies: object[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }[]; total: number; shortcuts?: object; success?: boolean; }`\n  Response for listing all frequency schemas.\n\n  - `schemas: { config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }[]`\n  - `total: number`\n  - `shortcuts?: object`\n  - `success?: boolean`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst frequencies = await client.frequencies.list();\n\nconsole.log(frequencies);\n```",
     perLanguage: {
       http: {
         example: 'curl https://memory.papr.ai/v1/frequencies \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
@@ -1607,7 +1704,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     response:
       '{ config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }',
     markdown:
-      "## retrieve\n\n`client.frequencies.retrieve(frequency_schema_id: string): { config: object; domain: string; frequencies: object[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }`\n\n**get** `/v1/frequencies/{frequency_schema_id}`\n\nRetrieve a specific frequency schema by its full ID (e.g. 'code_search:cosqa:2.0.0') or shorthand alias (e.g. 'cosqa').\n\n### Parameters\n\n- `frequency_schema_id: string`\n\n### Returns\n\n- `{ config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }`\n  Full frequency schema with fields and config.\n\n  - `config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }`\n  - `domain: string`\n  - `frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]`\n  - `name: string`\n  - `num_frequencies: number`\n  - `schema_id: string`\n  - `version: string`\n  - `description?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst frequency = await client.frequencies.retrieve('frequency_schema_id');\n\nconsole.log(frequency);\n```",
+      "## retrieve\n\n`client.frequencies.retrieve(frequency_schema_id: string): { config: schema_config_response; domain: string; frequencies: frequency_field_response[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }`\n\n**get** `/v1/frequencies/{frequency_schema_id}`\n\nRetrieve a specific frequency schema by its full ID (e.g. 'code_search:cosqa:2.0.0') or shorthand alias (e.g. 'cosqa').\n\n### Parameters\n\n- `frequency_schema_id: string`\n\n### Returns\n\n- `{ config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }; domain: string; frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]; name: string; num_frequencies: number; schema_id: string; version: string; description?: string; }`\n  Full frequency schema with fields and config.\n\n  - `config: { contrast_gamma?: number; cross_encoder_model?: string; cross_encoder_topk?: number; default_scoring_method?: string; dspy_model_path?: string; enable_entailment_rerank?: boolean; llm_metadata_model?: string; qdrant_topk?: number; use_adaptive_weights?: boolean; use_complex_interference?: boolean; use_sparse_weights?: boolean; weight_mode?: string; }`\n  - `domain: string`\n  - `frequencies: { frequency_hz: number; name: string; type: string; description?: string; weight?: number; }[]`\n  - `name: string`\n  - `num_frequencies: number`\n  - `schema_id: string`\n  - `version: string`\n  - `description?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst frequency = await client.frequencies.retrieve('frequency_schema_id');\n\nconsole.log(frequency);\n```",
     perLanguage: {
       http: {
         example:
@@ -1722,7 +1819,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     response:
       '{ data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; status?: string; }',
     markdown:
-      "## create\n\n`client.holographic.transform.create(content: string, embedding: number[], context_metadata?: object, domain?: string, frequency_schema_id?: string, output?: string[]): { data: object; status?: string; }`\n\n**post** `/v1/holographic/transform`\n\nCore BYOE endpoint. Send text content and your base embedding (any dimensions) to get back holographic-transformed embeddings. Use `output` to control which fields are returned. Default: rotation_v3 + metadata.\n\n### Parameters\n\n- `content: string`\n  Text content for LLM metadata extraction\n\n- `embedding: number[]`\n  Base embedding vector (any dimensionality)\n\n- `context_metadata?: object`\n  Optional context metadata (createdAt, sourceType, customMetadata, etc.) to improve LLM extraction accuracy, especially for dates and entities.\n\n- `domain?: string`\n  Domain for frequency schema selection (e.g. 'biomedical', 'code', 'general')\n\n- `frequency_schema_id?: string`\n  Specific frequency schema ID override (e.g. 'biomedical:scifact:2.0.0'). Takes precedence over domain.\n\n- `output?: string[]`\n  Which output fields to return. Default: ['rotation_v3', 'metadata']. Request only what you need to minimize response size.\n\n### Returns\n\n- `{ data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; status?: string; }`\n  Response for POST /v1/holographic/transform\n\n  - `data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst transform = await client.holographic.transform.create({ content: 'The patient presents with elevated troponin levels indicating myocardial damage', embedding: [0.1, -0.2, 0.3] });\n\nconsole.log(transform);\n```",
+      "## create\n\n`client.holographic.transform.create(content: string, embedding: number[], context_metadata?: object, domain?: string, frequency_schema_id?: string, output?: string[]): { data: transform_data; status?: string; }`\n\n**post** `/v1/holographic/transform`\n\nCore BYOE endpoint. Send text content and your base embedding (any dimensions) to get back holographic-transformed embeddings. Use `output` to control which fields are returned. Default: rotation_v3 + metadata.\n\n### Parameters\n\n- `content: string`\n  Text content for LLM metadata extraction\n\n- `embedding: number[]`\n  Base embedding vector (any dimensionality)\n\n- `context_metadata?: object`\n  Optional context metadata (createdAt, sourceType, customMetadata, etc.) to improve LLM extraction accuracy, especially for dates and entities.\n\n- `domain?: string`\n  Domain for frequency schema selection (e.g. 'biomedical', 'code', 'general')\n\n- `frequency_schema_id?: string`\n  Specific frequency schema ID override (e.g. 'biomedical:scifact:2.0.0'). Takes precedence over domain.\n\n- `output?: string[]`\n  Which output fields to return. Default: ['rotation_v3', 'metadata']. Request only what you need to minimize response size.\n\n### Returns\n\n- `{ data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; status?: string; }`\n  Response for POST /v1/holographic/transform\n\n  - `data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst transform = await client.holographic.transform.create({ content: 'The patient presents with elevated troponin levels indicating myocardial damage', embedding: [0.1, -0.2, 0.3] });\n\nconsole.log(transform);\n```",
     perLanguage: {
       http: {
         example:
@@ -1755,9 +1852,9 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       'output?: string[];',
     ],
     response:
-      '{ results: { id: string; data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; }[]; timing_ms: number; total: number; status?: string; }',
+      '{ results: { id: string; data: object; }[]; timing_ms: number; total: number; status?: string; }',
     markdown:
-      "## create_batch\n\n`client.holographic.transform.createBatch(items: { id: string; content: string; embedding: number[]; context_metadata?: object; }[], domain?: string, frequency_schema_id?: string, output?: string[]): { results: object[]; timing_ms: number; total: number; status?: string; }`\n\n**post** `/v1/holographic/transform/batch`\n\nTransform up to 50 items in a single request. Same as /transform but batched.\n\n### Parameters\n\n- `items: { id: string; content: string; embedding: number[]; context_metadata?: object; }[]`\n  Items to transform (max 50)\n\n- `domain?: string`\n  Domain for all items\n\n- `frequency_schema_id?: string`\n  Schema override for all items\n\n- `output?: string[]`\n  Which output fields to return for each item\n\n### Returns\n\n- `{ results: { id: string; data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; }[]; timing_ms: number; total: number; status?: string; }`\n  Response for POST /v1/holographic/transform/batch\n\n  - `results: { id: string; data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; }[]`\n  - `timing_ms: number`\n  - `total: number`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.holographic.transform.createBatch({ items: [{\n  id: 'id',\n  content: 'content',\n  embedding: [0],\n}] });\n\nconsole.log(response);\n```",
+      "## create_batch\n\n`client.holographic.transform.createBatch(items: { id: string; content: string; embedding: number[]; context_metadata?: object; }[], domain?: string, frequency_schema_id?: string, output?: string[]): { results: object[]; timing_ms: number; total: number; status?: string; }`\n\n**post** `/v1/holographic/transform/batch`\n\nTransform up to 50 items in a single request. Same as /transform but batched.\n\n### Parameters\n\n- `items: { id: string; content: string; embedding: number[]; context_metadata?: object; }[]`\n  Items to transform (max 50)\n\n- `domain?: string`\n  Domain for all items\n\n- `frequency_schema_id?: string`\n  Schema override for all items\n\n- `output?: string[]`\n  Which output fields to return for each item\n\n### Returns\n\n- `{ results: { id: string; data: object; }[]; timing_ms: number; total: number; status?: string; }`\n  Response for POST /v1/holographic/transform/batch\n\n  - `results: { id: string; data: { base_dim: number; domain: string; frequency_schema_id: string; timing_ms: number; base?: number[]; concat?: number[]; metadata?: object; metadata_embeddings?: object; phases?: number[]; rotation_v1?: number[]; rotation_v2?: number[]; rotation_v3?: number[]; }; }[]`\n  - `timing_ms: number`\n  - `total: number`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.holographic.transform.createBatch({ items: [{\n  id: 'id',\n  content: 'content',\n  embedding: [0],\n}] });\n\nconsole.log(response);\n```",
     perLanguage: {
       http: {
         example:
@@ -1836,6 +1933,445 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         method: 'client.holographic.domains.create',
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst domain = await client.holographic.domains.create({\n  fields: [\n    {\n      frequency: 4,\n      name: 'priority',\n      type: 'enum',\n    },\n    {\n      frequency: 6,\n      name: 'component',\n      type: 'free_text',\n    },\n    {\n      frequency: 12,\n      name: 'resolution_type',\n      type: 'enum',\n    },\n  ],\n  name: 'acme:support_tickets:1.0.0',\n});\n\nconsole.log(domain.schema_id);",
+      },
+    },
+  },
+  {
+    name: 'update',
+    endpoint: '/v1/organization/instance',
+    httpMethod: 'put',
+    summary: 'Set Organization Instance Config',
+    description:
+      'Set default dedicated instance configuration for the organization (inherited by namespaces without their own config).',
+    stainlessPath: '(resource) organization.instance > (method) update',
+    qualified: 'client.organization.instance.update',
+    params: [
+      'validate?: boolean;',
+      'neo4j?: { bolt_url: string; password: string; graphql_endpoint?: string; username?: string; };',
+      'provider?: string;',
+      'region?: string;',
+    ],
+    response:
+      '{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }',
+    markdown:
+      "## update\n\n`client.organization.instance.update(validate?: boolean, neo4j?: { bolt_url: string; password: string; graphql_endpoint?: string; username?: string; }, provider?: string, region?: string): { code?: number; data?: instance_config_item; details?: object; error?: string; status?: string; }`\n\n**put** `/v1/organization/instance`\n\nSet default dedicated instance configuration for the organization (inherited by namespaces without their own config).\n\n### Parameters\n\n- `validate?: boolean`\n  Test connection before saving\n\n- `neo4j?: { bolt_url: string; password: string; graphql_endpoint?: string; username?: string; }`\n  Neo4j AuraDB instance configuration — input (plain password).\n  - `bolt_url: string`\n    Neo4j bolt connection URL (e.g. 'neo4j+s://xxxxx.databases.neo4j.io')\n  - `password: string`\n    Neo4j password (encrypted before storage)\n  - `graphql_endpoint?: string`\n    Neo4j hosted GraphQL endpoint URL (e.g. 'https://xxxxx-graphql.production-orch-xxxx.neo4j.io/graphql')\n  - `username?: string`\n    Neo4j username\n\n- `provider?: string`\n  Cloud provider (only 'gcp' supported today)\n\n- `region?: string`\n  Cloud region (only 'us-west1' supported today)\n\n### Returns\n\n- `{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }`\n  Standard response envelope for instance config operations.\n\n  - `code?: number`\n  - `data?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst instance = await client.organization.instance.update();\n\nconsole.log(instance);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          }\n        }\'',
+      },
+      python: {
+        method: 'organization.instance.update',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.organization.instance.update()\nprint(instance.code)',
+      },
+      typescript: {
+        method: 'client.organization.instance.update',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.organization.instance.update();\n\nconsole.log(instance.code);",
+      },
+    },
+  },
+  {
+    name: 'retrieve',
+    endpoint: '/v1/organization/instance',
+    httpMethod: 'get',
+    summary: 'Get Organization Instance Config',
+    description: 'Get organization-level instance configuration (masked passwords).',
+    stainlessPath: '(resource) organization.instance > (method) retrieve',
+    qualified: 'client.organization.instance.retrieve',
+    response:
+      '{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }',
+    markdown:
+      "## retrieve\n\n`client.organization.instance.retrieve(): { code?: number; data?: instance_config_item; details?: object; error?: string; status?: string; }`\n\n**get** `/v1/organization/instance`\n\nGet organization-level instance configuration (masked passwords).\n\n### Returns\n\n- `{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }`\n  Standard response envelope for instance config operations.\n\n  - `code?: number`\n  - `data?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst instance = await client.organization.instance.retrieve();\n\nconsole.log(instance);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'organization.instance.retrieve',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.organization.instance.retrieve()\nprint(instance.code)',
+      },
+      typescript: {
+        method: 'client.organization.instance.retrieve',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.organization.instance.retrieve();\n\nconsole.log(instance.code);",
+      },
+    },
+  },
+  {
+    name: 'delete',
+    endpoint: '/v1/organization/instance',
+    httpMethod: 'delete',
+    summary: 'Delete Organization Instance Config',
+    description: 'Remove organization-level instance configuration (all namespaces revert to shared).',
+    stainlessPath: '(resource) organization.instance > (method) delete',
+    qualified: 'client.organization.instance.delete',
+    response:
+      '{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }',
+    markdown:
+      "## delete\n\n`client.organization.instance.delete(): { code?: number; data?: instance_config_item; details?: object; error?: string; status?: string; }`\n\n**delete** `/v1/organization/instance`\n\nRemove organization-level instance configuration (all namespaces revert to shared).\n\n### Returns\n\n- `{ code?: number; data?: { provider: string; region: string; scope: string; neo4j?: neo4j_instance_config_item; }; details?: object; error?: string; status?: string; }`\n  Standard response envelope for instance config operations.\n\n  - `code?: number`\n  - `data?: { provider: string; region: string; scope: string; neo4j?: { bolt_url: string; password_masked: string; username: string; graphql_endpoint?: string; }; }`\n  - `details?: object`\n  - `error?: string`\n  - `status?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst instance = await client.organization.instance.delete();\n\nconsole.log(instance);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'organization.instance.delete',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.organization.instance.delete()\nprint(instance.code)',
+      },
+      typescript: {
+        method: 'client.organization.instance.delete',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.organization.instance.delete();\n\nconsole.log(instance.code);",
+      },
+    },
+  },
+  {
+    name: 'get_usage',
+    endpoint: '/v1/ai/usage',
+    httpMethod: 'get',
+    summary: 'Get Ai Usage',
+    description: "Get user's AI proxy usage stats and subscription info.",
+    stainlessPath: '(resource) ai > (method) get_usage',
+    qualified: 'client.ai.getUsage',
+    response: 'object',
+    markdown:
+      "## get_usage\n\n`client.ai.getUsage(): object`\n\n**get** `/v1/ai/usage`\n\nGet user's AI proxy usage stats and subscription info.\n\n### Returns\n\n- `object`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.ai.getUsage();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example: 'curl https://memory.papr.ai/v1/ai/usage \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'ai.get_usage',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.get_usage()\nprint(response)',
+      },
+      typescript: {
+        method: 'client.ai.getUsage',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.getUsage();\n\nconsole.log(response);",
+      },
+    },
+  },
+  {
+    name: 'create_response',
+    endpoint: '/v1/ai/openai/responses',
+    httpMethod: 'post',
+    summary: 'Openai Responses Proxy',
+    description: 'OpenAI Responses API proxy (GPT-5+, o-series reasoning models)',
+    stainlessPath: '(resource) ai.openai > (method) create_response',
+    qualified: 'client.ai.openai.createResponse',
+    response: 'object',
+    markdown:
+      "## create_response\n\n`client.ai.openai.createResponse(): object`\n\n**post** `/v1/ai/openai/responses`\n\nOpenAI Responses API proxy (GPT-5+, o-series reasoning models)\n\n### Returns\n\n- `object`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.ai.openai.createResponse();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/openai/responses \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'ai.openai.create_response',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.openai.create_response()\nprint(response)',
+      },
+      typescript: {
+        method: 'client.ai.openai.createResponse',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.openai.createResponse();\n\nconsole.log(response);",
+      },
+    },
+  },
+  {
+    name: 'create_completion',
+    endpoint: '/v1/ai/openai/chat/completions',
+    httpMethod: 'post',
+    summary: 'Openai Completions Proxy',
+    description: 'OpenAI Chat Completions API proxy (GPT-4, GPT-4-turbo, etc.)',
+    stainlessPath: '(resource) ai.openai.chat > (method) create_completion',
+    qualified: 'client.ai.openai.chat.createCompletion',
+    response: 'object',
+    markdown:
+      "## create_completion\n\n`client.ai.openai.chat.createCompletion(): object`\n\n**post** `/v1/ai/openai/chat/completions`\n\nOpenAI Chat Completions API proxy (GPT-4, GPT-4-turbo, etc.)\n\n### Returns\n\n- `object`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.ai.openai.chat.createCompletion();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/openai/chat/completions \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'ai.openai.chat.create_completion',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.openai.chat.create_completion()\nprint(response)',
+      },
+      typescript: {
+        method: 'client.ai.openai.chat.createCompletion',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.openai.chat.createCompletion();\n\nconsole.log(response);",
+      },
+    },
+  },
+  {
+    name: 'send_message',
+    endpoint: '/v1/ai/anthropic/messages',
+    httpMethod: 'post',
+    summary: 'Anthropic Messages Proxy',
+    description: 'Anthropic Messages API proxy (Claude models)',
+    stainlessPath: '(resource) ai.anthropic > (method) send_message',
+    qualified: 'client.ai.anthropic.sendMessage',
+    response: 'object',
+    markdown:
+      "## send_message\n\n`client.ai.anthropic.sendMessage(): object`\n\n**post** `/v1/ai/anthropic/messages`\n\nAnthropic Messages API proxy (Claude models)\n\n### Returns\n\n- `object`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.ai.anthropic.sendMessage();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/anthropic/messages \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'ai.anthropic.send_message',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.anthropic.send_message()\nprint(response)',
+      },
+      typescript: {
+        method: 'client.ai.anthropic.sendMessage',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.anthropic.sendMessage();\n\nconsole.log(response);",
+      },
+    },
+  },
+  {
+    name: 'generate_content',
+    endpoint: '/v1/ai/google/models/{model_id}:generateContent',
+    httpMethod: 'post',
+    summary: 'Google Generate Content Proxy',
+    description: 'Google Gemini generateContent API proxy',
+    stainlessPath: '(resource) ai.google.models > (method) generate_content',
+    qualified: 'client.ai.google.models.generateContent',
+    params: ['model_id: string;'],
+    response: 'object',
+    markdown:
+      "## generate_content\n\n`client.ai.google.models.generateContent(model_id: string): object`\n\n**post** `/v1/ai/google/models/{model_id}:generateContent`\n\nGoogle Gemini generateContent API proxy\n\n### Parameters\n\n- `model_id: string`\n\n### Returns\n\n- `object`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.ai.google.models.generateContent('model_id');\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/google/models/$MODEL_ID:generateContent \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'ai.google.models.generate_content',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.google.models.generate_content(\n    "model_id",\n)\nprint(response)',
+      },
+      typescript: {
+        method: 'client.ai.google.models.generateContent',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.google.models.generateContent('model_id');\n\nconsole.log(response);",
+      },
+    },
+  },
+  {
+    name: 'stream_generate_content',
+    endpoint: '/v1/ai/google/models/{model_id}:streamGenerateContent',
+    httpMethod: 'post',
+    summary: 'Google Stream Generate Content Proxy',
+    description: 'Google Gemini streamGenerateContent API proxy',
+    stainlessPath: '(resource) ai.google.models > (method) stream_generate_content',
+    qualified: 'client.ai.google.models.streamGenerateContent',
+    params: ['model_id: string;'],
+    response: 'object',
+    markdown:
+      "## stream_generate_content\n\n`client.ai.google.models.streamGenerateContent(model_id: string): object`\n\n**post** `/v1/ai/google/models/{model_id}:streamGenerateContent`\n\nGoogle Gemini streamGenerateContent API proxy\n\n### Parameters\n\n- `model_id: string`\n\n### Returns\n\n- `object`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.ai.google.models.streamGenerateContent('model_id');\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/google/models/$MODEL_ID:streamGenerateContent \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'ai.google.models.stream_generate_content',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.google.models.stream_generate_content(\n    "model_id",\n)\nprint(response)',
+      },
+      typescript: {
+        method: 'client.ai.google.models.streamGenerateContent',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.google.models.streamGenerateContent('model_id');\n\nconsole.log(response);",
+      },
+    },
+  },
+  {
+    name: 'track_event',
+    endpoint: '/v1/telemetry/events',
+    httpMethod: 'post',
+    summary: 'Telemetry Events',
+    description:
+      'Telemetry proxy endpoint for anonymous OSS adoption tracking.\n    \n    This endpoint receives telemetry events from OSS installations and forwards them\n    to Amplitude using Papr\'s API key (which stays secure on the server).\n    \n    **Privacy**:\n    - All user IDs are hashed/anonymized\n    - No PII is collected\n    - Data is used only for understanding OSS adoption patterns\n    \n    **Opt-in**: Users must explicitly enable telemetry in their OSS installation.\n    \n    **Request Body**:\n    ```json\n    {\n      "events": [\n        {\n          "event_name": "memory_created",\n          "properties": {\n            "type": "text",\n            "has_metadata": true\n          },\n          "user_id": "hashed_user_id",\n          "timestamp": 1234567890000\n        }\n      ],\n      "anonymous_id": "session_id"\n    }\n    ```',
+    stainlessPath: '(resource) telemetry > (method) track_event',
+    qualified: 'client.telemetry.trackEvent',
+    params: [
+      'events: { event_name: string; properties?: object; timestamp?: number; user_id?: string; }[];',
+      'anonymous_id?: string;',
+    ],
+    response: '{ events_processed: number; events_received: number; success: boolean; message?: string; }',
+    markdown:
+      '## track_event\n\n`client.telemetry.trackEvent(events: { event_name: string; properties?: object; timestamp?: number; user_id?: string; }[], anonymous_id?: string): { events_processed: number; events_received: number; success: boolean; message?: string; }`\n\n**post** `/v1/telemetry/events`\n\nTelemetry proxy endpoint for anonymous OSS adoption tracking.\n    \n    This endpoint receives telemetry events from OSS installations and forwards them\n    to Amplitude using Papr\'s API key (which stays secure on the server).\n    \n    **Privacy**:\n    - All user IDs are hashed/anonymized\n    - No PII is collected\n    - Data is used only for understanding OSS adoption patterns\n    \n    **Opt-in**: Users must explicitly enable telemetry in their OSS installation.\n    \n    **Request Body**:\n    ```json\n    {\n      "events": [\n        {\n          "event_name": "memory_created",\n          "properties": {\n            "type": "text",\n            "has_metadata": true\n          },\n          "user_id": "hashed_user_id",\n          "timestamp": 1234567890000\n        }\n      ],\n      "anonymous_id": "session_id"\n    }\n    ```\n\n### Parameters\n\n- `events: { event_name: string; properties?: object; timestamp?: number; user_id?: string; }[]`\n  List of telemetry events to track\n\n- `anonymous_id?: string`\n  Anonymous session ID\n\n### Returns\n\n- `{ events_processed: number; events_received: number; success: boolean; message?: string; }`\n  Response from telemetry endpoint\n\n  - `events_processed: number`\n  - `events_received: number`\n  - `success: boolean`\n  - `message?: string`\n\n### Example\n\n```typescript\nimport Papr from \'@papr/memory\';\n\nconst client = new Papr();\n\nconst response = await client.telemetry.trackEvent({ events: [{ event_name: \'event_name\' }] });\n\nconsole.log(response);\n```',
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/telemetry/events \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "events": [\n            {\n              "event_name": "event_name"\n            }\n          ]\n        }\'',
+      },
+      python: {
+        method: 'telemetry.track_event',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.telemetry.track_event(\n    events=[{\n        "event_name": "event_name"\n    }],\n)\nprint(response.events_processed)',
+      },
+      typescript: {
+        method: 'client.telemetry.trackEvent',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.telemetry.trackEvent({ events: [{ event_name: 'event_name' }] });\n\nconsole.log(response.events_processed);",
+      },
+    },
+  },
+  {
+    name: 'initiate',
+    endpoint: '/login',
+    httpMethod: 'get',
+    summary: 'Login',
+    description:
+      'OAuth2 login endpoint. Initiates the OAuth2 authorization code flow.\n    \n    **Query Parameters:**\n    - `redirect_uri`: The URI to redirect to after authentication (required)\n    - `state`: A random string for CSRF protection (optional but recommended)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint with `redirect_uri` and `state`\n    2. This endpoint redirects user to Auth0 for authentication\n    3. After authentication, Auth0 redirects to `/callback` with authorization code\n    4. `/callback` redirects back to the original `redirect_uri` with code and state\n    \n    **Example:**\n    ```\n    GET /login?redirect_uri=https://chat.openai.com&state=abc123\n    ```',
+    stainlessPath: '(resource) login > (method) initiate',
+    qualified: 'client.login.initiate',
+    response: '{ message?: string; redirect_url?: string; }',
+    markdown:
+      "## initiate\n\n`client.login.initiate(): { message?: string; redirect_url?: string; }`\n\n**get** `/login`\n\nOAuth2 login endpoint. Initiates the OAuth2 authorization code flow.\n    \n    **Query Parameters:**\n    - `redirect_uri`: The URI to redirect to after authentication (required)\n    - `state`: A random string for CSRF protection (optional but recommended)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint with `redirect_uri` and `state`\n    2. This endpoint redirects user to Auth0 for authentication\n    3. After authentication, Auth0 redirects to `/callback` with authorization code\n    4. `/callback` redirects back to the original `redirect_uri` with code and state\n    \n    **Example:**\n    ```\n    GET /login?redirect_uri=https://chat.openai.com&state=abc123\n    ```\n\n### Returns\n\n- `{ message?: string; redirect_url?: string; }`\n  Response model for OAuth2 login endpoint\n\n  - `message?: string`\n  - `redirect_url?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.login.initiate();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example: 'curl https://memory.papr.ai/login \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'login.initiate',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.login.initiate()\nprint(response.message)',
+      },
+      typescript: {
+        method: 'client.login.initiate',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.login.initiate();\n\nconsole.log(response.message);",
+      },
+    },
+  },
+  {
+    name: 'process',
+    endpoint: '/callback',
+    httpMethod: 'get',
+    summary: 'Callback',
+    description:
+      'OAuth2 callback endpoint. Processes the authorization code from Auth0.\n    \n    **Query Parameters:**\n    - `code`: Authorization code from Auth0 (required)\n    - `state`: State parameter for CSRF protection (required)\n    \n    **Flow:**\n    1. Auth0 redirects to this endpoint after successful authentication\n    2. This endpoint validates the authorization code and state\n    3. Redirects back to the original `redirect_uri` with code and state\n    4. Client can then exchange the code for tokens at `/token` endpoint\n    \n    **Security:**\n    - Validates state parameter to prevent CSRF attacks\n    - Checks authorization code expiration\n    - Cleans up session data after processing',
+    stainlessPath: '(resource) callback > (method) process',
+    qualified: 'client.callback.process',
+    response: '{ code?: string; message?: string; state?: string; }',
+    markdown:
+      "## process\n\n`client.callback.process(): { code?: string; message?: string; state?: string; }`\n\n**get** `/callback`\n\nOAuth2 callback endpoint. Processes the authorization code from Auth0.\n    \n    **Query Parameters:**\n    - `code`: Authorization code from Auth0 (required)\n    - `state`: State parameter for CSRF protection (required)\n    \n    **Flow:**\n    1. Auth0 redirects to this endpoint after successful authentication\n    2. This endpoint validates the authorization code and state\n    3. Redirects back to the original `redirect_uri` with code and state\n    4. Client can then exchange the code for tokens at `/token` endpoint\n    \n    **Security:**\n    - Validates state parameter to prevent CSRF attacks\n    - Checks authorization code expiration\n    - Cleans up session data after processing\n\n### Returns\n\n- `{ code?: string; message?: string; state?: string; }`\n  Response model for OAuth2 callback endpoint\n\n  - `code?: string`\n  - `message?: string`\n  - `state?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.callback.process();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example: 'curl https://memory.papr.ai/callback \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'callback.process',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.callback.process()\nprint(response.code)',
+      },
+      typescript: {
+        method: 'client.callback.process',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.callback.process();\n\nconsole.log(response.code);",
+      },
+    },
+  },
+  {
+    name: 'create',
+    endpoint: '/token',
+    httpMethod: 'post',
+    summary: 'Token',
+    description:
+      'OAuth2 token endpoint. Exchanges authorization code for access tokens.\n    \n    **Request Body (JSON or Form):**\n    - `grant_type`: OAuth2 grant type - "authorization_code" or "refresh_token" (required)\n    - `code`: Authorization code from OAuth2 callback (required for authorization_code grant)\n    - `redirect_uri`: Redirect URI used in authorization (required for authorization_code grant)\n    - `client_type`: Client type - "papr_plugin" or "browser_extension" (optional, default: papr_plugin)\n    - `refresh_token`: Refresh token for token refresh (required for refresh_token grant)\n    \n    **Response:**\n    - `access_token`: OAuth2 access token for API authentication\n    - `token_type`: Token type (Bearer)\n    - `expires_in`: Token expiration time in seconds\n    - `refresh_token`: Refresh token for getting new access tokens\n    - `scope`: OAuth2 scopes granted\n    - `user_id`: User ID from Auth0\n    \n    **Example Request:**\n    ```json\n    {\n        "grant_type": "authorization_code",\n        "code": "abc123...",\n        "redirect_uri": "https://chat.openai.com",\n        "client_type": "papr_plugin"\n    }\n    ```',
+    stainlessPath: '(resource) token > (method) create',
+    qualified: 'client.token.create',
+    response:
+      '{ access_token: string; expires_in: number; scope: string; message?: string; refresh_token?: string; token_type?: string; user_id?: string; }',
+    markdown:
+      '## create\n\n`client.token.create(): { access_token: string; expires_in: number; scope: string; message?: string; refresh_token?: string; token_type?: string; user_id?: string; }`\n\n**post** `/token`\n\nOAuth2 token endpoint. Exchanges authorization code for access tokens.\n    \n    **Request Body (JSON or Form):**\n    - `grant_type`: OAuth2 grant type - "authorization_code" or "refresh_token" (required)\n    - `code`: Authorization code from OAuth2 callback (required for authorization_code grant)\n    - `redirect_uri`: Redirect URI used in authorization (required for authorization_code grant)\n    - `client_type`: Client type - "papr_plugin" or "browser_extension" (optional, default: papr_plugin)\n    - `refresh_token`: Refresh token for token refresh (required for refresh_token grant)\n    \n    **Response:**\n    - `access_token`: OAuth2 access token for API authentication\n    - `token_type`: Token type (Bearer)\n    - `expires_in`: Token expiration time in seconds\n    - `refresh_token`: Refresh token for getting new access tokens\n    - `scope`: OAuth2 scopes granted\n    - `user_id`: User ID from Auth0\n    \n    **Example Request:**\n    ```json\n    {\n        "grant_type": "authorization_code",\n        "code": "abc123...",\n        "redirect_uri": "https://chat.openai.com",\n        "client_type": "papr_plugin"\n    }\n    ```\n\n### Returns\n\n- `{ access_token: string; expires_in: number; scope: string; message?: string; refresh_token?: string; token_type?: string; user_id?: string; }`\n  Response model for OAuth2 token endpoint\n\n  - `access_token: string`\n  - `expires_in: number`\n  - `scope: string`\n  - `message?: string`\n  - `refresh_token?: string`\n  - `token_type?: string`\n  - `user_id?: string`\n\n### Example\n\n```typescript\nimport Papr from \'@papr/memory\';\n\nconst client = new Papr();\n\nconst token = await client.token.create();\n\nconsole.log(token);\n```',
+    perLanguage: {
+      http: {
+        example:
+          'curl https://memory.papr.ai/token \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'token.create',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ntoken = client.token.create()\nprint(token.user_id)',
+      },
+      typescript: {
+        method: 'client.token.create',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst token = await client.token.create();\n\nconsole.log(token.user_id);",
+      },
+    },
+  },
+  {
+    name: 'retrieve',
+    endpoint: '/me',
+    httpMethod: 'get',
+    summary: 'Me',
+    description:
+      'Get current user information. Validates authentication and returns user details.\n    \n    **Authentication Required:**\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header: `Authorization: Bearer <access_token>`\n    - Session token in `Authorization` header: `Authorization: Session <session_token>`\n    - API Key in `Authorization` header: `Authorization: APIKey <api_key>`\n    \n    **Headers:**\n    - `Authorization`: Authentication token (required)\n    - `X-Client-Type`: Client type for logging (optional, default: papr_plugin)\n    \n    **Response:**\n    - `user_id`: Internal user ID\n    - `sessionToken`: Session token for API access (if available)\n    - `imageUrl`: User profile image URL (if available)\n    - `displayName`: User display name (if available)\n    - `email`: User email address (if available)\n    - `message`: Authentication status message\n    \n    **Example:**\n    ```\n    GET /me\n    Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\n    X-Client-Type: papr_plugin\n    ```',
+    stainlessPath: '(resource) me > (method) retrieve',
+    qualified: 'client.me.retrieve',
+    response:
+      '{ user_id: string; displayName?: string; email?: string; imageUrl?: string; message?: string; sessionToken?: string; }',
+    markdown:
+      "## retrieve\n\n`client.me.retrieve(): { user_id: string; displayName?: string; email?: string; imageUrl?: string; message?: string; sessionToken?: string; }`\n\n**get** `/me`\n\nGet current user information. Validates authentication and returns user details.\n    \n    **Authentication Required:**\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header: `Authorization: Bearer <access_token>`\n    - Session token in `Authorization` header: `Authorization: Session <session_token>`\n    - API Key in `Authorization` header: `Authorization: APIKey <api_key>`\n    \n    **Headers:**\n    - `Authorization`: Authentication token (required)\n    - `X-Client-Type`: Client type for logging (optional, default: papr_plugin)\n    \n    **Response:**\n    - `user_id`: Internal user ID\n    - `sessionToken`: Session token for API access (if available)\n    - `imageUrl`: User profile image URL (if available)\n    - `displayName`: User display name (if available)\n    - `email`: User email address (if available)\n    - `message`: Authentication status message\n    \n    **Example:**\n    ```\n    GET /me\n    Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\n    X-Client-Type: papr_plugin\n    ```\n\n### Returns\n\n- `{ user_id: string; displayName?: string; email?: string; imageUrl?: string; message?: string; sessionToken?: string; }`\n  Response model for /me endpoint\n\n  - `user_id: string`\n  - `displayName?: string`\n  - `email?: string`\n  - `imageUrl?: string`\n  - `message?: string`\n  - `sessionToken?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst me = await client.me.retrieve();\n\nconsole.log(me);\n```",
+    perLanguage: {
+      http: {
+        example: 'curl https://memory.papr.ai/me \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'me.retrieve',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nme = client.me.retrieve()\nprint(me.user_id)',
+      },
+      typescript: {
+        method: 'client.me.retrieve',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst me = await client.me.retrieve();\n\nconsole.log(me.user_id);",
+      },
+    },
+  },
+  {
+    name: 'perform',
+    endpoint: '/logout',
+    httpMethod: 'get',
+    summary: 'Logout',
+    description:
+      "OAuth2 logout endpoint. Logs out the user from Auth0 and redirects to specified URL.\n    \n    **Query Parameters:**\n    - `returnTo`: URL to redirect to after logout (optional, default: extension logout page)\n    - `client_type`: Client type for determining Auth0 client ID (optional, default: papr_plugin)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint\n    2. This endpoint redirects to Auth0 logout URL\n    3. Auth0 logs out the user and redirects to the specified return URL\n    \n    **Example:**\n    ```\n    GET /logout?returnTo=https://chat.openai.com\n    ```\n    \n    **Note:** This endpoint initiates the logout process. The actual logout completion happens on Auth0's side.",
+    stainlessPath: '(resource) logout > (method) perform',
+    qualified: 'client.logout.perform',
+    response: '{ logout_url: string; message?: string; }',
+    markdown:
+      "## perform\n\n`client.logout.perform(): { logout_url: string; message?: string; }`\n\n**get** `/logout`\n\nOAuth2 logout endpoint. Logs out the user from Auth0 and redirects to specified URL.\n    \n    **Query Parameters:**\n    - `returnTo`: URL to redirect to after logout (optional, default: extension logout page)\n    - `client_type`: Client type for determining Auth0 client ID (optional, default: papr_plugin)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint\n    2. This endpoint redirects to Auth0 logout URL\n    3. Auth0 logs out the user and redirects to the specified return URL\n    \n    **Example:**\n    ```\n    GET /logout?returnTo=https://chat.openai.com\n    ```\n    \n    **Note:** This endpoint initiates the logout process. The actual logout completion happens on Auth0's side.\n\n### Returns\n\n- `{ logout_url: string; message?: string; }`\n  Response model for logout endpoint\n\n  - `logout_url: string`\n  - `message?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.logout.perform();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      http: {
+        example: 'curl https://memory.papr.ai/logout \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+      python: {
+        method: 'logout.perform',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.logout.perform()\nprint(response.logout_url)',
+      },
+      typescript: {
+        method: 'client.logout.perform',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.logout.perform();\n\nconsole.log(response.logout_url);",
       },
     },
   },
