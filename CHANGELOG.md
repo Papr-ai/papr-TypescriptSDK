@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.6.0 (2026-04-30)
+
+Full Changelog: [v2.5.0...v2.6.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.5.0...v2.6.0)
+
+### Features
+
+* support setting headers via env ([ac3aae8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ac3aae8cd0f778cdb888ba4e77f57ac3643adc0b))
+
+
+### Chores
+
+* avoid formatting file that gets changed during releases ([e344028](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e34402827fc3b6bbeff56b30ab152e4ea94bc9f0))
+* **format:** run eslint and prettier separately ([d0ac90e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/d0ac90e371f031c9365e58288c4064b9de2efd48))
+* **internal:** codegen related update ([81e5bc6](https://github.com/Papr-ai/papr-TypescriptSDK/commit/81e5bc62119ac9664fcc2a4e76d7aca851447aad))
+* restructure docs search code ([bdf7f40](https://github.com/Papr-ai/papr-TypescriptSDK/commit/bdf7f40891961b484b9b6e81862c8b440f7a9cb5))
+
 ## 2.5.0 (2026-04-23)
 
 Full Changelog: [v2.4.0...v2.5.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.4.0...v2.5.0)
