@@ -81,7 +81,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/user \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "external_id": "user123"\n        }\'',
+          'curl https://memory.papr.ai/v1/user \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "external_id": "user123",\n          "email": "user@example.com",\n          "metadata": {\n            "name": "bar",\n            "preferences": "bar"\n          },\n          "type": "developerUser"\n        }\'',
       },
     },
   },
@@ -239,7 +239,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          "curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -X PUT \\\n    -H 'Content-Type: application/json' \\\n    -H \"X-API-Key: $PAPR_MEMORY_API_KEY\" \\\n    -d '{}'",
+          'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "email": "updated.user@example.com",\n          "external_id": "updated_user_123",\n          "metadata": {\n            "name": "bar",\n            "preferences": "bar"\n          },\n          "type": "developerUser"\n        }\'',
       },
     },
   },
@@ -289,7 +289,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/memory \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "Meeting with John Smith from Acme Corp about the Q4 project timeline"\n        }\'',
+          'curl https://memory.papr.ai/v1/memory \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"content\\": \\"Meeting with John Smith from Acme Corp about the Q4 project timeline\\",\n          \\"context\\": [\n            {\n              \\"content\\": \\"Let\'s discuss the Q4 project timeline with John\\",\n              \\"role\\": \\"user\\"\n            },\n            {\n              \\"content\\": \\"I\'ll help you prepare for the timeline discussion. What are your key milestones?\\",\n              \\"role\\": \\"assistant\\"\n            }\n          ],\n          \\"metadata\\": {\n            \\"conversationId\\": \\"conv-123\\",\n            \\"createdAt\\": \\"2024-10-04T10:00:00Z\\",\n            \\"external_user_id\\": \\"external_user_123\\",\n            \\"external_user_read_access\\": [\n              \\"external_user_123\\",\n              \\"external_user_789\\"\n            ],\n            \\"external_user_write_access\\": [\n              \\"external_user_123\\"\n            ],\n            \\"hierarchical_structures\\": \\"Business/Meetings/Project Planning\\",\n            \\"location\\": \\"Conference Room A\\",\n            \\"sourceUrl\\": \\"https://calendar.example.com/meeting/123\\",\n            \\"topics\\": [\n              \\"product\\",\n              \\"planning\\"\n            ]\n          },\n          \\"type\\": \\"text\\"\n        }"',
       },
     },
   },
@@ -334,7 +334,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          "curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -X PUT \\\n    -H 'Content-Type: application/json' \\\n    -H \"X-API-Key: $PAPR_MEMORY_API_KEY\" \\\n    -d '{}'",
+          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"content\\": \\"Updated meeting notes from the product planning session\\",\n          \\"context\\": [\n            {\n              \\"content\\": \\"Let\'s update the Q2 product roadmap\\",\n              \\"role\\": \\"user\\"\n            },\n            {\n              \\"content\\": \\"I\'ll help you update the roadmap. What changes would you like to make?\\",\n              \\"role\\": \\"assistant\\"\n            }\n          ],\n          \\"metadata\\": {\n            \\"emoji tags\\": [\n              \\"string\\"\n            ],\n            \\"emotion tags\\": [\n              \\"string\\"\n            ],\n            \\"topics\\": [\n              \\"string\\"\n            ]\n          },\n          \\"relationships_json\\": [\n            {\n              \\"relation_type\\": \\"updates\\",\n              \\"metadata\\": {\n                \\"relevance\\": \\"bar\\"\n              },\n              \\"related_item_id\\": \\"previous_memory_item_id\\",\n              \\"related_item_type\\": \\"TextMemoryItem\\"\n            }\n          ],\n          \\"type\\": \\"text\\"\n        }"',
       },
     },
   },
@@ -483,7 +483,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/memory/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memories": [\n            {\n              "content": "Meeting notes from the product planning session",\n              "metadata": {\n                "createdAt": "2024-03-21T10:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            },\n            {\n              "content": "Follow-up tasks from the planning meeting",\n              "metadata": {\n                "createdAt": "2024-03-21T11:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            }\n          ]\n        }\'',
+          'curl https://memory.papr.ai/v1/memory/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memories": [\n            {\n              "content": "Meeting notes from the product planning session",\n              "metadata": {\n                "createdAt": "2024-03-21T10:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            },\n            {\n              "content": "Follow-up tasks from the planning meeting",\n              "metadata": {\n                "createdAt": "2024-03-21T11:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            }\n          ],\n          "batch_size": 10,\n          "external_user_id": "external_user_abcde",\n          "user_id": "internal_user_id_12345"\n        }\'',
       },
     },
   },
@@ -533,7 +533,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/memory/search \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"query\\": \\"Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they\'ve suggested.\\",\n          \\"holographic_config\\": {\n            \\"enabled\\": true,\n            \\"frequency_schema_id\\": \\"cosqa\\",\n            \\"hcond_boost_factor\\": 0.12,\n            \\"hcond_boost_threshold\\": 0.35,\n            \\"hcond_penalty_factor\\": 0.06,\n            \\"scoring_method\\": \\"egr_rerank\\",\n            \\"search_mode\\": \\"post_search\\"\n          },\n          \\"search_override\\": {\n            \\"pattern\\": {\n              \\"relationship_type\\": \\"ASSOCIATED_WITH\\",\n              \\"source_label\\": \\"Memory\\",\n              \\"target_label\\": \\"Person\\",\n              \\"direction\\": \\"->\\"\n            },\n            \\"filters\\": [\n              {\n                \\"node_type\\": \\"Person\\",\n                \\"operator\\": \\"CONTAINS\\",\n                \\"property_name\\": \\"name\\",\n                \\"value\\": \\"John\\"\n              },\n              {\n                \\"node_type\\": \\"Memory\\",\n                \\"operator\\": \\"IN\\",\n                \\"property_name\\": \\"topics\\",\n                \\"value\\": [\n                  \\"project\\",\n                  \\"meeting\\"\n                ]\n              }\n            ],\n            \\"return_properties\\": [\n              \\"name\\",\n              \\"content\\",\n              \\"createdAt\\"\n            ]\n          }\n        }"',
+          'curl https://memory.papr.ai/v1/memory/search \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"query\\": \\"Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they\'ve suggested.\\",\n          \\"enable_agentic_graph\\": false,\n          \\"external_user_id\\": \\"external_user_123\\",\n          \\"rank_results\\": true\n        }"',
       },
     },
   },
@@ -631,7 +631,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/feedback \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "feedbackData": {\n            "feedbackSource": "inline",\n            "feedbackType": "thumbs_up",\n            "assistantMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            },\n            "citedMemoryIds": [\n              "mem_123",\n              "mem_456"\n            ],\n            "citedNodeIds": [\n              "node_123",\n              "node_456"\n            ],\n            "feedbackImpact": "positive",\n            "feedbackProcessed": true,\n            "feedbackScore": 1,\n            "feedbackText": "This answer was very helpful and accurate",\n            "feedbackValue": "helpful",\n            "userMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            }\n          },\n          "search_id": "abc123def456"\n        }\'',
+          'curl https://memory.papr.ai/v1/feedback \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "feedbackData": {\n            "feedbackSource": "inline",\n            "feedbackType": "thumbs_up",\n            "assistantMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            },\n            "citedMemoryIds": [\n              "mem_123",\n              "mem_456"\n            ],\n            "citedNodeIds": [\n              "node_123",\n              "node_456"\n            ],\n            "feedbackImpact": "positive",\n            "feedbackProcessed": true,\n            "feedbackScore": 1,\n            "feedbackText": "This answer was very helpful and accurate",\n            "feedbackValue": "helpful",\n            "userMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            }\n          },\n          "search_id": "abc123def456",\n          "external_user_id": "dev_api_key_123",\n          "user_id": "abc123def456"\n        }\'',
       },
     },
   },
@@ -1076,7 +1076,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/messages \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "Can you help me plan the Q4 product roadmap?",\n          "role": "user",\n          "sessionId": "session_123"\n        }\'',
+          'curl https://memory.papr.ai/v1/messages \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "Can you help me plan the Q4 product roadmap?",\n          "role": "user",\n          "sessionId": "session_123",\n          "metadata": {\n            "location": "Office",\n            "topics": [\n              "product",\n              "planning",\n              "roadmap"\n            ]\n          },\n          "process_messages": true,\n          "title": "Q4 Product Planning"\n        }\'',
       },
     },
   },
@@ -1361,7 +1361,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          "curl https://memory.papr.ai/v1/sync/tiers \\\n    -H 'Content-Type: application/json' \\\n    -H \"X-API-Key: $PAPR_MEMORY_API_KEY\" \\\n    -d '{}'",
+          'curl https://memory.papr.ai/v1/sync/tiers \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "embed_limit": 200,\n          "embed_model": "sbert",\n          "external_user_id": "external_user_abc",\n          "include_embeddings": false,\n          "max_tier0": 300,\n          "max_tier1": 1000,\n          "user_id": "internal_user_123",\n          "workspace_id": "workspace_123"\n        }\'',
       },
     },
   },
@@ -1430,7 +1430,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/namespace \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "acme-production"\n        }\'',
+          'curl https://memory.papr.ai/v1/namespace \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "acme-production",\n          "environment_type": "production",\n          "is_active": true,\n          "rate_limits": {}\n        }\'',
       },
     },
   },
@@ -1525,7 +1525,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          "curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -X PUT \\\n    -H 'Content-Type: application/json' \\\n    -H \"X-API-Key: $PAPR_MEMORY_API_KEY\" \\\n    -d '{}'",
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "environment_type": "staging",\n          "is_active": true,\n          "name": "acme-staging"\n        }\'',
       },
     },
   },
@@ -1597,7 +1597,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          }\n        }\'',
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          },\n          "provider": "gcp",\n          "region": "us-west1"\n        }\'',
       },
     },
   },
@@ -1759,7 +1759,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/holographic/rerank \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "candidates": [\n            {\n              "id": "doc_1",\n              "content": "Troponin is a cardiac biomarker released during myocardial injury..."\n            },\n            {\n              "id": "doc_2",\n              "content": "Aspirin reduces platelet aggregation..."\n            }\n          ],\n          "query": "How does troponin relate to myocardial infarction?"\n        }\'',
+          'curl https://memory.papr.ai/v1/holographic/rerank \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "candidates": [\n            {\n              "id": "doc_1",\n              "content": "Troponin is a cardiac biomarker released during myocardial injury..."\n            },\n            {\n              "id": "doc_2",\n              "content": "Aspirin reduces platelet aggregation..."\n            }\n          ],\n          "query": "How does troponin relate to myocardial infarction?",\n          "domain": "biomedical",\n          "top_k": 10\n        }\'',
       },
     },
   },
@@ -1833,7 +1833,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/holographic/transform \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "The patient presents with elevated troponin levels indicating myocardial damage",\n          "embedding": [\n            0.1,\n            -0.2,\n            0.3\n          ]\n        }\'',
+          'curl https://memory.papr.ai/v1/holographic/transform \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "The patient presents with elevated troponin levels indicating myocardial damage",\n          "embedding": [\n            0.1,\n            -0.2,\n            0.3\n          ],\n          "context_metadata": {\n            "createdAt": "bar",\n            "sourceType": "bar"\n          },\n          "domain": "biomedical",\n          "output": [\n            "rotation_v3",\n            "phases",\n            "metadata"\n          ]\n        }\'',
       },
     },
   },
@@ -1932,7 +1932,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/holographic/domains \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "fields": [\n            {\n              "frequency": 4,\n              "name": "priority",\n              "type": "enum",\n              "values": [\n                "P0",\n                "P1",\n                "P2",\n                "P3"\n              ],\n              "weight": 0.9\n            },\n            {\n              "frequency": 6,\n              "name": "component",\n              "type": "free_text",\n              "weight": 0.7\n            },\n            {\n              "frequency": 12,\n              "name": "resolution_type",\n              "type": "enum",\n              "values": [\n                "bug_fix",\n                "config",\n                "wontfix"\n              ],\n              "weight": 0.8\n            }\n          ],\n          "name": "acme:support_tickets:1.0.0"\n        }\'',
+          'curl https://memory.papr.ai/v1/holographic/domains \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "fields": [\n            {\n              "frequency": 4,\n              "name": "priority",\n              "type": "enum",\n              "values": [\n                "P0",\n                "P1",\n                "P2",\n                "P3"\n              ],\n              "weight": 0.9\n            },\n            {\n              "frequency": 6,\n              "name": "component",\n              "type": "free_text",\n              "weight": 0.7\n            },\n            {\n              "frequency": 12,\n              "name": "resolution_type",\n              "type": "enum",\n              "values": [\n                "bug_fix",\n                "config",\n                "wontfix"\n              ],\n              "weight": 0.8\n            }\n          ],\n          "name": "acme:support_tickets:1.0.0",\n          "description": "Support ticket classification schema"\n        }\'',
       },
     },
   },
@@ -1968,7 +1968,7 @@ const EMBEDDED_METHODS: MethodEntry[] = [
       },
       http: {
         example:
-          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          }\n        }\'',
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          },\n          "provider": "gcp",\n          "region": "us-west1"\n        }\'',
       },
     },
   },
