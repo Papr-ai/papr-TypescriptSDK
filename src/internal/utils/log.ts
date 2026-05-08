@@ -107,10 +107,11 @@ export const formatRequestDetails = (details: {
           name,
           (
             name.toLowerCase() === 'authorization' ||
-            name.toLowerCase() === 'x-session-token' ||
+            name.toLowerCase() === 'api-key' ||
             name.toLowerCase() === 'x-api-key' ||
             name.toLowerCase() === 'cookie' ||
-            name.toLowerCase() === 'set-cookie'
+            name.toLowerCase() === 'set-cookie' ||
+            name.toLowerCase() === 'x-session-token'
           ) ?
             '***'
           : value,
