@@ -29,6 +29,8 @@ export {
 } from './frequencies';
 export {
   Graph,
+  type DocumentInput,
+  type GraphDomainRoutingConfig,
   type GraphRerankResponse,
   type GraphTransformResponse,
   type GraphRerankParams,

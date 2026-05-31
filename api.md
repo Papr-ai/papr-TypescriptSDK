@@ -410,6 +410,8 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/graph/graph.ts">DocumentInput</a></code>
+- <code><a href="./src/resources/graph/graph.ts">GraphDomainRoutingConfig</a></code>
 - <code><a href="./src/resources/graph/graph.ts">GraphRerankResponse</a></code>
 - <code><a href="./src/resources/graph/graph.ts">GraphTransformResponse</a></code>
 
@@ -422,6 +424,12 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/graph/domains/domains.ts">CatalogBufferEntry</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">CatalogEntityCluster</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">CatalogRelationshipPattern</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainCatalog</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainCatalogConfig</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">SignalField</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">DomainCreateResponse</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">DomainRetrieveResponse</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">DomainUpdateResponse</a></code>
@@ -438,12 +446,7 @@ Methods:
 
 ### Catalog
 
-Types:
-
-- <code><a href="./src/resources/graph/domains/catalog.ts">CatalogRetrieveResponse</a></code>
-- <code><a href="./src/resources/graph/domains/catalog.ts">CatalogRefreshResponse</a></code>
-
 Methods:
 
-- <code title="get /v1/graph/domains/{domain_id}/catalog">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">retrieve</a>(domainID) -> CatalogRetrieveResponse</code>
-- <code title="post /v1/graph/domains/{domain_id}/catalog/refresh">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">refresh</a>(domainID) -> CatalogRefreshResponse</code>
+- <code title="get /v1/graph/domains/{domain_id}/catalog">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">retrieve</a>(domainID) -> DomainCatalog</code>
+- <code title="post /v1/graph/domains/{domain_id}/catalog/refresh">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">refresh</a>(domainID) -> DomainCatalog</code>
