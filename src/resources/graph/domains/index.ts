@@ -1,8 +1,14 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export { Catalog, type CatalogRetrieveResponse, type CatalogRefreshResponse } from './catalog';
+export { Catalog } from './catalog';
 export {
   Domains,
+  type CatalogBufferEntry,
+  type CatalogEntityCluster,
+  type CatalogRelationshipPattern,
+  type DomainCatalog,
+  type DomainCatalogConfig,
+  type SignalField,
   type DomainCreateResponse,
   type DomainRetrieveResponse,
   type DomainUpdateResponse,

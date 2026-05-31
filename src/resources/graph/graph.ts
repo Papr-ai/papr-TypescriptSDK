@@ -1,8 +1,14 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../../core/resource';
+import * as GraphAPI from './graph';
 import * as DomainsAPI from './domains/domains';
 import {
+  CatalogBufferEntry,
+  CatalogEntityCluster,
+  CatalogRelationshipPattern,
+  DomainCatalog,
+  DomainCatalogConfig,
   DomainCreateParams,
   DomainCreateResponse,
   DomainDeleteResponse,
@@ -11,6 +17,7 @@ import {
   DomainUpdateParams,
   DomainUpdateResponse,
   Domains,
+  SignalField,
 } from './domains/domains';
 import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
@@ -38,6 +45,122 @@ export class Graph extends APIResource {
   transform(body: GraphTransformParams, options?: RequestOptions): APIPromise<GraphTransformResponse> {
     return this._client.post('/v1/graph/transform', { body, ...options });
   }
+}
+
+/**
+ * Object form of a document (when developer wants to attach an id/metadata).
+ *
+ * Either `embedding` or `text` should be set; both are accepted by the rerank
+ * pipeline. `metadata` round-trips into the response if requested.
+ *
+ * BYO artifact fields (`signals`, `signal_embeddings`, `phases`, `rot_v3`,
+ * `concat_embedding`) are all optional and let callers skip the per-doc
+ * extract+embed pass at scoring time. They map 1:1 to the producer fields returned
+ * by /v1/graph/transform.
+ */
+export interface DocumentInput {
+  /**
+   * Stable doc identifier echoed back in results.
+   */
+  id?: string | null;
+
+  /**
+   * Pre-computed concat reconstruction.
+   */
+  concat_embedding?: Array<number> | null;
+
+  /**
+   * Pre-computed base embedding (BYOE). Qwen 2560-d expected.
+   */
+  embedding?: Array<number> | null;
+
+  /**
+   * Free-form user metadata, echoed back if return_documents=true.
+   */
+  metadata?: { [key: string]: unknown } | null;
+
+  /**
+   * Pre-computed per-frequency phase angles (14-dim). If provided, phase computation
+   * is skipped.
+   */
+  phases?: Array<number> | null;
+
+  /**
+   * Pre-computed rotation v3 vector.
+   */
+  rot_v3?: Array<number> | null;
+
+  /**
+   * Pre-computed signal band-name -> vector (typically 384d sbert). If provided,
+   * per-band embedding step is skipped.
+   */
+  signal_embeddings?: { [key: string]: Array<number> } | null;
+
+  /**
+   * Pre-extracted signal band-name -> text. If provided, the LLM extractor is
+   * skipped for this doc.
+   */
+  signals?: { [key: string]: string } | null;
+
+  /**
+   * Document text (if not BYOE).
+   */
+  text?: string | null;
+}
+
+/**
+ * Domain-scoped CAESAR-VIII routing overrides (stored on graph_domains).
+ */
+export interface GraphDomainRoutingConfig {
+  /**
+   * Which ranking is exposed as rankings['caesar4'] to CAESAR-VIII rules
+   * (c4_c7_diverge, etc.). Accepts 'v4a' (default — alias to family-routed v4a / v3a
+   * fallback), 'v3a' (force v3a only), or 'legacy' (SKIP the alias; keep the
+   * original Jaccard / trust-score selection at rankings['caesar4'] and stash a copy
+   * at rankings['_caesar4_legacy']). Use 'legacy' to A/B C-VIII rules against the
+   * original SciFact calibration semantics. Label-free in all modes.
+   */
+  caesar4_source?: string | null;
+
+  /**
+   * Minimum phi to allow caesar7/baseline_rerank to bypass holographic floor.
+   */
+  ce_gate_min_phi?: number | null;
+
+  /**
+   * Global SciFact routing rule names to skip for this domain (e.g.
+   * 'DANGER_LOW_RSG_LOW_PHI').
+   */
+  disabled_rules?: Array<string> | null;
+
+  /**
+   * Stacked EGR entailment fusion weight (0–1). Lower for code domains.
+   */
+  egr_lambda_ce?: number | null;
+
+  /**
+   * Named domain rule packs to run after global rules (e.g. 'cosqa_caesar8_v2').
+   */
+  enabled_rule_packs?: Array<string> | null;
+
+  /**
+   * CAESAR-VIII initial source for the CE-on path. Domain defaults may pin
+   * 'caesar4_5_v4a' on code_search for public enhanced; public max overrides to
+   * 'caesar7' unless this field is set.
+   */
+  enhanced_initial_source?: string | null;
+
+  /**
+   * When true, never return a ranking worse than max(v4a, baseline) unless CE gate
+   * (ce_gate_min_phi) passes.
+   */
+  holographic_floor?: boolean | null;
+
+  /**
+   * Optional CaesarConfig field overrides keyed by threshold name (e.g.
+   * {'cmas_c4_trust_jaccard_threshold': 0.95}).
+   */
+  threshold_overrides?: { [key: string]: number } | null;
 }
 
 export interface GraphRerankResponse {
@@ -120,7 +243,7 @@ export namespace GraphRerankResponse {
      * extract+embed pass at scoring time. They map 1:1 to the producer fields returned
      * by /v1/graph/transform.
      */
-    document?: Result.Document | null;
+    document?: GraphAPI.DocumentInput | null;
 
     /**
      * Which method CAESAR-8 routed to for this query (e.g. 'caesar7',
@@ -141,69 +264,6 @@ export namespace GraphRerankResponse {
      * computed gated SFI.
      */
     signal_scores_by_band?: { [key: string]: number } | null;
-  }
-
-  export namespace Result {
-    /**
-     * Object form of a document (when developer wants to attach an id/metadata).
-     *
-     * Either `embedding` or `text` should be set; both are accepted by the rerank
-     * pipeline. `metadata` round-trips into the response if requested.
-     *
-     * BYO artifact fields (`signals`, `signal_embeddings`, `phases`, `rot_v3`,
-     * `concat_embedding`) are all optional and let callers skip the per-doc
-     * extract+embed pass at scoring time. They map 1:1 to the producer fields returned
-     * by /v1/graph/transform.
-     */
-    export interface Document {
-      /**
-       * Stable doc identifier echoed back in results.
-       */
-      id?: string | null;
-
-      /**
-       * Pre-computed concat reconstruction.
-       */
-      concat_embedding?: Array<number> | null;
-
-      /**
-       * Pre-computed base embedding (BYOE). Qwen 2560-d expected.
-       */
-      embedding?: Array<number> | null;
-
-      /**
-       * Free-form user metadata, echoed back if return_documents=true.
-       */
-      metadata?: { [key: string]: unknown } | null;
-
-      /**
-       * Pre-computed per-frequency phase angles (14-dim). If provided, phase computation
-       * is skipped.
-       */
-      phases?: Array<number> | null;
-
-      /**
-       * Pre-computed rotation v3 vector.
-       */
-      rot_v3?: Array<number> | null;
-
-      /**
-       * Pre-computed signal band-name -> vector (typically 384d sbert). If provided,
-       * per-band embedding step is skipped.
-       */
-      signal_embeddings?: { [key: string]: Array<number> } | null;
-
-      /**
-       * Pre-extracted signal band-name -> text. If provided, the LLM extractor is
-       * skipped for this doc.
-       */
-      signals?: { [key: string]: string } | null;
-
-      /**
-       * Document text (if not BYOE).
-       */
-      text?: string | null;
-    }
   }
 }
 
@@ -264,7 +324,7 @@ export interface GraphRerankParams {
   /**
    * Candidate documents (string or DocumentInput with pre-computed artifacts).
    */
-  documents: Array<string | GraphRerankParams.DocumentInput>;
+  documents: Array<string | DocumentInput>;
 
   /**
    * Query text (string) or QueryItem with pre-computed artifacts.
@@ -307,7 +367,7 @@ export interface GraphRerankParams {
   /**
    * Domain-scoped CAESAR-VIII routing overrides (stored on graph_domains).
    */
-  routing_config?: GraphRerankParams.RoutingConfig | null;
+  routing_config?: GraphDomainRoutingConfig | null;
 
   /**
    * Embedder for per-band signal vectors when extracting query/docs. 'sbert' (384d,
@@ -338,67 +398,6 @@ export interface GraphRerankParams {
 }
 
 export namespace GraphRerankParams {
-  /**
-   * Object form of a document (when developer wants to attach an id/metadata).
-   *
-   * Either `embedding` or `text` should be set; both are accepted by the rerank
-   * pipeline. `metadata` round-trips into the response if requested.
-   *
-   * BYO artifact fields (`signals`, `signal_embeddings`, `phases`, `rot_v3`,
-   * `concat_embedding`) are all optional and let callers skip the per-doc
-   * extract+embed pass at scoring time. They map 1:1 to the producer fields returned
-   * by /v1/graph/transform.
-   */
-  export interface DocumentInput {
-    /**
-     * Stable doc identifier echoed back in results.
-     */
-    id?: string | null;
-
-    /**
-     * Pre-computed concat reconstruction.
-     */
-    concat_embedding?: Array<number> | null;
-
-    /**
-     * Pre-computed base embedding (BYOE). Qwen 2560-d expected.
-     */
-    embedding?: Array<number> | null;
-
-    /**
-     * Free-form user metadata, echoed back if return_documents=true.
-     */
-    metadata?: { [key: string]: unknown } | null;
-
-    /**
-     * Pre-computed per-frequency phase angles (14-dim). If provided, phase computation
-     * is skipped.
-     */
-    phases?: Array<number> | null;
-
-    /**
-     * Pre-computed rotation v3 vector.
-     */
-    rot_v3?: Array<number> | null;
-
-    /**
-     * Pre-computed signal band-name -> vector (typically 384d sbert). If provided,
-     * per-band embedding step is skipped.
-     */
-    signal_embeddings?: { [key: string]: Array<number> } | null;
-
-    /**
-     * Pre-extracted signal band-name -> text. If provided, the LLM extractor is
-     * skipped for this doc.
-     */
-    signals?: { [key: string]: string } | null;
-
-    /**
-     * Document text (if not BYOE).
-     */
-    text?: string | null;
-  }
-
   /**
    * Query with optional pre-computed artifacts from /v1/graph/transform.
    *
@@ -440,61 +439,6 @@ export namespace GraphRerankParams {
      * Pre-extracted signal band-name -> text. Skips LLM extractor.
      */
     signals?: { [key: string]: string } | null;
-  }
-
-  /**
-   * Domain-scoped CAESAR-VIII routing overrides (stored on graph_domains).
-   */
-  export interface RoutingConfig {
-    /**
-     * Which ranking is exposed as rankings['caesar4'] to CAESAR-VIII rules
-     * (c4_c7_diverge, etc.). Accepts 'v4a' (default — alias to family-routed v4a / v3a
-     * fallback), 'v3a' (force v3a only), or 'legacy' (SKIP the alias; keep the
-     * original Jaccard / trust-score selection at rankings['caesar4'] and stash a copy
-     * at rankings['_caesar4_legacy']). Use 'legacy' to A/B C-VIII rules against the
-     * original SciFact calibration semantics. Label-free in all modes.
-     */
-    caesar4_source?: string | null;
-
-    /**
-     * Minimum phi to allow caesar7/baseline_rerank to bypass holographic floor.
-     */
-    ce_gate_min_phi?: number | null;
-
-    /**
-     * Global SciFact routing rule names to skip for this domain (e.g.
-     * 'DANGER_LOW_RSG_LOW_PHI').
-     */
-    disabled_rules?: Array<string> | null;
-
-    /**
-     * Stacked EGR entailment fusion weight (0–1). Lower for code domains.
-     */
-    egr_lambda_ce?: number | null;
-
-    /**
-     * Named domain rule packs to run after global rules (e.g. 'cosqa_caesar8_v2').
-     */
-    enabled_rule_packs?: Array<string> | null;
-
-    /**
-     * CAESAR-VIII initial source for the CE-on path. Domain defaults may pin
-     * 'caesar4_5_v4a' on code_search for public enhanced; public max overrides to
-     * 'caesar7' unless this field is set.
-     */
-    enhanced_initial_source?: string | null;
-
-    /**
-     * When true, never return a ranking worse than max(v4a, baseline) unless CE gate
-     * (ce_gate_min_phi) passes.
-     */
-    holographic_floor?: boolean | null;
-
-    /**
-     * Optional CaesarConfig field overrides keyed by threshold name (e.g.
-     * {'cmas_c4_trust_jaccard_threshold': 0.95}).
-     */
-    threshold_overrides?: { [key: string]: number } | null;
   }
 }
 
@@ -546,6 +490,8 @@ Graph.Domains = Domains;
 
 export declare namespace Graph {
   export {
+    type DocumentInput as DocumentInput,
+    type GraphDomainRoutingConfig as GraphDomainRoutingConfig,
     type GraphRerankResponse as GraphRerankResponse,
     type GraphTransformResponse as GraphTransformResponse,
     type GraphRerankParams as GraphRerankParams,
@@ -554,6 +500,12 @@ export declare namespace Graph {
 
   export {
     Domains as Domains,
+    type CatalogBufferEntry as CatalogBufferEntry,
+    type CatalogEntityCluster as CatalogEntityCluster,
+    type CatalogRelationshipPattern as CatalogRelationshipPattern,
+    type DomainCatalog as DomainCatalog,
+    type DomainCatalogConfig as DomainCatalogConfig,
+    type SignalField as SignalField,
     type DomainCreateResponse as DomainCreateResponse,
     type DomainRetrieveResponse as DomainRetrieveResponse,
     type DomainUpdateResponse as DomainUpdateResponse,

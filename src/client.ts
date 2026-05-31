@@ -121,7 +121,9 @@ import {
 } from './resources/user';
 import { AI, AIGetUsageResponse } from './resources/ai/ai';
 import {
+  DocumentInput,
   Graph,
+  GraphDomainRoutingConfig,
   GraphRerankParams,
   GraphRerankResponse,
   GraphTransformParams,
@@ -1120,6 +1122,8 @@ export declare namespace Papr {
 
   export {
     Graph as Graph,
+    type DocumentInput as DocumentInput,
+    type GraphDomainRoutingConfig as GraphDomainRoutingConfig,
     type GraphRerankResponse as GraphRerankResponse,
     type GraphTransformResponse as GraphTransformResponse,
     type GraphRerankParams as GraphRerankParams,

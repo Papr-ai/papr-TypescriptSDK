@@ -2,6 +2,12 @@
 
 export {
   Domains,
+  type CatalogBufferEntry,
+  type CatalogEntityCluster,
+  type CatalogRelationshipPattern,
+  type DomainCatalog,
+  type DomainCatalogConfig,
+  type SignalField,
   type DomainCreateResponse,
   type DomainRetrieveResponse,
   type DomainUpdateResponse,
@@ -12,6 +18,8 @@ export {
 } from './domains/index';
 export {
   Graph,
+  type DocumentInput,
+  type GraphDomainRoutingConfig,
   type GraphRerankResponse,
   type GraphTransformResponse,
   type GraphRerankParams,
