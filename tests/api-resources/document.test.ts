@@ -58,6 +58,7 @@ describe('resource document', () => {
       memory_policy: 'memory_policy',
       metadata: 'metadata',
       namespace_id: 'namespace_id',
+      policy: 'policy',
       preferred_provider: 'gemini',
       property_overrides: 'property_overrides',
       schema_id: 'schema_id',

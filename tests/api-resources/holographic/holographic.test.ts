@@ -24,9 +24,13 @@ describe('resource holographic', () => {
   test.skip('extractMetadata: required and optional params', async () => {
     const response = await client.holographic.extractMetadata({
       content: 'content',
+      concat_embedding: [0],
       context_metadata: { foo: 'bar' },
       domain: 'domain',
       frequency_schema_id: 'frequency_schema_id',
+      rotation_embedding: [0],
+      rotation_v2_embedding: [0],
+      rotation_v3_embedding: [0],
     });
   });
 
@@ -51,20 +55,28 @@ describe('resource holographic', () => {
       candidates: [
         {
           id: 'doc_1',
+          concat_embedding: [0],
           content: 'Troponin is a cardiac biomarker released during myocardial injury...',
           context_metadata: { foo: 'bar' },
           embedding: [0],
           metadata_embeddings: { foo: [0] },
           phases: [0],
+          rotation_embedding: [0],
+          rotation_v2_embedding: [0],
+          rotation_v3_embedding: [0],
           score: 0,
         },
         {
           id: 'doc_2',
+          concat_embedding: [0],
           content: 'Aspirin reduces platelet aggregation...',
           context_metadata: { foo: 'bar' },
           embedding: [0],
           metadata_embeddings: { foo: [0] },
           phases: [0],
+          rotation_embedding: [0],
+          rotation_v2_embedding: [0],
+          rotation_v3_embedding: [0],
           score: 0,
         },
       ],
@@ -81,6 +93,7 @@ describe('resource holographic', () => {
         scoring_method: 'scoring_method',
         use_cross_encoder: true,
       },
+      query_dimension_weights: { foo: 0 },
       query_embedding: [0],
       query_metadata_embeddings: { foo: [0] },
       query_phases: [0],

@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.6.0 (2026-05-31)
+
+Full Changelog: [v2.5.0...v2.6.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.5.0...v2.6.0)
+
+### Features
+
+* **api:** manual updates ([beb22bb](https://github.com/Papr-ai/papr-TypescriptSDK/commit/beb22bbf3a84af1478dce88cdbdef5cea45faba9))
+* **api:** manual updates ([6abc29b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6abc29b9ddf1580f21802414ade8c6b414c40ad6))
+* **api:** manual updates ([f044430](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f04443005a2f85ac759d9d6bd860fbd1e41978c3))
+* support setting headers via env ([509e9b9](https://github.com/Papr-ai/papr-TypescriptSDK/commit/509e9b98b47e89c3e4d6ab12a54f002d9fe6234d))
+
+
+### Bug Fixes
+
+* keep prettier-ignore on types.ts node_modules import unions ([2961899](https://github.com/Papr-ai/papr-TypescriptSDK/commit/2961899c7cfb490fcb6215d2170cfc0869f76ce5))
+* **mcp:** use `pure-lockfile` when building mcp server ([8bb72e6](https://github.com/Papr-ai/papr-TypescriptSDK/commit/8bb72e63f0c2b33ad604ab6b64692e41995523af))
+* resolve lint failures for README formatting and ESLint dist ignores ([f91bdc4](https://github.com/Papr-ai/papr-TypescriptSDK/commit/f91bdc4b2dde9953d4a0487cea126dd5a0b8b6f6))
+* **typescript:** upgrade tsc-multi so that it works with Node 26 ([a54925c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a54925c3737fc452383cacbd6409204ab6b6d3d0))
+
+
+### Chores
+
+* avoid formatting file that gets changed during releases ([0285218](https://github.com/Papr-ai/papr-TypescriptSDK/commit/028521865d80b060b1e9e48062e48832e45b819d))
+* **format:** run eslint and prettier separately ([533a6b6](https://github.com/Papr-ai/papr-TypescriptSDK/commit/533a6b6a78449a6e79e5eccc601494ae2cc2ab71))
+* **internal:** codegen related update ([3e7ab98](https://github.com/Papr-ai/papr-TypescriptSDK/commit/3e7ab98b15c2e71c5f3014edd8153c3402183d01))
+* **internal:** codegen related update ([5939d5b](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5939d5be1629ea8d8ed1f98f04022a0af57a0222))
+* redact api-key headers in debug logs ([aee84a1](https://github.com/Papr-ai/papr-TypescriptSDK/commit/aee84a14aed4b7b1c4239dfc22616041c90575b9))
+* restructure docs search code ([5b2ea9f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5b2ea9f7d179b962d5bb4fa213ecd657f70e9ece))
+* **tests:** remove redundant File import ([b949526](https://github.com/Papr-ai/papr-TypescriptSDK/commit/b949526a4258f088544b752b4fac082a55f6044f))
+
+
+### Documentation
+
+* update http mcp docs ([ca448e5](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ca448e5b1e4d81339850e496e025be1419344670))
+
 ## 2.5.0 (2026-04-23)
 
 Full Changelog: [v2.4.0...v2.5.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.4.0...v2.5.0)

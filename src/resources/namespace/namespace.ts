@@ -99,6 +99,31 @@ export class Namespace extends APIResource {
       ...options,
     });
   }
+
+  /**
+   * Mint a new API key bound to the given namespace. Caller must authenticate with
+   * any API key belonging to the same organization (typically the org-wide /
+   * default-namespace key).
+   *
+   * **Security:** The full key is returned exactly once in this response. Store it
+   * immediately — it cannot be retrieved later. Subsequent reads expose only the
+   * masked `key_prefix`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.namespace.createAPIKey(
+   *   'namespace_id',
+   *   { name: 'Acme Production API Key' },
+   * );
+   * ```
+   */
+  createAPIKey(
+    namespaceID: string,
+    body: NamespaceCreateAPIKeyParams,
+    options?: RequestOptions,
+  ): APIPromise<NamespaceCreateAPIKeyResponse> {
+    return this._client.post(path`/v1/namespace/${namespaceID}/api-keys`, { body, ...options });
+  }
 }
 
 /**
@@ -134,6 +159,11 @@ export interface NamespaceItem {
    * Creation timestamp
    */
   createdAt?: string | null;
+
+  /**
+   * Default memory policy when requests omit policy.
+   */
+  default_policy?: { [key: string]: unknown } | null;
 
   /**
    * Environment type
@@ -420,11 +450,116 @@ export namespace NamespaceDeleteResponse {
   }
 }
 
+/**
+ * Response for `POST /v1/namespace/{namespace_id}/api-keys`.
+ */
+export interface NamespaceCreateAPIKeyResponse {
+  /**
+   * HTTP status code
+   */
+  code?: number;
+
+  /**
+   * Public-facing API key data.
+   *
+   * The `key` field is populated **only** in the response of
+   * `POST /v1/namespace/{namespace_id}/api-keys` (the moment of creation). It is
+   * never returned by any read/list endpoint and is never logged. Use `key_prefix`
+   * (first 24 chars) to identify the key in audit trails and admin dashboards.
+   */
+  data?: NamespaceCreateAPIKeyResponse.Data | null;
+
+  /**
+   * Additional error details. NEVER contains the API key.
+   */
+  details?: unknown;
+
+  /**
+   * Error message if failed
+   */
+  error?: string | null;
+
+  /**
+   * 'success' or 'error'
+   */
+  status?: string;
+}
+
+export namespace NamespaceCreateAPIKeyResponse {
+  /**
+   * Public-facing API key data.
+   *
+   * The `key` field is populated **only** in the response of
+   * `POST /v1/namespace/{namespace_id}/api-keys` (the moment of creation). It is
+   * never returned by any read/list endpoint and is never logged. Use `key_prefix`
+   * (first 24 chars) to identify the key in audit trails and admin dashboards.
+   */
+  export interface Data {
+    /**
+     * Creation timestamp (ISO 8601)
+     */
+    createdAt?: string | null;
+
+    /**
+     * Environment label
+     */
+    environment?: string | null;
+
+    /**
+     * Whether this key is active
+     */
+    is_active?: boolean | null;
+
+    /**
+     * The full API key string. Returned ONLY on creation; store it securely — you
+     * cannot retrieve it later.
+     */
+    key?: string | null;
+
+    /**
+     * First 24 characters of the key, safe for audit/UI display.
+     */
+    key_prefix?: string | null;
+
+    /**
+     * Human-readable name
+     */
+    name?: string | null;
+
+    /**
+     * Bound namespace objectId
+     */
+    namespace_id?: string | null;
+
+    /**
+     * Parse APIKey objectId
+     */
+    objectId?: string | null;
+
+    /**
+     * Bound organization objectId
+     */
+    organization_id?: string | null;
+
+    /**
+     * Granted permissions
+     */
+    permissions?: Array<string> | null;
+
+    [k: string]: unknown;
+  }
+}
+
 export interface NamespaceCreateParams {
   /**
    * Namespace name (e.g., 'acme-production')
    */
   name: string;
+
+  /**
+   * Default memory policy for add/search when request omits policy.
+   */
+  default_policy?: { [key: string]: unknown } | null;
 
   /**
    * Environment type: development, staging, production
@@ -443,6 +578,11 @@ export interface NamespaceCreateParams {
 }
 
 export interface NamespaceUpdateParams {
+  /**
+   * Default memory policy for add/search when request omits policy.
+   */
+  default_policy?: { [key: string]: unknown } | null;
+
   /**
    * Environment types for namespaces
    */
@@ -493,6 +633,24 @@ export interface NamespaceDeleteParams {
   remove_acl_references?: boolean;
 }
 
+export interface NamespaceCreateAPIKeyParams {
+  /**
+   * Human-readable name for the API key (shown in admin UIs).
+   */
+  name: string;
+
+  /**
+   * Environment label: development, staging, or production.
+   */
+  environment?: 'development' | 'staging' | 'production';
+
+  /**
+   * Permissions granted by this key. Must be a subset of ['read', 'write',
+   * 'delete'].
+   */
+  permissions?: Array<'read' | 'write' | 'delete'>;
+}
+
 Namespace.Instance = Instance;
 
 export declare namespace Namespace {
@@ -505,10 +663,12 @@ export declare namespace Namespace {
     type NamespaceUpdateResponse as NamespaceUpdateResponse,
     type NamespaceListResponse as NamespaceListResponse,
     type NamespaceDeleteResponse as NamespaceDeleteResponse,
+    type NamespaceCreateAPIKeyResponse as NamespaceCreateAPIKeyResponse,
     type NamespaceCreateParams as NamespaceCreateParams,
     type NamespaceUpdateParams as NamespaceUpdateParams,
     type NamespaceListParams as NamespaceListParams,
     type NamespaceDeleteParams as NamespaceDeleteParams,
+    type NamespaceCreateAPIKeyParams as NamespaceCreateAPIKeyParams,
   };
 
   export {

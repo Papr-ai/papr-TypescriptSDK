@@ -28,10 +28,15 @@ describe('resource transform', () => {
     const response = await client.holographic.transform.create({
       content: 'The patient presents with elevated troponin levels indicating myocardial damage',
       embedding: [0.1, -0.2, 0.3],
+      concat_embedding: [0],
       context_metadata: { createdAt: 'bar', sourceType: 'bar' },
       domain: 'biomedical',
       frequency_schema_id: 'frequency_schema_id',
+      is_query: true,
       output: ['rotation_v3', 'phases', 'metadata'],
+      rotation_embedding: [0],
+      rotation_v2_embedding: [0],
+      rotation_v3_embedding: [0],
     });
   });
 
@@ -63,7 +68,11 @@ describe('resource transform', () => {
           id: 'id',
           content: 'content',
           embedding: [0],
+          concat_embedding: [0],
           context_metadata: { foo: 'bar' },
+          rotation_embedding: [0],
+          rotation_v2_embedding: [0],
+          rotation_v3_embedding: [0],
         },
       ],
       domain: 'domain',

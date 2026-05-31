@@ -383,20 +383,23 @@ export interface AddMemory {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * @deprecated DEPRECATED: Use policy.graph.link_to instead. Shorthand DSL for
+   * node/edge constraints (same as node_constraints, compact syntax). Expands and
+   * merges into memory_policy.node_constraints and edge_constraints at resolve time.
+   * Default create is upsert; use dict form with create='lookup' (or legacy 'never')
+   * for link-only. Formats: - String: 'Task:title' (semantic match on Task.title,
+   * upsert by default) - List: ['Task:title', 'Person:email'] (multiple
+   * constraints) - Dict: {'Task:title': {'set': {...}, 'create': 'lookup'}} (full
+   * options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
    * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
    * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * '$this', '$previous', '$context:N' Example lookup-only: {'SecurityPolicy:name':
+   * {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
   /**
-   * Unified memory processing policy.
+   * @deprecated Unified memory processing policy.
    *
    * This is the SINGLE source of truth for how a memory should be processed,
    * combining graph generation control AND OMO (Open Memory Object) safety
@@ -437,6 +440,11 @@ export interface AddMemory {
    * associated organization.
    */
   organization_id?: string | null;
+
+  /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * @deprecated DEPRECATED: Use 'memory_policy' instead. Migration options: 1.
@@ -884,8 +892,8 @@ export interface MemoryMetadata {
   useCaseClassificationScores?: Array<number> | null;
 
   /**
-   * @deprecated DEPRECATED: Use 'external_user_id' at request level instead. This
-   * field will be removed in v2.
+   * @deprecated Use 'external_user_id' at request level instead. This field will be
+   * removed in v2.
    */
   user_id?: string | null;
 
@@ -1162,15 +1170,18 @@ export interface MemoryUpdateParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Body param: Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
+   * DSL for node/edge constraints (same as node_constraints, compact syntax).
+   * Expands and merges into memory_policy.node_constraints and edge_constraints at
+   * resolve time. Default create is upsert; use dict form with create='lookup' (or
+   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
+   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
+   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
+   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
+   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
+   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
+   * Special: '$this', '$previous', '$context:N' Example lookup-only:
+   * {'SecurityPolicy:name': {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1215,6 +1226,11 @@ export interface MemoryUpdateParams {
    * provided, update is scoped to memories within this organization.
    */
   organization_id?: string | null;
+
+  /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * Body param: Updated relationships for Graph DB (neo4J)
@@ -1296,15 +1312,18 @@ export interface MemoryAddParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Body param: Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
+   * DSL for node/edge constraints (same as node_constraints, compact syntax).
+   * Expands and merges into memory_policy.node_constraints and edge_constraints at
+   * resolve time. Default create is upsert; use dict form with create='lookup' (or
+   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
+   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
+   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
+   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
+   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
+   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
+   * Special: '$this', '$previous', '$context:N' Example lookup-only:
+   * {'SecurityPolicy:name': {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1350,6 +1369,11 @@ export interface MemoryAddParams {
    * API key's associated organization.
    */
   organization_id?: string | null;
+
+  /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * @deprecated Body param: DEPRECATED: Use 'memory_policy' instead. Migration
@@ -1413,15 +1437,18 @@ export interface MemoryAddBatchParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Body param: Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
+   * DSL for node/edge constraints (same as node_constraints, compact syntax).
+   * Expands and merges into memory_policy.node_constraints and edge_constraints at
+   * resolve time. Default create is upsert; use dict form with create='lookup' (or
+   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
+   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
+   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
+   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
+   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
+   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
+   * Special: '$this', '$previous', '$context:N' Example lookup-only:
+   * {'SecurityPolicy:name': {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1462,6 +1489,11 @@ export interface MemoryAddBatchParams {
    * API key's associated organization.
    */
   organization_id?: string | null;
+
+  /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
@@ -1581,8 +1613,8 @@ export interface MemorySearchParams {
   external_user_id?: string | null;
 
   /**
-   * Body param: Configuration for holographic neural embedding transforms and H-COND
-   * scoring.
+   * @deprecated Body param: Configuration for holographic neural embedding
+   * transforms and H-COND scoring.
    *
    * Neural holographic embeddings use 13 brain-inspired frequency bands to encode
    * hierarchical semantic metadata alongside the base embedding. H-COND (Holographic
@@ -1614,6 +1646,11 @@ export interface MemorySearchParams {
    * provided, search is scoped to memories within this organization.
    */
   organization_id?: string | null;
+
+  /**
+   * Body param: Policy for POST /v1/memory/search.
+   */
+  policy?: MemorySearchParams.Policy | null;
 
   /**
    * @deprecated Body param: DEPRECATED: Use 'reranking_config' instead. Whether to
@@ -1694,7 +1731,8 @@ export interface MemorySearchParams {
 
 export namespace MemorySearchParams {
   /**
-   * Configuration for holographic neural embedding transforms and H-COND scoring.
+   * @deprecated Configuration for holographic neural embedding transforms and H-COND
+   * scoring.
    *
    * Neural holographic embeddings use 13 brain-inspired frequency bands to encode
    * hierarchical semantic metadata alongside the base embedding. H-COND (Holographic
@@ -1803,6 +1841,97 @@ export namespace MemorySearchParams {
      * Shorthand for exclude_consent=['none'].
      */
     require_consent?: boolean;
+  }
+
+  /**
+   * Policy for POST /v1/memory/search.
+   */
+  export interface Policy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: Shared.ACLConfig | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    graph?: Shared.GraphPolicyBlock | null;
+
+    rerank?: Policy.Rerank | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    vector?: Policy.Vector | null;
+  }
+
+  export namespace Policy {
+    export interface Rerank {
+      enabled?: boolean;
+
+      model?: string | null;
+
+      provider?: string | null;
+    }
+
+    export interface Vector {
+      domain_id?: string | null;
+
+      /**
+       * fast=cosine; enhanced=graph rerank enhanced; max=graph rerank max
+       */
+      mode?: 'fast' | 'enhanced' | 'max';
+
+      return_debug?: boolean;
+
+      return_signal_scores?: boolean;
+
+      signal_multipliers?: { [key: string]: number | string } | null;
+
+      /**
+       * Min per-band scores; maps to graph rerank signal_filters
+       */
+      signal_thresholds?: { [key: string]: number } | null;
+    }
   }
 
   /**

@@ -121,6 +121,15 @@ import {
 } from './resources/user';
 import { AI, AIGetUsageResponse } from './resources/ai/ai';
 import {
+  DocumentInput,
+  Graph,
+  GraphDomainRoutingConfig,
+  GraphRerankParams,
+  GraphRerankResponse,
+  GraphTransformParams,
+  GraphTransformResponse,
+} from './resources/graph/graph';
+import {
   Holographic,
   HolographicExtractMetadataParams,
   HolographicExtractMetadataResponse,
@@ -131,6 +140,8 @@ import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/
 import {
   InstanceConfigItem,
   Namespace,
+  NamespaceCreateAPIKeyParams,
+  NamespaceCreateAPIKeyResponse,
   NamespaceCreateParams,
   NamespaceCreateResponse,
   NamespaceDeleteParams,
@@ -311,6 +322,18 @@ export class Papr {
     this.maxRetries = options.maxRetries ?? 2;
     this.fetch = options.fetch ?? Shims.getDefaultFetch();
     this.#encoder = Opts.FallbackEncoder;
+
+    const customHeadersEnv = readEnv('PAPR_CUSTOM_HEADERS');
+    if (customHeadersEnv) {
+      const parsed: Record<string, string> = {};
+      for (const line of customHeadersEnv.split('\n')) {
+        const colon = line.indexOf(':');
+        if (colon >= 0) {
+          parsed[line.substring(0, colon).trim()] = line.substring(colon + 1).trim();
+        }
+      }
+      options.defaultHeaders = { ...parsed, ...options.defaultHeaders };
+    }
 
     this._options = options;
 
@@ -908,6 +931,7 @@ export class Papr {
   token: API.Token = new API.Token(this);
   me: API.Me = new API.Me(this);
   logout: API.Logout = new API.Logout(this);
+  graph: API.Graph = new API.Graph(this);
 }
 
 Papr.User = User;
@@ -930,6 +954,7 @@ Papr.Callback = Callback;
 Papr.Token = Token;
 Papr.Me = Me;
 Papr.Logout = Logout;
+Papr.Graph = Graph;
 
 export declare namespace Papr {
   export type RequestOptions = Opts.RequestOptions;
@@ -1051,10 +1076,12 @@ export declare namespace Papr {
     type NamespaceUpdateResponse as NamespaceUpdateResponse,
     type NamespaceListResponse as NamespaceListResponse,
     type NamespaceDeleteResponse as NamespaceDeleteResponse,
+    type NamespaceCreateAPIKeyResponse as NamespaceCreateAPIKeyResponse,
     type NamespaceCreateParams as NamespaceCreateParams,
     type NamespaceUpdateParams as NamespaceUpdateParams,
     type NamespaceListParams as NamespaceListParams,
     type NamespaceDeleteParams as NamespaceDeleteParams,
+    type NamespaceCreateAPIKeyParams as NamespaceCreateAPIKeyParams,
   };
 
   export {
@@ -1093,14 +1120,27 @@ export declare namespace Papr {
 
   export { Logout as Logout, type LogoutPerformResponse as LogoutPerformResponse };
 
+  export {
+    Graph as Graph,
+    type DocumentInput as DocumentInput,
+    type GraphDomainRoutingConfig as GraphDomainRoutingConfig,
+    type GraphRerankResponse as GraphRerankResponse,
+    type GraphTransformResponse as GraphTransformResponse,
+    type GraphRerankParams as GraphRerankParams,
+    type GraphTransformParams as GraphTransformParams,
+  };
+
   export type ACLConfig = API.ACLConfig;
   export type AddMemoryItem = API.AddMemoryItem;
   export type EdgeConstraintInput = API.EdgeConstraintInput;
+  export type GraphPolicyBlock = API.GraphPolicyBlock;
   export type MemoryObject = API.MemoryObject;
+  export type MemoryAddPolicy = API.MemoryAddPolicy;
   export type MemoryPolicy = API.MemoryPolicy;
   export type NodeConstraintInput = API.NodeConstraintInput;
   export type NodeSpec = API.NodeSpec;
   export type PropertyValue = API.PropertyValue;
   export type RelationshipSpec = API.RelationshipSpec;
   export type SearchConfigInput = API.SearchConfigInput;
+  export type TransformEmbeddingPolicy = API.TransformEmbeddingPolicy;
 }

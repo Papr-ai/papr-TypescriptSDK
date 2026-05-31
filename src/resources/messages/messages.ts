@@ -163,6 +163,11 @@ export interface MessageStoreParams {
   organization_id?: string | null;
 
   /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  policy?: Shared.MemoryAddPolicy | null;
+
+  /**
    * Whether to process messages into memories (true) or just store them (false).
    * Default is true.
    */

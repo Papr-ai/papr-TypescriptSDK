@@ -10,29 +10,7 @@ export class Domains extends APIResource {
    * fields to the 14 standard brain-inspired frequency bands. Custom schemas are
    * scoped to your API key.
    *
-   * @example
-   * ```ts
-   * const domain = await client.holographic.domains.create({
-   *   fields: [
-   *     {
-   *       frequency: 4,
-   *       name: 'priority',
-   *       type: 'enum',
-   *     },
-   *     {
-   *       frequency: 6,
-   *       name: 'component',
-   *       type: 'free_text',
-   *     },
-   *     {
-   *       frequency: 12,
-   *       name: 'resolution_type',
-   *       type: 'enum',
-   *     },
-   *   ],
-   *   name: 'acme:support_tickets:1.0.0',
-   * });
-   * ```
+   * @deprecated Use /graph/domains instead.
    */
   create(body: DomainCreateParams, options?: RequestOptions): APIPromise<DomainCreateResponse> {
     return this._client.post('/v1/holographic/domains', { body, ...options });
@@ -42,10 +20,7 @@ export class Domains extends APIResource {
    * Returns all available frequency schemas organized by domain. Use the schema_id
    * or domain shortname in transform/rerank calls.
    *
-   * @example
-   * ```ts
-   * const domains = await client.holographic.domains.list();
-   * ```
+   * @deprecated Use /graph/domains instead.'
    */
   list(options?: RequestOptions): APIPromise<DomainListResponse> {
     return this._client.get('/v1/holographic/domains', options);

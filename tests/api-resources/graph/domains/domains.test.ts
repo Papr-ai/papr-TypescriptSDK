@@ -7,10 +7,15 @@ const client = new Papr({
   baseURL: process.env['TEST_API_BASE_URL'] ?? 'http://127.0.0.1:4010',
 });
 
-describe('resource namespace', () => {
+describe('resource domains', () => {
   // Mock server tests are disabled
   test.skip('create: only required params', async () => {
-    const responsePromise = client.namespace.create({ name: 'acme-production' });
+    const responsePromise = client.graph.domains.create({
+      description: 'description',
+      domain_id: 'domain_id',
+      name: 'name',
+      signals: [{ description: 'description', name: 'name' }],
+    });
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -22,18 +27,39 @@ describe('resource namespace', () => {
 
   // Mock server tests are disabled
   test.skip('create: required and optional params', async () => {
-    const response = await client.namespace.create({
-      name: 'acme-production',
-      default_policy: { foo: 'bar' },
-      environment_type: 'production',
-      is_active: true,
-      rate_limits: { foo: 0 },
+    const response = await client.graph.domains.create({
+      description: 'description',
+      domain_id: 'domain_id',
+      name: 'name',
+      signals: [
+        {
+          description: 'description',
+          name: 'name',
+          allowed_values: ['string'],
+          frequency_hz: 0,
+          required: true,
+          type: 'enum',
+          weight: 0,
+        },
+      ],
+      catalog_config: { enabled: true, refresh_every_n: 0 },
+      routing_config: {
+        caesar4_source: 'caesar4_source',
+        ce_gate_min_phi: 0,
+        disabled_rules: ['string'],
+        egr_lambda_ce: 0,
+        enabled_rule_packs: ['string'],
+        enhanced_initial_source: 'enhanced_initial_source',
+        holographic_floor: true,
+        threshold_overrides: { foo: 0 },
+      },
+      signal_multipliers: { foo: 0 },
     });
   });
 
   // Mock server tests are disabled
   test.skip('retrieve', async () => {
-    const responsePromise = client.namespace.retrieve('namespace_id');
+    const responsePromise = client.graph.domains.retrieve('domain_id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -45,7 +71,7 @@ describe('resource namespace', () => {
 
   // Mock server tests are disabled
   test.skip('update', async () => {
-    const responsePromise = client.namespace.update('namespace_id', {});
+    const responsePromise = client.graph.domains.update('domain_id', {});
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -57,7 +83,7 @@ describe('resource namespace', () => {
 
   // Mock server tests are disabled
   test.skip('list', async () => {
-    const responsePromise = client.namespace.list();
+    const responsePromise = client.graph.domains.list();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -65,19 +91,11 @@ describe('resource namespace', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('list: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.namespace.list({ limit: 1, skip: 0 }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(Papr.NotFoundError);
   });
 
   // Mock server tests are disabled
   test.skip('delete', async () => {
-    const responsePromise = client.namespace.delete('namespace_id');
+    const responsePromise = client.graph.domains.delete('domain_id');
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -85,44 +103,5 @@ describe('resource namespace', () => {
     const dataAndResponse = await responsePromise.withResponse();
     expect(dataAndResponse.data).toBe(response);
     expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('delete: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.namespace.delete(
-        'namespace_id',
-        {
-          delete_memories: true,
-          delete_neo4j_nodes: true,
-          remove_acl_references: true,
-        },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(Papr.NotFoundError);
-  });
-
-  // Mock server tests are disabled
-  test.skip('createAPIKey: only required params', async () => {
-    const responsePromise = client.namespace.createAPIKey('namespace_id', {
-      name: 'Acme Production API Key',
-    });
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('createAPIKey: required and optional params', async () => {
-    const response = await client.namespace.createAPIKey('namespace_id', {
-      name: 'Acme Production API Key',
-      environment: 'production',
-      permissions: ['read', 'write', 'delete'],
-    });
   });
 });
