@@ -24,9 +24,10 @@ describe('resource namespace', () => {
   test.skip('create: required and optional params', async () => {
     const response = await client.namespace.create({
       name: 'acme-production',
+      default_policy: { foo: 'bar' },
       environment_type: 'production',
       is_active: true,
-      rate_limits: {},
+      rate_limits: { foo: 0 },
     });
   });
 

@@ -249,6 +249,12 @@ export interface Memory {
 
   hierarchical_structures?: string;
 
+  /**
+   * Per-frequency-field scores from holographic scoring (e.g. {category: 0.9, topic:
+   * 0.7}). Only present when include_frequency_scores=True.
+   */
+  holographic_frequency_scores?: { [key: string]: number } | null;
+
   location?: string | null;
 
   metadata?: string | { [key: string]: unknown } | null;

@@ -11,16 +11,7 @@ export class Transform extends APIResource {
    * to get back holographic-transformed embeddings. Use `output` to control which
    * fields are returned. Default: rotation_v3 + metadata.
    *
-   * @example
-   * ```ts
-   * const transform = await client.holographic.transform.create(
-   *   {
-   *     content:
-   *       'The patient presents with elevated troponin levels indicating myocardial damage',
-   *     embedding: [0.1, -0.2, 0.3],
-   *   },
-   * );
-   * ```
+   * @deprecated
    */
   create(body: TransformCreateParams, options?: RequestOptions): APIPromise<TransformCreateResponse> {
     return this._client.post('/v1/holographic/transform', { body, ...options });
@@ -29,19 +20,7 @@ export class Transform extends APIResource {
   /**
    * Transform up to 50 items in a single request. Same as /transform but batched.
    *
-   * @example
-   * ```ts
-   * const response =
-   *   await client.holographic.transform.createBatch({
-   *     items: [
-   *       {
-   *         id: 'id',
-   *         content: 'content',
-   *         embedding: [0],
-   *       },
-   *     ],
-   *   });
-   * ```
+   * @deprecated
    */
   createBatch(
     body: TransformCreateBatchParams,
@@ -84,6 +63,12 @@ export interface TransformData {
    * Concatenation transform (input_dims + 196)
    */
   concat?: Array<number> | null;
+
+  /**
+   * Adaptive per-field weights (queries only, when is_query=true). Pass to /rerank
+   * as query_dimension_weights to skip recomputation.
+   */
+  dimension_weights?: { [key: string]: number } | null;
 
   /**
    * LLM-extracted metadata keyed by frequency field name
@@ -167,6 +152,11 @@ export interface TransformCreateParams {
   embedding: Array<number>;
 
   /**
+   * Pre-computed concat (new) embedding from holographic transform.
+   */
+  concat_embedding?: Array<number> | null;
+
+  /**
    * Optional context metadata (createdAt, sourceType, customMetadata, etc.) to
    * improve LLM extraction accuracy, especially for dates and entities.
    */
@@ -184,6 +174,13 @@ export interface TransformCreateParams {
   frequency_schema_id?: string | null;
 
   /**
+   * If true, treat content as a query (not a doc): runs adaptive dimension-weight
+   * scoring and returns weights in TransformData. Pass these weights into a
+   * subsequent /rerank call as `query_dimension_weights` to skip recomputation.
+   */
+  is_query?: boolean;
+
+  /**
    * Which output fields to return. Default: ['rotation_v3', 'metadata']. Request
    * only what you need to minimize response size.
    */
@@ -197,6 +194,22 @@ export interface TransformCreateParams {
     | 'metadata'
     | 'metadata_embeddings'
   > | null;
+
+  /**
+   * Pre-computed rotation (old) embedding from holographic transform. Enables
+   * rot_v2/v3 similarity scoring and full CAESAR ensemble.
+   */
+  rotation_embedding?: Array<number> | null;
+
+  /**
+   * Pre-computed rotation V2 embedding from holographic transform.
+   */
+  rotation_v2_embedding?: Array<number> | null;
+
+  /**
+   * Pre-computed rotation V3 embedding from holographic transform.
+   */
+  rotation_v3_embedding?: Array<number> | null;
 }
 
 export interface TransformCreateBatchParams {
@@ -251,9 +264,30 @@ export namespace TransformCreateBatchParams {
     embedding: Array<number>;
 
     /**
+     * Pre-computed concat (new) embedding from holographic transform.
+     */
+    concat_embedding?: Array<number> | null;
+
+    /**
      * Optional context metadata for this item (createdAt, sourceType, etc.)
      */
     context_metadata?: { [key: string]: unknown } | null;
+
+    /**
+     * Pre-computed rotation (old) embedding from holographic transform. Enables
+     * rot_v2/v3 similarity scoring and full CAESAR ensemble.
+     */
+    rotation_embedding?: Array<number> | null;
+
+    /**
+     * Pre-computed rotation V2 embedding from holographic transform.
+     */
+    rotation_v2_embedding?: Array<number> | null;
+
+    /**
+     * Pre-computed rotation V3 embedding from holographic transform.
+     */
+    rotation_v3_embedding?: Array<number> | null;
   }
 }
 
