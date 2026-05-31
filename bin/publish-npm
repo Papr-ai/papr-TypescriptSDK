@@ -2,6 +2,7 @@
 
 set -eux
 
+npm config set registry https://registry.npmjs.org/
 npm config set '//registry.npmjs.org/:_authToken' "$NPM_TOKEN"
 
 yarn build
@@ -57,5 +58,5 @@ else
   TAG="latest"
 fi
 
-# Publish with the appropriate tag
-yarn publish --tag "$TAG"
+# Publish to the npm registry (yarn publish targets registry.yarnpkg.com).
+npm publish --tag "$TAG" --access public
