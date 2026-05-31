@@ -34,7 +34,6 @@ npm install @papr/memory
 The full API of this library can be found in [api.md](api.md).
 
 <!-- prettier-ignore -->
-
 ```js
 import Papr from "@papr/memory";
 
@@ -56,7 +55,6 @@ This library includes TypeScript definitions for all request params and response
 import and use them like so:
 
 <!-- prettier-ignore -->
-
 ```ts
 import Papr from "@papr/memory";
 
@@ -83,7 +81,6 @@ relationships.
 ### 1. Define a Schema
 
 <!-- prettier-ignore -->
-
 ```ts
 import {
   schema,
@@ -137,7 +134,6 @@ Once the schema is registered, just pass your content. The engine auto-detects t
 schema and applies the policies you defined:
 
 <!-- prettier-ignore -->
-
 ```ts
 // Meeting transcript - just pass the content
 await client.memory.add({
@@ -169,7 +165,6 @@ That's it. Here's what happens automatically:
 For cases where you want to explicitly direct which nodes to match, use `buildLinkTo`:
 
 <!-- prettier-ignore -->
-
 ```ts
 import { buildLinkTo } from "@papr/memory/lib";
 
@@ -198,7 +193,6 @@ Schema defines the default behavior. For specific memories that need different h
 per-memory with `memory_policy`:
 
 <!-- prettier-ignore -->
-
 ```ts
 import { buildMemoryPolicy, serializeSetValues, Auto } from "@papr/memory/lib";
 
@@ -221,16 +215,15 @@ await client.memory.add({
 
 ### Resolution Policies
 
-| Policy                          | Behavior                                   | Use Case                                                  |
-| ------------------------------- | ------------------------------------------ | --------------------------------------------------------- |
-| `upsert()`                      | Create if not found, update if exists      | Dynamic entities (tasks, conversations, events)           |
-| `lookup()`                      | Only match existing nodes, never create    | Controlled data (people from directory, product catalog)  |
-| `resolve({ onMiss: "error" })` | Fail if not found                          | Strict validation (required references)                   |
+| Policy                         | Behavior                                | Use Case                                                 |
+| ------------------------------ | --------------------------------------- | -------------------------------------------------------- |
+| `upsert()`                     | Create if not found, update if exists   | Dynamic entities (tasks, conversations, events)          |
+| `lookup()`                     | Only match existing nodes, never create | Controlled data (people from directory, product catalog) |
+| `resolve({ onMiss: "error" })` | Fail if not found                       | Strict validation (required references)                  |
 
 ### Search Modes
 
 <!-- prettier-ignore -->
-
 ```ts
 const Ref = node("Ref", {
   id: prop({ search: exact() }), // Exact string match
@@ -242,7 +235,6 @@ const Ref = node("Ref", {
 ### Conditional Constraints
 
 <!-- prettier-ignore -->
-
 ```ts
 import { And, Or, Not, Auto } from "@papr/memory/lib";
 
@@ -273,7 +265,6 @@ const Alert = node(
 ### Complete Example: Security Monitoring
 
 <!-- prettier-ignore -->
-
 ```ts
 import {
   schema,
@@ -361,28 +352,28 @@ Request parameters that correspond to file uploads can be passed in many differe
 - the return value of our `toFile` helper
 
 ```ts
-import fs from "fs";
-import Papr, { toFile } from "@papr/memory";
+import fs from 'fs';
+import Papr, { toFile } from '@papr/memory';
 
 const client = new Papr();
 
 // If you have access to Node `fs` we recommend using `fs.createReadStream()`:
-await client.document.upload({ file: fs.createReadStream("/path/to/file") });
+await client.document.upload({ file: fs.createReadStream('/path/to/file') });
 
 // Or if you have the web `File` API you can pass a `File` instance:
-await client.document.upload({ file: new File(["my bytes"], "file") });
+await client.document.upload({ file: new File(['my bytes'], 'file') });
 
 // You can also pass a `fetch` `Response`:
 await client.document.upload({
-  file: await fetch("https://somesite/file"),
+  file: await fetch('https://somesite/file'),
 });
 
 // Finally, if none of the above are convenient, you can use our `toFile` helper:
 await client.document.upload({
-  file: await toFile(Buffer.from("my bytes"), "file"),
+  file: await toFile(Buffer.from('my bytes'), 'file'),
 });
 await client.document.upload({
-  file: await toFile(new Uint8Array([0, 1, 2]), "file"),
+  file: await toFile(new Uint8Array([0, 1, 2]), 'file'),
 });
 ```
 
@@ -392,7 +383,6 @@ When the library is unable to connect to the API, or if the API returns a non-su
 (i.e., 4xx or 5xx response), a subclass of `APIError` will be thrown:
 
 <!-- prettier-ignore -->
-
 ```ts
 const userResponse = await client.user
   .create({ external_id: "demo_user_123", email: "user@example.com" })
@@ -429,7 +419,6 @@ Conflict, 429 Rate Limit, and >=500 Internal errors will all be retried by defau
 You can use the `maxRetries` option to configure or disable this:
 
 <!-- prettier-ignore -->
-
 ```js
 // Configure the default for all requests:
 const client = new Papr({
@@ -450,7 +439,6 @@ await client.user.create(
 Requests time out after 1 minute by default. You can configure this with a `timeout` option:
 
 <!-- prettier-ignore -->
-
 ```ts
 // Configure the default for all requests:
 const client = new Papr({
@@ -483,7 +471,6 @@ You can also use the `.withResponse()` method to get the raw `Response` along wi
 data. Unlike `.asResponse()` this method consumes the body, returning once it is parsed.
 
 <!-- prettier-ignore -->
-
 ```ts
 const client = new Papr();
 
@@ -514,10 +501,10 @@ The log level can be configured in two ways:
 2. Using the `logLevel` client option (overrides the environment variable if set)
 
 ```ts
-import Papr from "@papr/memory";
+import Papr from '@papr/memory';
 
 const client = new Papr({
-  logLevel: "debug", // Show all log messages
+  logLevel: 'debug', // Show all log messages
 });
 ```
 
@@ -544,14 +531,14 @@ When providing a custom logger, the `logLevel` option still controls which messa
 messages below the configured level will not be sent to your logger.
 
 ```ts
-import Papr from "@papr/memory";
-import pino from "pino";
+import Papr from '@papr/memory';
+import pino from 'pino';
 
 const logger = pino();
 
 const client = new Papr({
-  logger: logger.child({ name: "Papr" }),
-  logLevel: "debug", // Send all messages to pino, allowing it to filter
+  logger: logger.child({ name: 'Papr' }),
+  logLevel: 'debug', // Send all messages to pino, allowing it to filter
 });
 ```
 
@@ -566,9 +553,9 @@ To make requests to undocumented endpoints, you can use `client.get`, `client.po
 HTTP verbs. Options on the client, such as retries, will be respected when making these requests.
 
 ```ts
-await client.post("/some/path", {
-  body: { some_prop: "foo" },
-  query: { some_query_arg: "bar" },
+await client.post('/some/path', {
+  body: { some_prop: 'foo' },
+  query: { some_query_arg: 'bar' },
 });
 ```
 
@@ -582,7 +569,7 @@ type, so any extra values you send will be sent as-is.
 client.user.create({
   // ...
   // @ts-expect-error baz is not yet public
-  baz: "undocumented option",
+  baz: 'undocumented option',
 });
 ```
 
@@ -606,7 +593,7 @@ By default, this library expects a global `fetch` function is defined.
 If you want to use a different `fetch` function, you can either polyfill the global:
 
 ```ts
-import fetch from "my-fetch";
+import fetch from 'my-fetch';
 
 globalThis.fetch = fetch;
 ```
@@ -614,8 +601,8 @@ globalThis.fetch = fetch;
 Or pass it to the client:
 
 ```ts
-import Papr from "@papr/memory";
-import fetch from "my-fetch";
+import Papr from '@papr/memory';
+import fetch from 'my-fetch';
 
 const client = new Papr({ fetch });
 ```
@@ -628,7 +615,7 @@ provide a `fetchOptions` object when instantiating the client or making a reques
 options taking precedence.)
 
 ```ts
-import Papr from "@papr/memory";
+import Papr from '@papr/memory';
 
 const client = new Papr({
   fetchOptions: {
@@ -647,10 +634,10 @@ options to requests:
 <sup>[[docs](https://github.com/nodejs/undici/blob/main/docs/api/ProxyAgent.md)]</sup>
 
 ```ts
-import Papr from "@papr/memory";
-import * as undici from "undici";
+import Papr from '@papr/memory';
+import * as undici from 'undici';
 
-const proxyAgent = new undici.ProxyAgent("http://localhost:8888");
+const proxyAgent = new undici.ProxyAgent('http://localhost:8888');
 const client = new Papr({
   fetchOptions: {
     dispatcher: proxyAgent,
@@ -662,11 +649,11 @@ const client = new Papr({
 **Bun** <sup>[[docs](https://bun.sh/guides/http/proxy)]</sup>
 
 ```ts
-import Papr from "@papr/memory";
+import Papr from '@papr/memory';
 
 const client = new Papr({
   fetchOptions: {
-    proxy: "http://localhost:8888",
+    proxy: 'http://localhost:8888',
   },
 });
 ```
@@ -675,10 +662,10 @@ const client = new Papr({
 **Deno** <sup>[[docs](https://docs.deno.com/api/deno/~/Deno.createHttpClient)]</sup>
 
 ```ts
-import Papr from "npm:@papr/memory";
+import Papr from 'npm:@papr/memory';
 
 const httpClient = Deno.createHttpClient({
-  proxy: { url: "http://localhost:8888" },
+  proxy: { url: 'http://localhost:8888' },
 });
 const client = new Papr({
   fetchOptions: {
