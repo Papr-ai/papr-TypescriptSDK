@@ -2,11 +2,16 @@
 
 set -eux
 
-npm config set registry https://registry.npmjs.org/
-npm config set '//registry.npmjs.org/:_authToken' "$NPM_TOKEN"
+NPM_REGISTRY=https://registry.npmjs.org/
 
 yarn build
 cd dist
+
+# yarn install writes a project .npmrc pointing at registry.yarnpkg.com; override in dist.
+cat > .npmrc <<EOF
+registry=${NPM_REGISTRY}
+//registry.npmjs.org/:_authToken=${NPM_TOKEN}
+EOF
 
 # Get package name and version from package.json
 PACKAGE_NAME="$(jq -r -e '.name' ./package.json)"
@@ -22,7 +27,7 @@ VERSION="$(jq -r -e '.version' ./package.json)"
 #     "detail": "'the_package' is not in this registry..."
 #   }
 # }
-NPM_INFO="$(npm view "$PACKAGE_NAME" version --json 2>/dev/null || true)"
+NPM_INFO="$(npm view "$PACKAGE_NAME" version --registry="$NPM_REGISTRY" --json 2>/dev/null || true)"
 
 # Check if we got an E404 error
 if echo "$NPM_INFO" | jq -e '.error.code == "E404"' > /dev/null 2>&1; then
@@ -59,4 +64,4 @@ else
 fi
 
 # Publish to the npm registry (yarn publish targets registry.yarnpkg.com).
-npm publish --tag "$TAG" --access public
+npm publish --registry="$NPM_REGISTRY" --tag "$TAG" --access public
