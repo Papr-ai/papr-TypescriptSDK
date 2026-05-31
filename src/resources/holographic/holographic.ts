@@ -25,7 +25,7 @@ export class Holographic extends APIResource {
    * transforms. Call this once per document at index time, then use phases locally
    * for scoring.
    *
-   * @deprecated
+   * @deprecated Use /graph/transform instead.'
    */
   extractMetadata(
     body: HolographicExtractMetadataParams,
@@ -42,7 +42,7 @@ export class Holographic extends APIResource {
    * Candidates with only `content` use the cold path (~100ms each, includes LLM
    * extraction). You can mix both in a single request.
    *
-   * @deprecated
+   * @deprecated Use /graph/rerank instead.'
    */
   rerank(body: HolographicRerankParams, options?: RequestOptions): APIPromise<HolographicRerankResponse> {
     return this._client.post('/v1/holographic/rerank', { body, ...options });

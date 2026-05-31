@@ -5,13 +5,16 @@ Types:
 - <code><a href="./src/resources/shared.ts">ACLConfig</a></code>
 - <code><a href="./src/resources/shared.ts">AddMemoryItem</a></code>
 - <code><a href="./src/resources/shared.ts">EdgeConstraintInput</a></code>
+- <code><a href="./src/resources/shared.ts">GraphPolicyBlock</a></code>
 - <code><a href="./src/resources/shared.ts">Memory</a></code>
+- <code><a href="./src/resources/shared.ts">MemoryAddPolicy</a></code>
 - <code><a href="./src/resources/shared.ts">MemoryPolicy</a></code>
 - <code><a href="./src/resources/shared.ts">NodeConstraintInput</a></code>
 - <code><a href="./src/resources/shared.ts">NodeSpec</a></code>
 - <code><a href="./src/resources/shared.ts">PropertyValue</a></code>
 - <code><a href="./src/resources/shared.ts">RelationshipSpec</a></code>
 - <code><a href="./src/resources/shared.ts">SearchConfigInput</a></code>
+- <code><a href="./src/resources/shared.ts">TransformEmbeddingPolicy</a></code>
 
 # User
 
@@ -197,6 +200,7 @@ Types:
 - <code><a href="./src/resources/namespace/namespace.ts">NamespaceUpdateResponse</a></code>
 - <code><a href="./src/resources/namespace/namespace.ts">NamespaceListResponse</a></code>
 - <code><a href="./src/resources/namespace/namespace.ts">NamespaceDeleteResponse</a></code>
+- <code><a href="./src/resources/namespace/namespace.ts">NamespaceCreateAPIKeyResponse</a></code>
 
 Methods:
 
@@ -205,6 +209,7 @@ Methods:
 - <code title="put /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">update</a>(namespaceID, { ...params }) -> NamespaceUpdateResponse</code>
 - <code title="get /v1/namespace">client.namespace.<a href="./src/resources/namespace/namespace.ts">list</a>({ ...params }) -> NamespaceListResponse</code>
 - <code title="delete /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">delete</a>(namespaceID, { ...params }) -> NamespaceDeleteResponse</code>
+- <code title="post /v1/namespace/{namespace_id}/api-keys">client.namespace.<a href="./src/resources/namespace/namespace.ts">createAPIKey</a>(namespaceID, { ...params }) -> NamespaceCreateAPIKeyResponse</code>
 
 ## Instance
 
@@ -400,3 +405,45 @@ Types:
 Methods:
 
 - <code title="get /logout">client.logout.<a href="./src/resources/logout.ts">perform</a>() -> LogoutPerformResponse</code>
+
+# Graph
+
+Types:
+
+- <code><a href="./src/resources/graph/graph.ts">GraphRerankResponse</a></code>
+- <code><a href="./src/resources/graph/graph.ts">GraphTransformResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/graph/rerank">client.graph.<a href="./src/resources/graph/graph.ts">rerank</a>({ ...params }) -> GraphRerankResponse</code>
+- <code title="post /v1/graph/transform">client.graph.<a href="./src/resources/graph/graph.ts">transform</a>({ ...params }) -> GraphTransformResponse</code>
+
+## Domains
+
+Types:
+
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainCreateResponse</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainRetrieveResponse</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainUpdateResponse</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainListResponse</a></code>
+- <code><a href="./src/resources/graph/domains/domains.ts">DomainDeleteResponse</a></code>
+
+Methods:
+
+- <code title="post /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">create</a>({ ...params }) -> DomainCreateResponse</code>
+- <code title="get /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">retrieve</a>(domainID) -> DomainRetrieveResponse</code>
+- <code title="put /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">update</a>(domainID, { ...params }) -> DomainUpdateResponse</code>
+- <code title="get /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">list</a>() -> DomainListResponse</code>
+- <code title="delete /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">delete</a>(domainID) -> DomainDeleteResponse</code>
+
+### Catalog
+
+Types:
+
+- <code><a href="./src/resources/graph/domains/catalog.ts">CatalogRetrieveResponse</a></code>
+- <code><a href="./src/resources/graph/domains/catalog.ts">CatalogRefreshResponse</a></code>
+
+Methods:
+
+- <code title="get /v1/graph/domains/{domain_id}/catalog">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">retrieve</a>(domainID) -> CatalogRetrieveResponse</code>
+- <code title="post /v1/graph/domains/{domain_id}/catalog/refresh">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">refresh</a>(domainID) -> CatalogRefreshResponse</code>

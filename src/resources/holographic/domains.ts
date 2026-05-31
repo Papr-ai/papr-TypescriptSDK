@@ -10,7 +10,7 @@ export class Domains extends APIResource {
    * fields to the 14 standard brain-inspired frequency bands. Custom schemas are
    * scoped to your API key.
    *
-   * @deprecated
+   * @deprecated Use /graph/domains instead.
    */
   create(body: DomainCreateParams, options?: RequestOptions): APIPromise<DomainCreateResponse> {
     return this._client.post('/v1/holographic/domains', { body, ...options });
@@ -20,7 +20,7 @@ export class Domains extends APIResource {
    * Returns all available frequency schemas organized by domain. Use the schema_id
    * or domain shortname in transform/rerank calls.
    *
-   * @deprecated
+   * @deprecated Use /graph/domains instead.'
    */
   list(options?: RequestOptions): APIPromise<DomainListResponse> {
     return this._client.get('/v1/holographic/domains', options);

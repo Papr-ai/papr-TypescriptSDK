@@ -11,7 +11,7 @@ export class Transform extends APIResource {
    * to get back holographic-transformed embeddings. Use `output` to control which
    * fields are returned. Default: rotation_v3 + metadata.
    *
-   * @deprecated
+   * @deprecated Use /graph/transform instead.'
    */
   create(body: TransformCreateParams, options?: RequestOptions): APIPromise<TransformCreateResponse> {
     return this._client.post('/v1/holographic/transform', { body, ...options });
@@ -20,7 +20,7 @@ export class Transform extends APIResource {
   /**
    * Transform up to 50 items in a single request. Same as /transform but batched.
    *
-   * @deprecated
+   * @deprecated Use /graph/transform instead.'
    */
   createBatch(
     body: TransformCreateBatchParams,

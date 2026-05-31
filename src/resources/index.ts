@@ -27,6 +27,13 @@ export {
   type FrequencyRetrieveResponse,
   type FrequencyListResponse,
 } from './frequencies';
+export {
+  Graph,
+  type GraphRerankResponse,
+  type GraphTransformResponse,
+  type GraphRerankParams,
+  type GraphTransformParams,
+} from './graph/graph';
 export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
 export {
   Holographic,
@@ -77,10 +84,12 @@ export {
   type NamespaceUpdateResponse,
   type NamespaceListResponse,
   type NamespaceDeleteResponse,
+  type NamespaceCreateAPIKeyResponse,
   type NamespaceCreateParams,
   type NamespaceUpdateParams,
   type NamespaceListParams,
   type NamespaceDeleteParams,
+  type NamespaceCreateAPIKeyParams,
 } from './namespace/namespace';
 export {
   Omo,

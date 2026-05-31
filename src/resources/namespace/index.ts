@@ -17,8 +17,10 @@ export {
   type NamespaceUpdateResponse,
   type NamespaceListResponse,
   type NamespaceDeleteResponse,
+  type NamespaceCreateAPIKeyResponse,
   type NamespaceCreateParams,
   type NamespaceUpdateParams,
   type NamespaceListParams,
   type NamespaceDeleteParams,
+  type NamespaceCreateAPIKeyParams,
 } from './namespace';
