@@ -383,20 +383,23 @@ export interface AddMemory {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * @deprecated DEPRECATED: Use policy.graph.link_to instead. Shorthand DSL for
+   * node/edge constraints (same as node_constraints, compact syntax). Expands and
+   * merges into memory_policy.node_constraints and edge_constraints at resolve time.
+   * Default create is upsert; use dict form with create='lookup' (or legacy 'never')
+   * for link-only. Formats: - String: 'Task:title' (semantic match on Task.title,
+   * upsert by default) - List: ['Task:title', 'Person:email'] (multiple
+   * constraints) - Dict: {'Task:title': {'set': {...}, 'create': 'lookup'}} (full
+   * options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
    * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
    * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * '$this', '$previous', '$context:N' Example lookup-only: {'SecurityPolicy:name':
+   * {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
   /**
-   * Unified memory processing policy.
+   * @deprecated Unified memory processing policy.
    *
    * This is the SINGLE source of truth for how a memory should be processed,
    * combining graph generation control AND OMO (Open Memory Object) safety
@@ -439,6 +442,11 @@ export interface AddMemory {
   organization_id?: string | null;
 
   /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  policy?: AddMemory.Policy | null;
+
+  /**
    * @deprecated DEPRECATED: Use 'memory_policy' instead. Migration options: 1.
    * Specific memory: relationships=[{source: '$this', target: 'mem_123', type:
    * 'FOLLOWS'}] 2. Previous memory: link_to_previous_memory=True 3. Related
@@ -456,6 +464,118 @@ export interface AddMemory {
    * ID. Most developers should not use this field directly.
    */
   user_id?: string | null;
+}
+
+export namespace AddMemory {
+  /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  export interface Policy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: Shared.ACLConfig | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    graph?: Policy.Graph | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    transform_embedding?: Policy.TransformEmbedding | null;
+  }
+
+  export namespace Policy {
+    export interface Graph {
+      /**
+       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
+       * after expansion; both may be set in the same request.
+       */
+      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
+
+      /**
+       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
+       * mode — expands into node_constraints and edge_constraints at resolve time and
+       * merges with any explicit constraints in the same request. Default create policy
+       * is upsert (create if not found); use dict form with create='lookup' for
+       * link-only. Prefer over deprecated top-level link_to.
+       */
+      link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * Full node constraint objects. Same rules as policy.graph.link_to after
+       * expansion; use link_to for compact DSL or this field for explicit control. Both
+       * may be set.
+       */
+      node_constraints?: Array<Shared.NodeConstraintInput> | null;
+
+      nodes?: Array<Shared.NodeSpec> | null;
+
+      relationships?: Array<Shared.RelationshipSpec> | null;
+
+      schema_id?: string | null;
+    }
+
+    export interface TransformEmbedding {
+      /**
+       * Signal domain id or shorthand (e.g. cosqa)
+       */
+      domain_id?: string | null;
+
+      /**
+       * none=base embed only; auto=run graph transform; manual=BYO signals
+       */
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * BYO band text values when mode=manual
+       */
+      signals?: { [key: string]: string } | null;
+    }
+  }
 }
 
 /**
@@ -1162,15 +1282,18 @@ export interface MemoryUpdateParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Body param: Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
+   * DSL for node/edge constraints (same as node_constraints, compact syntax).
+   * Expands and merges into memory_policy.node_constraints and edge_constraints at
+   * resolve time. Default create is upsert; use dict form with create='lookup' (or
+   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
+   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
+   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
+   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
+   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
+   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
+   * Special: '$this', '$previous', '$context:N' Example lookup-only:
+   * {'SecurityPolicy:name': {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1217,6 +1340,11 @@ export interface MemoryUpdateParams {
   organization_id?: string | null;
 
   /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: MemoryUpdateParams.Policy | null;
+
+  /**
    * Body param: Updated relationships for Graph DB (neo4J)
    */
   relationships_json?: Array<RelationshipItem> | null;
@@ -1225,6 +1353,118 @@ export interface MemoryUpdateParams {
    * Body param: Valid memory types
    */
   type?: MemoryType | null;
+}
+
+export namespace MemoryUpdateParams {
+  /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  export interface Policy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: Shared.ACLConfig | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    graph?: Policy.Graph | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    transform_embedding?: Policy.TransformEmbedding | null;
+  }
+
+  export namespace Policy {
+    export interface Graph {
+      /**
+       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
+       * after expansion; both may be set in the same request.
+       */
+      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
+
+      /**
+       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
+       * mode — expands into node_constraints and edge_constraints at resolve time and
+       * merges with any explicit constraints in the same request. Default create policy
+       * is upsert (create if not found); use dict form with create='lookup' for
+       * link-only. Prefer over deprecated top-level link_to.
+       */
+      link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * Full node constraint objects. Same rules as policy.graph.link_to after
+       * expansion; use link_to for compact DSL or this field for explicit control. Both
+       * may be set.
+       */
+      node_constraints?: Array<Shared.NodeConstraintInput> | null;
+
+      nodes?: Array<Shared.NodeSpec> | null;
+
+      relationships?: Array<Shared.RelationshipSpec> | null;
+
+      schema_id?: string | null;
+    }
+
+    export interface TransformEmbedding {
+      /**
+       * Signal domain id or shorthand (e.g. cosqa)
+       */
+      domain_id?: string | null;
+
+      /**
+       * none=base embed only; auto=run graph transform; manual=BYO signals
+       */
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * BYO band text values when mode=manual
+       */
+      signals?: { [key: string]: string } | null;
+    }
+  }
 }
 
 export interface MemoryDeleteParams {
@@ -1296,15 +1536,18 @@ export interface MemoryAddParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Body param: Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
+   * DSL for node/edge constraints (same as node_constraints, compact syntax).
+   * Expands and merges into memory_policy.node_constraints and edge_constraints at
+   * resolve time. Default create is upsert; use dict form with create='lookup' (or
+   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
+   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
+   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
+   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
+   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
+   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
+   * Special: '$this', '$previous', '$context:N' Example lookup-only:
+   * {'SecurityPolicy:name': {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1352,6 +1595,11 @@ export interface MemoryAddParams {
   organization_id?: string | null;
 
   /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: MemoryAddParams.Policy | null;
+
+  /**
    * @deprecated Body param: DEPRECATED: Use 'memory_policy' instead. Migration
    * options: 1. Specific memory: relationships=[{source: '$this', target: 'mem_123',
    * type: 'FOLLOWS'}] 2. Previous memory: link_to_previous_memory=True 3. Related
@@ -1369,6 +1617,118 @@ export interface MemoryAddParams {
    * Papr Parse user ID. Most developers should not use this field directly.
    */
   user_id?: string | null;
+}
+
+export namespace MemoryAddParams {
+  /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  export interface Policy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: Shared.ACLConfig | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    graph?: Policy.Graph | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    transform_embedding?: Policy.TransformEmbedding | null;
+  }
+
+  export namespace Policy {
+    export interface Graph {
+      /**
+       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
+       * after expansion; both may be set in the same request.
+       */
+      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
+
+      /**
+       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
+       * mode — expands into node_constraints and edge_constraints at resolve time and
+       * merges with any explicit constraints in the same request. Default create policy
+       * is upsert (create if not found); use dict form with create='lookup' for
+       * link-only. Prefer over deprecated top-level link_to.
+       */
+      link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * Full node constraint objects. Same rules as policy.graph.link_to after
+       * expansion; use link_to for compact DSL or this field for explicit control. Both
+       * may be set.
+       */
+      node_constraints?: Array<Shared.NodeConstraintInput> | null;
+
+      nodes?: Array<Shared.NodeSpec> | null;
+
+      relationships?: Array<Shared.RelationshipSpec> | null;
+
+      schema_id?: string | null;
+    }
+
+    export interface TransformEmbedding {
+      /**
+       * Signal domain id or shorthand (e.g. cosqa)
+       */
+      domain_id?: string | null;
+
+      /**
+       * none=base embed only; auto=run graph transform; manual=BYO signals
+       */
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * BYO band text values when mode=manual
+       */
+      signals?: { [key: string]: string } | null;
+    }
+  }
 }
 
 export interface MemoryAddBatchParams {
@@ -1413,15 +1773,18 @@ export interface MemoryAddBatchParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * Body param: Shorthand DSL for node/edge constraints. Expands to
-   * memory_policy.node_constraints and edge_constraints. Formats: - String:
-   * 'Task:title' (semantic match on Task.title) - List: ['Task:title',
-   * 'Person:email'] (multiple constraints) - Dict: {'Task:title': {'set': {...}}}
-   * (with options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example:
-   * 'SecurityBehavior->MITIGATES->TacticDef:name' with {'create': 'never'}
+   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
+   * DSL for node/edge constraints (same as node_constraints, compact syntax).
+   * Expands and merges into memory_policy.node_constraints and edge_constraints at
+   * resolve time. Default create is upsert; use dict form with create='lookup' (or
+   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
+   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
+   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
+   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
+   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
+   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
+   * Special: '$this', '$previous', '$context:N' Example lookup-only:
+   * {'SecurityPolicy:name': {'create': 'lookup'}}
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1464,6 +1827,11 @@ export interface MemoryAddBatchParams {
   organization_id?: string | null;
 
   /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: MemoryAddBatchParams.Policy | null;
+
+  /**
    * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
    * Papr Parse user ID.
    */
@@ -1482,6 +1850,118 @@ export interface MemoryAddBatchParams {
   webhook_url?: string | null;
 
   [k: string]: unknown;
+}
+
+export namespace MemoryAddBatchParams {
+  /**
+   * Policy for add / batch / document / message ingestion.
+   */
+  export interface Policy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: Shared.ACLConfig | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    graph?: Policy.Graph | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    transform_embedding?: Policy.TransformEmbedding | null;
+  }
+
+  export namespace Policy {
+    export interface Graph {
+      /**
+       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
+       * after expansion; both may be set in the same request.
+       */
+      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
+
+      /**
+       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
+       * mode — expands into node_constraints and edge_constraints at resolve time and
+       * merges with any explicit constraints in the same request. Default create policy
+       * is upsert (create if not found); use dict form with create='lookup' for
+       * link-only. Prefer over deprecated top-level link_to.
+       */
+      link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * Full node constraint objects. Same rules as policy.graph.link_to after
+       * expansion; use link_to for compact DSL or this field for explicit control. Both
+       * may be set.
+       */
+      node_constraints?: Array<Shared.NodeConstraintInput> | null;
+
+      nodes?: Array<Shared.NodeSpec> | null;
+
+      relationships?: Array<Shared.RelationshipSpec> | null;
+
+      schema_id?: string | null;
+    }
+
+    export interface TransformEmbedding {
+      /**
+       * Signal domain id or shorthand (e.g. cosqa)
+       */
+      domain_id?: string | null;
+
+      /**
+       * none=base embed only; auto=run graph transform; manual=BYO signals
+       */
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * BYO band text values when mode=manual
+       */
+      signals?: { [key: string]: string } | null;
+    }
+  }
 }
 
 export interface MemoryDeleteAllParams {
@@ -1581,8 +2061,8 @@ export interface MemorySearchParams {
   external_user_id?: string | null;
 
   /**
-   * Body param: Configuration for holographic neural embedding transforms and H-COND
-   * scoring.
+   * @deprecated Body param: Configuration for holographic neural embedding
+   * transforms and H-COND scoring.
    *
    * Neural holographic embeddings use 13 brain-inspired frequency bands to encode
    * hierarchical semantic metadata alongside the base embedding. H-COND (Holographic
@@ -1614,6 +2094,11 @@ export interface MemorySearchParams {
    * provided, search is scoped to memories within this organization.
    */
   organization_id?: string | null;
+
+  /**
+   * Body param: Policy for POST /v1/memory/search.
+   */
+  policy?: MemorySearchParams.Policy | null;
 
   /**
    * @deprecated Body param: DEPRECATED: Use 'reranking_config' instead. Whether to
@@ -1694,7 +2179,8 @@ export interface MemorySearchParams {
 
 export namespace MemorySearchParams {
   /**
-   * Configuration for holographic neural embedding transforms and H-COND scoring.
+   * @deprecated Configuration for holographic neural embedding transforms and H-COND
+   * scoring.
    *
    * Neural holographic embeddings use 13 brain-inspired frequency bands to encode
    * hierarchical semantic metadata alongside the base embedding. H-COND (Holographic
@@ -1803,6 +2289,129 @@ export namespace MemorySearchParams {
      * Shorthand for exclude_consent=['none'].
      */
     require_consent?: boolean;
+  }
+
+  /**
+   * Policy for POST /v1/memory/search.
+   */
+  export interface Policy {
+    /**
+     * Simplified Access Control List configuration.
+     *
+     * Aligned with Open Memory Object (OMO) standard. See:
+     * https://github.com/anthropics/open-memory-object
+     *
+     * **Supported Entity Prefixes:**
+     *
+     * | Prefix           | Description           | Validation                           |
+     * | ---------------- | --------------------- | ------------------------------------ |
+     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+     * | `organization:`  | Organization ID       | Validated against your organizations |
+     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+     * | `role:`          | Parse role ID         | Validated against your roles         |
+     *
+     * **Examples:**
+     *
+     * ```python
+     * acl = ACLConfig(
+     *     read=["external_user:alice_123", "organization:org_acme"],
+     *     write=["external_user:alice_123"]
+     * )
+     * ```
+     *
+     * **Validation Rules:**
+     *
+     * - Internal entities (user, organization, namespace, workspace, role) are
+     *   validated
+     * - External entities (external_user) are NOT validated - your app is responsible
+     * - Invalid internal entities will return an error
+     * - Unprefixed values default to `external_user:` for backwards compatibility
+     */
+    acl?: Shared.ACLConfig | null;
+
+    /**
+     * How the data owner allowed this memory to be stored/used.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+    graph?: Policy.Graph | null;
+
+    rerank?: Policy.Rerank | null;
+
+    /**
+     * Post-ingest safety assessment of memory content.
+     *
+     * Aligned with Open Memory Object (OMO) standard.
+     */
+    risk?: 'none' | 'sensitive' | 'flagged';
+
+    vector?: Policy.Vector | null;
+  }
+
+  export namespace Policy {
+    export interface Graph {
+      /**
+       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
+       * after expansion; both may be set in the same request.
+       */
+      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
+
+      /**
+       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
+       * mode — expands into node_constraints and edge_constraints at resolve time and
+       * merges with any explicit constraints in the same request. Default create policy
+       * is upsert (create if not found); use dict form with create='lookup' for
+       * link-only. Prefer over deprecated top-level link_to.
+       */
+      link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+      mode?: 'none' | 'auto' | 'manual';
+
+      /**
+       * Full node constraint objects. Same rules as policy.graph.link_to after
+       * expansion; use link_to for compact DSL or this field for explicit control. Both
+       * may be set.
+       */
+      node_constraints?: Array<Shared.NodeConstraintInput> | null;
+
+      nodes?: Array<Shared.NodeSpec> | null;
+
+      relationships?: Array<Shared.RelationshipSpec> | null;
+
+      schema_id?: string | null;
+    }
+
+    export interface Rerank {
+      enabled?: boolean;
+
+      model?: string | null;
+
+      provider?: string | null;
+    }
+
+    export interface Vector {
+      domain_id?: string | null;
+
+      /**
+       * fast=cosine; enhanced=graph rerank enhanced; max=graph rerank max
+       */
+      mode?: 'fast' | 'enhanced' | 'max';
+
+      return_debug?: boolean;
+
+      return_signal_scores?: boolean;
+
+      signal_multipliers?: { [key: string]: number | string } | null;
+
+      /**
+       * Min per-band scores; maps to graph rerank signal_filters
+       */
+      signal_thresholds?: { [key: string]: number } | null;
+    }
   }
 
   /**

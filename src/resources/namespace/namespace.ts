@@ -136,6 +136,11 @@ export interface NamespaceItem {
   createdAt?: string | null;
 
   /**
+   * Default memory policy when requests omit policy.
+   */
+  default_policy?: { [key: string]: unknown } | null;
+
+  /**
    * Environment type
    */
   environment_type?: string | null;
@@ -427,6 +432,11 @@ export interface NamespaceCreateParams {
   name: string;
 
   /**
+   * Default memory policy for add/search when request omits policy.
+   */
+  default_policy?: { [key: string]: unknown } | null;
+
+  /**
    * Environment type: development, staging, production
    */
   environment_type?: 'development' | 'staging' | 'production';
@@ -443,6 +453,11 @@ export interface NamespaceCreateParams {
 }
 
 export interface NamespaceUpdateParams {
+  /**
+   * Default memory policy for add/search when request omits policy.
+   */
+  default_policy?: { [key: string]: unknown } | null;
+
   /**
    * Environment types for namespaces
    */

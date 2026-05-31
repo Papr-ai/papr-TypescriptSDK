@@ -25,12 +25,7 @@ export class Holographic extends APIResource {
    * transforms. Call this once per document at index time, then use phases locally
    * for scoring.
    *
-   * @example
-   * ```ts
-   * const response = await client.holographic.extractMetadata({
-   *   content: 'content',
-   * });
-   * ```
+   * @deprecated
    */
   extractMetadata(
     body: HolographicExtractMetadataParams,
@@ -47,14 +42,7 @@ export class Holographic extends APIResource {
    * Candidates with only `content` use the cold path (~100ms each, includes LLM
    * extraction). You can mix both in a single request.
    *
-   * @example
-   * ```ts
-   * const response = await client.holographic.rerank({
-   *   candidates: [{ id: 'doc_1' }, { id: 'doc_2' }],
-   *   query:
-   *     'How does troponin relate to myocardial infarction?',
-   * });
-   * ```
+   * @deprecated
    */
   rerank(body: HolographicRerankParams, options?: RequestOptions): APIPromise<HolographicRerankResponse> {
     return this._client.post('/v1/holographic/rerank', { body, ...options });
@@ -113,6 +101,12 @@ export namespace HolographicRerankResponse {
      * Present when cold path was used. Suggests storing phases for faster reranking.
      */
     optimization_hint?: string | null;
+
+    /**
+     * LLM-determined importance weights per dimension for this query (0.0-1.0). Shows
+     * how the adaptive weighting system interpreted this query's intent.
+     */
+    query_dimension_weights?: { [key: string]: number } | null;
   }
 
   export namespace Data {
@@ -160,6 +154,11 @@ export interface HolographicExtractMetadataParams {
   content: string;
 
   /**
+   * Pre-computed concat (new) embedding from holographic transform.
+   */
+  concat_embedding?: Array<number> | null;
+
+  /**
    * Optional context metadata (createdAt, sourceType, etc.) to improve extraction.
    */
   context_metadata?: { [key: string]: unknown } | null;
@@ -173,6 +172,22 @@ export interface HolographicExtractMetadataParams {
    * Schema override
    */
   frequency_schema_id?: string | null;
+
+  /**
+   * Pre-computed rotation (old) embedding from holographic transform. Enables
+   * rot_v2/v3 similarity scoring and full CAESAR ensemble.
+   */
+  rotation_embedding?: Array<number> | null;
+
+  /**
+   * Pre-computed rotation V2 embedding from holographic transform.
+   */
+  rotation_v2_embedding?: Array<number> | null;
+
+  /**
+   * Pre-computed rotation V3 embedding from holographic transform.
+   */
+  rotation_v3_embedding?: Array<number> | null;
 }
 
 export interface HolographicRerankParams {
@@ -200,6 +215,14 @@ export interface HolographicRerankParams {
    * Options for the rerank endpoint.
    */
   options?: HolographicRerankParams.Options | null;
+
+  /**
+   * Pre-computed per-field weights from a prior /transform call (is_query=true). If
+   * provided, skips the adaptive Groq weights call entirely (saves ~500ms + LLM
+   * cost). Keyed by frequency string (e.g. '0.1') OR field name (e.g.
+   * 'mega_domain').
+   */
+  query_dimension_weights?: { [key: string]: number } | null;
 
   /**
    * Query embedding in the same space as candidate embeddings. If provided, used for
@@ -244,6 +267,11 @@ export namespace HolographicRerankParams {
     id: string;
 
     /**
+     * Pre-computed concat (new) embedding from holographic transform.
+     */
+    concat_embedding?: Array<number> | null;
+
+    /**
      * Text content. Required for cold path (LLM extraction + cross-encoder).
      */
     content?: string | null;
@@ -269,6 +297,22 @@ export namespace HolographicRerankParams {
      * Pre-computed phases from a prior /transform call. Enables fast path.
      */
     phases?: Array<number> | null;
+
+    /**
+     * Pre-computed rotation (old) embedding from holographic transform. Enables
+     * rot_v2/v3 similarity scoring and full CAESAR ensemble.
+     */
+    rotation_embedding?: Array<number> | null;
+
+    /**
+     * Pre-computed rotation V2 embedding from holographic transform.
+     */
+    rotation_v2_embedding?: Array<number> | null;
+
+    /**
+     * Pre-computed rotation V3 embedding from holographic transform.
+     */
+    rotation_v3_embedding?: Array<number> | null;
 
     /**
      * Original retrieval score (used as a signal in ensemble methods)

@@ -127,8 +127,8 @@ export interface DocumentUploadParams {
   file: Uploadable;
 
   /**
-   * If True, applies holographic neural transforms and stores in holographic
-   * collection
+   * @deprecated DEPRECATED: Use policy.transform_embedding instead. If True, applies
+   * holographic neural transforms and stores in holographic collection.
    */
   enable_holographic?: boolean;
 
@@ -139,6 +139,7 @@ export interface DocumentUploadParams {
   external_user_id?: string | null;
 
   /**
+   * @deprecated DEPRECATED: Use policy.transform_embedding.domain_id instead.
    * Frequency schema for holographic embedding (e.g. 'cosqa', 'scifact'). Required
    * when enable_holographic=True. Call GET /v1/frequencies to see available schemas.
    */
@@ -149,15 +150,21 @@ export interface DocumentUploadParams {
   hierarchical_enabled?: boolean;
 
   /**
-   * JSON-encoded memory policy. Includes mode ('auto'/'manual'), schema_id,
-   * node_constraints (applied in auto mode when present), and OMO fields (consent,
-   * risk, acl). This is the recommended way to configure memory processing.
+   * @deprecated DEPRECATED: Use 'policy' instead. JSON-encoded memory policy.
+   * Includes mode ('auto'/'manual'), schema_id, node_constraints (applied in auto
+   * mode when present), and OMO fields (consent, risk, acl).
    */
   memory_policy?: string | null;
 
   metadata?: string | null;
 
   namespace_id?: string | null;
+
+  /**
+   * JSON-encoded unified processing policy (transform_embedding, graph incl.
+   * link_to, consent, risk, acl). Applies to all chunks from this document.
+   */
+  policy?: string | null;
 
   /**
    * Preferred provider for document processing.
