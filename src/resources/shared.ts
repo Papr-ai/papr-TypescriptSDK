@@ -196,6 +196,38 @@ export interface EdgeConstraintInput {
   when?: { [key: string]: unknown } | null;
 }
 
+export interface GraphPolicyBlock {
+  /**
+   * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
+   * after expansion; both may be set in the same request.
+   */
+  edge_constraints?: Array<EdgeConstraintInput> | null;
+
+  /**
+   * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
+   * mode — expands into node_constraints and edge_constraints at resolve time and
+   * merges with any explicit constraints in the same request. Default create policy
+   * is upsert (create if not found); use dict form with create='lookup' for
+   * link-only. Prefer over deprecated top-level link_to.
+   */
+  link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+  mode?: 'none' | 'auto' | 'manual';
+
+  /**
+   * Full node constraint objects. Same rules as policy.graph.link_to after
+   * expansion; use link_to for compact DSL or this field for explicit control. Both
+   * may be set.
+   */
+  node_constraints?: Array<NodeConstraintInput> | null;
+
+  nodes?: Array<NodeSpec> | null;
+
+  relationships?: Array<RelationshipSpec> | null;
+
+  schema_id?: string | null;
+}
+
 /**
  * A memory item in the knowledge base
  */
@@ -366,6 +398,65 @@ export interface MemoryObject {
   workspace_write_access?: Array<string> | null;
 
   [k: string]: unknown;
+}
+
+/**
+ * Policy for add / batch / document / message ingestion.
+ */
+export interface MemoryAddPolicy {
+  /**
+   * Simplified Access Control List configuration.
+   *
+   * Aligned with Open Memory Object (OMO) standard. See:
+   * https://github.com/anthropics/open-memory-object
+   *
+   * **Supported Entity Prefixes:**
+   *
+   * | Prefix           | Description           | Validation                           |
+   * | ---------------- | --------------------- | ------------------------------------ |
+   * | `user:`          | Internal Papr user ID | Validated against Parse users        |
+   * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
+   * | `organization:`  | Organization ID       | Validated against your organizations |
+   * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
+   * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
+   * | `role:`          | Parse role ID         | Validated against your roles         |
+   *
+   * **Examples:**
+   *
+   * ```python
+   * acl = ACLConfig(
+   *     read=["external_user:alice_123", "organization:org_acme"],
+   *     write=["external_user:alice_123"]
+   * )
+   * ```
+   *
+   * **Validation Rules:**
+   *
+   * - Internal entities (user, organization, namespace, workspace, role) are
+   *   validated
+   * - External entities (external_user) are NOT validated - your app is responsible
+   * - Invalid internal entities will return an error
+   * - Unprefixed values default to `external_user:` for backwards compatibility
+   */
+  acl?: ACLConfig | null;
+
+  /**
+   * How the data owner allowed this memory to be stored/used.
+   *
+   * Aligned with Open Memory Object (OMO) standard.
+   */
+  consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+
+  graph?: GraphPolicyBlock | null;
+
+  /**
+   * Post-ingest safety assessment of memory content.
+   *
+   * Aligned with Open Memory Object (OMO) standard.
+   */
+  risk?: 'none' | 'sensitive' | 'flagged';
+
+  transform_embedding?: TransformEmbeddingPolicy | null;
 }
 
 /**
@@ -777,4 +868,21 @@ export namespace SearchConfigInput {
      */
     value?: unknown;
   }
+}
+
+export interface TransformEmbeddingPolicy {
+  /**
+   * Signal domain id or shorthand (e.g. cosqa)
+   */
+  domain_id?: string | null;
+
+  /**
+   * none=base embed only; auto=run graph transform; manual=BYO signals
+   */
+  mode?: 'none' | 'auto' | 'manual';
+
+  /**
+   * BYO band text values when mode=manual
+   */
+  signals?: { [key: string]: string } | null;
 }

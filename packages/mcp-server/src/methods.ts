@@ -275,6 +275,12 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/namespace/{namespace_id}',
   },
   {
+    clientCallName: 'client.namespace.createAPIKey',
+    fullyQualifiedName: 'namespace.createAPIKey',
+    httpMethod: 'post',
+    httpPath: '/v1/namespace/{namespace_id}/api-keys',
+  },
+  {
     clientCallName: 'client.namespace.instance.retrieve',
     fullyQualifiedName: 'namespace.instance.retrieve',
     httpMethod: 'get',
@@ -429,6 +435,60 @@ export const sdkMethods: SdkMethod[] = [
     fullyQualifiedName: 'logout.perform',
     httpMethod: 'get',
     httpPath: '/logout',
+  },
+  {
+    clientCallName: 'client.graph.rerank',
+    fullyQualifiedName: 'graph.rerank',
+    httpMethod: 'post',
+    httpPath: '/v1/graph/rerank',
+  },
+  {
+    clientCallName: 'client.graph.transform',
+    fullyQualifiedName: 'graph.transform',
+    httpMethod: 'post',
+    httpPath: '/v1/graph/transform',
+  },
+  {
+    clientCallName: 'client.graph.domains.create',
+    fullyQualifiedName: 'graph.domains.create',
+    httpMethod: 'post',
+    httpPath: '/v1/graph/domains',
+  },
+  {
+    clientCallName: 'client.graph.domains.retrieve',
+    fullyQualifiedName: 'graph.domains.retrieve',
+    httpMethod: 'get',
+    httpPath: '/v1/graph/domains/{domain_id}',
+  },
+  {
+    clientCallName: 'client.graph.domains.update',
+    fullyQualifiedName: 'graph.domains.update',
+    httpMethod: 'put',
+    httpPath: '/v1/graph/domains/{domain_id}',
+  },
+  {
+    clientCallName: 'client.graph.domains.list',
+    fullyQualifiedName: 'graph.domains.list',
+    httpMethod: 'get',
+    httpPath: '/v1/graph/domains',
+  },
+  {
+    clientCallName: 'client.graph.domains.delete',
+    fullyQualifiedName: 'graph.domains.delete',
+    httpMethod: 'delete',
+    httpPath: '/v1/graph/domains/{domain_id}',
+  },
+  {
+    clientCallName: 'client.graph.domains.catalog.retrieve',
+    fullyQualifiedName: 'graph.domains.catalog.retrieve',
+    httpMethod: 'get',
+    httpPath: '/v1/graph/domains/{domain_id}/catalog',
+  },
+  {
+    clientCallName: 'client.graph.domains.catalog.refresh',
+    fullyQualifiedName: 'graph.domains.catalog.refresh',
+    httpMethod: 'post',
+    httpPath: '/v1/graph/domains/{domain_id}/catalog/refresh',
   },
 ];
 

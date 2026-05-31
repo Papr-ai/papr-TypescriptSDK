@@ -444,7 +444,7 @@ export interface AddMemory {
   /**
    * Policy for add / batch / document / message ingestion.
    */
-  policy?: AddMemory.Policy | null;
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * @deprecated DEPRECATED: Use 'memory_policy' instead. Migration options: 1.
@@ -464,118 +464,6 @@ export interface AddMemory {
    * ID. Most developers should not use this field directly.
    */
   user_id?: string | null;
-}
-
-export namespace AddMemory {
-  /**
-   * Policy for add / batch / document / message ingestion.
-   */
-  export interface Policy {
-    /**
-     * Simplified Access Control List configuration.
-     *
-     * Aligned with Open Memory Object (OMO) standard. See:
-     * https://github.com/anthropics/open-memory-object
-     *
-     * **Supported Entity Prefixes:**
-     *
-     * | Prefix           | Description           | Validation                           |
-     * | ---------------- | --------------------- | ------------------------------------ |
-     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
-     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
-     * | `organization:`  | Organization ID       | Validated against your organizations |
-     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
-     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
-     * | `role:`          | Parse role ID         | Validated against your roles         |
-     *
-     * **Examples:**
-     *
-     * ```python
-     * acl = ACLConfig(
-     *     read=["external_user:alice_123", "organization:org_acme"],
-     *     write=["external_user:alice_123"]
-     * )
-     * ```
-     *
-     * **Validation Rules:**
-     *
-     * - Internal entities (user, organization, namespace, workspace, role) are
-     *   validated
-     * - External entities (external_user) are NOT validated - your app is responsible
-     * - Invalid internal entities will return an error
-     * - Unprefixed values default to `external_user:` for backwards compatibility
-     */
-    acl?: Shared.ACLConfig | null;
-
-    /**
-     * How the data owner allowed this memory to be stored/used.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
-
-    graph?: Policy.Graph | null;
-
-    /**
-     * Post-ingest safety assessment of memory content.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    risk?: 'none' | 'sensitive' | 'flagged';
-
-    transform_embedding?: Policy.TransformEmbedding | null;
-  }
-
-  export namespace Policy {
-    export interface Graph {
-      /**
-       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
-       * after expansion; both may be set in the same request.
-       */
-      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
-
-      /**
-       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
-       * mode — expands into node_constraints and edge_constraints at resolve time and
-       * merges with any explicit constraints in the same request. Default create policy
-       * is upsert (create if not found); use dict form with create='lookup' for
-       * link-only. Prefer over deprecated top-level link_to.
-       */
-      link_to?: string | Array<string> | { [key: string]: unknown } | null;
-
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * Full node constraint objects. Same rules as policy.graph.link_to after
-       * expansion; use link_to for compact DSL or this field for explicit control. Both
-       * may be set.
-       */
-      node_constraints?: Array<Shared.NodeConstraintInput> | null;
-
-      nodes?: Array<Shared.NodeSpec> | null;
-
-      relationships?: Array<Shared.RelationshipSpec> | null;
-
-      schema_id?: string | null;
-    }
-
-    export interface TransformEmbedding {
-      /**
-       * Signal domain id or shorthand (e.g. cosqa)
-       */
-      domain_id?: string | null;
-
-      /**
-       * none=base embed only; auto=run graph transform; manual=BYO signals
-       */
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * BYO band text values when mode=manual
-       */
-      signals?: { [key: string]: string } | null;
-    }
-  }
 }
 
 /**
@@ -1004,8 +892,8 @@ export interface MemoryMetadata {
   useCaseClassificationScores?: Array<number> | null;
 
   /**
-   * @deprecated DEPRECATED: Use 'external_user_id' at request level instead. This
-   * field will be removed in v2.
+   * @deprecated Use 'external_user_id' at request level instead. This field will be
+   * removed in v2.
    */
   user_id?: string | null;
 
@@ -1342,7 +1230,7 @@ export interface MemoryUpdateParams {
   /**
    * Body param: Policy for add / batch / document / message ingestion.
    */
-  policy?: MemoryUpdateParams.Policy | null;
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * Body param: Updated relationships for Graph DB (neo4J)
@@ -1353,118 +1241,6 @@ export interface MemoryUpdateParams {
    * Body param: Valid memory types
    */
   type?: MemoryType | null;
-}
-
-export namespace MemoryUpdateParams {
-  /**
-   * Policy for add / batch / document / message ingestion.
-   */
-  export interface Policy {
-    /**
-     * Simplified Access Control List configuration.
-     *
-     * Aligned with Open Memory Object (OMO) standard. See:
-     * https://github.com/anthropics/open-memory-object
-     *
-     * **Supported Entity Prefixes:**
-     *
-     * | Prefix           | Description           | Validation                           |
-     * | ---------------- | --------------------- | ------------------------------------ |
-     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
-     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
-     * | `organization:`  | Organization ID       | Validated against your organizations |
-     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
-     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
-     * | `role:`          | Parse role ID         | Validated against your roles         |
-     *
-     * **Examples:**
-     *
-     * ```python
-     * acl = ACLConfig(
-     *     read=["external_user:alice_123", "organization:org_acme"],
-     *     write=["external_user:alice_123"]
-     * )
-     * ```
-     *
-     * **Validation Rules:**
-     *
-     * - Internal entities (user, organization, namespace, workspace, role) are
-     *   validated
-     * - External entities (external_user) are NOT validated - your app is responsible
-     * - Invalid internal entities will return an error
-     * - Unprefixed values default to `external_user:` for backwards compatibility
-     */
-    acl?: Shared.ACLConfig | null;
-
-    /**
-     * How the data owner allowed this memory to be stored/used.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
-
-    graph?: Policy.Graph | null;
-
-    /**
-     * Post-ingest safety assessment of memory content.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    risk?: 'none' | 'sensitive' | 'flagged';
-
-    transform_embedding?: Policy.TransformEmbedding | null;
-  }
-
-  export namespace Policy {
-    export interface Graph {
-      /**
-       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
-       * after expansion; both may be set in the same request.
-       */
-      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
-
-      /**
-       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
-       * mode — expands into node_constraints and edge_constraints at resolve time and
-       * merges with any explicit constraints in the same request. Default create policy
-       * is upsert (create if not found); use dict form with create='lookup' for
-       * link-only. Prefer over deprecated top-level link_to.
-       */
-      link_to?: string | Array<string> | { [key: string]: unknown } | null;
-
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * Full node constraint objects. Same rules as policy.graph.link_to after
-       * expansion; use link_to for compact DSL or this field for explicit control. Both
-       * may be set.
-       */
-      node_constraints?: Array<Shared.NodeConstraintInput> | null;
-
-      nodes?: Array<Shared.NodeSpec> | null;
-
-      relationships?: Array<Shared.RelationshipSpec> | null;
-
-      schema_id?: string | null;
-    }
-
-    export interface TransformEmbedding {
-      /**
-       * Signal domain id or shorthand (e.g. cosqa)
-       */
-      domain_id?: string | null;
-
-      /**
-       * none=base embed only; auto=run graph transform; manual=BYO signals
-       */
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * BYO band text values when mode=manual
-       */
-      signals?: { [key: string]: string } | null;
-    }
-  }
 }
 
 export interface MemoryDeleteParams {
@@ -1597,7 +1373,7 @@ export interface MemoryAddParams {
   /**
    * Body param: Policy for add / batch / document / message ingestion.
    */
-  policy?: MemoryAddParams.Policy | null;
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * @deprecated Body param: DEPRECATED: Use 'memory_policy' instead. Migration
@@ -1617,118 +1393,6 @@ export interface MemoryAddParams {
    * Papr Parse user ID. Most developers should not use this field directly.
    */
   user_id?: string | null;
-}
-
-export namespace MemoryAddParams {
-  /**
-   * Policy for add / batch / document / message ingestion.
-   */
-  export interface Policy {
-    /**
-     * Simplified Access Control List configuration.
-     *
-     * Aligned with Open Memory Object (OMO) standard. See:
-     * https://github.com/anthropics/open-memory-object
-     *
-     * **Supported Entity Prefixes:**
-     *
-     * | Prefix           | Description           | Validation                           |
-     * | ---------------- | --------------------- | ------------------------------------ |
-     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
-     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
-     * | `organization:`  | Organization ID       | Validated against your organizations |
-     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
-     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
-     * | `role:`          | Parse role ID         | Validated against your roles         |
-     *
-     * **Examples:**
-     *
-     * ```python
-     * acl = ACLConfig(
-     *     read=["external_user:alice_123", "organization:org_acme"],
-     *     write=["external_user:alice_123"]
-     * )
-     * ```
-     *
-     * **Validation Rules:**
-     *
-     * - Internal entities (user, organization, namespace, workspace, role) are
-     *   validated
-     * - External entities (external_user) are NOT validated - your app is responsible
-     * - Invalid internal entities will return an error
-     * - Unprefixed values default to `external_user:` for backwards compatibility
-     */
-    acl?: Shared.ACLConfig | null;
-
-    /**
-     * How the data owner allowed this memory to be stored/used.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
-
-    graph?: Policy.Graph | null;
-
-    /**
-     * Post-ingest safety assessment of memory content.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    risk?: 'none' | 'sensitive' | 'flagged';
-
-    transform_embedding?: Policy.TransformEmbedding | null;
-  }
-
-  export namespace Policy {
-    export interface Graph {
-      /**
-       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
-       * after expansion; both may be set in the same request.
-       */
-      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
-
-      /**
-       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
-       * mode — expands into node_constraints and edge_constraints at resolve time and
-       * merges with any explicit constraints in the same request. Default create policy
-       * is upsert (create if not found); use dict form with create='lookup' for
-       * link-only. Prefer over deprecated top-level link_to.
-       */
-      link_to?: string | Array<string> | { [key: string]: unknown } | null;
-
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * Full node constraint objects. Same rules as policy.graph.link_to after
-       * expansion; use link_to for compact DSL or this field for explicit control. Both
-       * may be set.
-       */
-      node_constraints?: Array<Shared.NodeConstraintInput> | null;
-
-      nodes?: Array<Shared.NodeSpec> | null;
-
-      relationships?: Array<Shared.RelationshipSpec> | null;
-
-      schema_id?: string | null;
-    }
-
-    export interface TransformEmbedding {
-      /**
-       * Signal domain id or shorthand (e.g. cosqa)
-       */
-      domain_id?: string | null;
-
-      /**
-       * none=base embed only; auto=run graph transform; manual=BYO signals
-       */
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * BYO band text values when mode=manual
-       */
-      signals?: { [key: string]: string } | null;
-    }
-  }
 }
 
 export interface MemoryAddBatchParams {
@@ -1829,7 +1493,7 @@ export interface MemoryAddBatchParams {
   /**
    * Body param: Policy for add / batch / document / message ingestion.
    */
-  policy?: MemoryAddBatchParams.Policy | null;
+  policy?: Shared.MemoryAddPolicy | null;
 
   /**
    * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
@@ -1850,118 +1514,6 @@ export interface MemoryAddBatchParams {
   webhook_url?: string | null;
 
   [k: string]: unknown;
-}
-
-export namespace MemoryAddBatchParams {
-  /**
-   * Policy for add / batch / document / message ingestion.
-   */
-  export interface Policy {
-    /**
-     * Simplified Access Control List configuration.
-     *
-     * Aligned with Open Memory Object (OMO) standard. See:
-     * https://github.com/anthropics/open-memory-object
-     *
-     * **Supported Entity Prefixes:**
-     *
-     * | Prefix           | Description           | Validation                           |
-     * | ---------------- | --------------------- | ------------------------------------ |
-     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
-     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
-     * | `organization:`  | Organization ID       | Validated against your organizations |
-     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
-     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
-     * | `role:`          | Parse role ID         | Validated against your roles         |
-     *
-     * **Examples:**
-     *
-     * ```python
-     * acl = ACLConfig(
-     *     read=["external_user:alice_123", "organization:org_acme"],
-     *     write=["external_user:alice_123"]
-     * )
-     * ```
-     *
-     * **Validation Rules:**
-     *
-     * - Internal entities (user, organization, namespace, workspace, role) are
-     *   validated
-     * - External entities (external_user) are NOT validated - your app is responsible
-     * - Invalid internal entities will return an error
-     * - Unprefixed values default to `external_user:` for backwards compatibility
-     */
-    acl?: Shared.ACLConfig | null;
-
-    /**
-     * How the data owner allowed this memory to be stored/used.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
-
-    graph?: Policy.Graph | null;
-
-    /**
-     * Post-ingest safety assessment of memory content.
-     *
-     * Aligned with Open Memory Object (OMO) standard.
-     */
-    risk?: 'none' | 'sensitive' | 'flagged';
-
-    transform_embedding?: Policy.TransformEmbedding | null;
-  }
-
-  export namespace Policy {
-    export interface Graph {
-      /**
-       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
-       * after expansion; both may be set in the same request.
-       */
-      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
-
-      /**
-       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
-       * mode — expands into node_constraints and edge_constraints at resolve time and
-       * merges with any explicit constraints in the same request. Default create policy
-       * is upsert (create if not found); use dict form with create='lookup' for
-       * link-only. Prefer over deprecated top-level link_to.
-       */
-      link_to?: string | Array<string> | { [key: string]: unknown } | null;
-
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * Full node constraint objects. Same rules as policy.graph.link_to after
-       * expansion; use link_to for compact DSL or this field for explicit control. Both
-       * may be set.
-       */
-      node_constraints?: Array<Shared.NodeConstraintInput> | null;
-
-      nodes?: Array<Shared.NodeSpec> | null;
-
-      relationships?: Array<Shared.RelationshipSpec> | null;
-
-      schema_id?: string | null;
-    }
-
-    export interface TransformEmbedding {
-      /**
-       * Signal domain id or shorthand (e.g. cosqa)
-       */
-      domain_id?: string | null;
-
-      /**
-       * none=base embed only; auto=run graph transform; manual=BYO signals
-       */
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * BYO band text values when mode=manual
-       */
-      signals?: { [key: string]: string } | null;
-    }
-  }
 }
 
 export interface MemoryDeleteAllParams {
@@ -2338,7 +1890,7 @@ export namespace MemorySearchParams {
      */
     consent?: 'explicit' | 'implicit' | 'terms' | 'none';
 
-    graph?: Policy.Graph | null;
+    graph?: Shared.GraphPolicyBlock | null;
 
     rerank?: Policy.Rerank | null;
 
@@ -2353,38 +1905,6 @@ export namespace MemorySearchParams {
   }
 
   export namespace Policy {
-    export interface Graph {
-      /**
-       * Full edge constraint objects. Same rules as edge entries in policy.graph.link_to
-       * after expansion; both may be set in the same request.
-       */
-      edge_constraints?: Array<Shared.EdgeConstraintInput> | null;
-
-      /**
-       * Shorthand DSL for node/edge constraints under policy.graph. Not a separate graph
-       * mode — expands into node_constraints and edge_constraints at resolve time and
-       * merges with any explicit constraints in the same request. Default create policy
-       * is upsert (create if not found); use dict form with create='lookup' for
-       * link-only. Prefer over deprecated top-level link_to.
-       */
-      link_to?: string | Array<string> | { [key: string]: unknown } | null;
-
-      mode?: 'none' | 'auto' | 'manual';
-
-      /**
-       * Full node constraint objects. Same rules as policy.graph.link_to after
-       * expansion; use link_to for compact DSL or this field for explicit control. Both
-       * may be set.
-       */
-      node_constraints?: Array<Shared.NodeConstraintInput> | null;
-
-      nodes?: Array<Shared.NodeSpec> | null;
-
-      relationships?: Array<Shared.RelationshipSpec> | null;
-
-      schema_id?: string | null;
-    }
-
     export interface Rerank {
       enabled?: boolean;
 
