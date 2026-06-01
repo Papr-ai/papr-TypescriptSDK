@@ -35,13 +35,6 @@ import {
   FeedbackSubmitParams,
   ParsePointer,
 } from './resources/feedback';
-import {
-  Frequencies,
-  FrequencyFieldResponse,
-  FrequencyListResponse,
-  FrequencyRetrieveResponse,
-  SchemaConfigResponse,
-} from './resources/frequencies';
 import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
 import { Login, LoginInitiateResponse } from './resources/login';
 import { Logout, LogoutPerformResponse } from './resources/logout';
@@ -129,13 +122,6 @@ import {
   GraphTransformParams,
   GraphTransformResponse,
 } from './resources/graph/graph';
-import {
-  Holographic,
-  HolographicExtractMetadataParams,
-  HolographicExtractMetadataResponse,
-  HolographicRerankParams,
-  HolographicRerankResponse,
-} from './resources/holographic/holographic';
 import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
 import {
   InstanceConfigItem,
@@ -921,8 +907,6 @@ export class Papr {
   omo: API.Omo = new API.Omo(this);
   sync: API.Sync = new API.Sync(this);
   namespace: API.Namespace = new API.Namespace(this);
-  frequencies: API.Frequencies = new API.Frequencies(this);
-  holographic: API.Holographic = new API.Holographic(this);
   organization: API.Organization = new API.Organization(this);
   ai: API.AI = new API.AI(this);
   telemetry: API.Telemetry = new API.Telemetry(this);
@@ -944,8 +928,6 @@ Papr.Messages = Messages;
 Papr.Omo = Omo;
 Papr.Sync = Sync;
 Papr.Namespace = Namespace;
-Papr.Frequencies = Frequencies;
-Papr.Holographic = Holographic;
 Papr.Organization = Organization;
 Papr.AI = AI;
 Papr.Telemetry = Telemetry;
@@ -1082,22 +1064,6 @@ export declare namespace Papr {
     type NamespaceListParams as NamespaceListParams,
     type NamespaceDeleteParams as NamespaceDeleteParams,
     type NamespaceCreateAPIKeyParams as NamespaceCreateAPIKeyParams,
-  };
-
-  export {
-    Frequencies as Frequencies,
-    type FrequencyFieldResponse as FrequencyFieldResponse,
-    type SchemaConfigResponse as SchemaConfigResponse,
-    type FrequencyRetrieveResponse as FrequencyRetrieveResponse,
-    type FrequencyListResponse as FrequencyListResponse,
-  };
-
-  export {
-    Holographic as Holographic,
-    type HolographicExtractMetadataResponse as HolographicExtractMetadataResponse,
-    type HolographicRerankResponse as HolographicRerankResponse,
-    type HolographicExtractMetadataParams as HolographicExtractMetadataParams,
-    type HolographicRerankParams as HolographicRerankParams,
   };
 
   export { Organization as Organization };

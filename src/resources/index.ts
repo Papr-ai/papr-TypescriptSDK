@@ -21,13 +21,6 @@ export {
   type FeedbackSubmitBatchParams,
 } from './feedback';
 export {
-  Frequencies,
-  type FrequencyFieldResponse,
-  type SchemaConfigResponse,
-  type FrequencyRetrieveResponse,
-  type FrequencyListResponse,
-} from './frequencies';
-export {
   Graph,
   type DocumentInput,
   type GraphDomainRoutingConfig,
@@ -37,13 +30,6 @@ export {
   type GraphTransformParams,
 } from './graph/graph';
 export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
-export {
-  Holographic,
-  type HolographicExtractMetadataResponse,
-  type HolographicRerankResponse,
-  type HolographicExtractMetadataParams,
-  type HolographicRerankParams,
-} from './holographic/holographic';
 export { Login, type LoginInitiateResponse } from './login';
 export { Logout, type LogoutPerformResponse } from './logout';
 export { Me, type MeRetrieveResponse } from './me';

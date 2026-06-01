@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.7.0 (2026-06-01)
+
+Full Changelog: [v2.6.0...v2.7.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.6.0...v2.7.0)
+
+### Features
+
+* **api:** manual updates ([fb83ba8](https://github.com/Papr-ai/papr-TypescriptSDK/commit/fb83ba8cc263d684ecf45c735347fd4faa82c6fb))
+* **api:** manual updates ([48c7b40](https://github.com/Papr-ai/papr-TypescriptSDK/commit/48c7b406eeb9496906711b2d193d4baaa4725eb2))
+
+
+### Bug Fixes
+
+* override yarn registry in dist .npmrc before npm publish ([902e67d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/902e67d1550179b1c9bc0131d37739780ad902da))
+* publish packages to registry.npmjs.org with npm publish ([ba17b6d](https://github.com/Papr-ai/papr-TypescriptSDK/commit/ba17b6da716db532d71164c943ef72d444618606))
+
 ## 2.6.0 (2026-05-31)
 
 Full Changelog: [v2.5.0...v2.6.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.5.0...v2.6.0)
