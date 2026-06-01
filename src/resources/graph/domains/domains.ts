@@ -107,55 +107,6 @@ export interface CatalogRelationshipPattern {
   members?: Array<string>;
 }
 
-/**
- * Curated summary of what's in a domain's frequency space.
- */
-export interface DomainCatalog {
-  /**
-   * Signal band name -> total doc count.
-   */
-  domain_distribution?: { [key: string]: number };
-
-  entity_clusters?: Array<CatalogEntityCluster>;
-
-  /**
-   * ISO timestamp of last LLM clustering run.
-   */
-  last_refreshed?: string | null;
-
-  /**
-   * ISO timestamp of last buffer append.
-   */
-  last_updated?: string | null;
-
-  relationship_patterns?: Array<CatalogRelationshipPattern>;
-
-  /**
-   * Per-band raw value counts, e.g. {'domain': {'Health': 500, 'Tech': 200}}.
-   */
-  signal_value_counts?: { [key: string]: { [key: string]: number } };
-
-  /**
-   * Total transforms processed.
-   */
-  total_documents?: number;
-}
-
-/**
- * Catalog settings on a domain.
- */
-export interface DomainCatalogConfig {
-  /**
-   * Whether to auto-accumulate signals on transform.
-   */
-  enabled?: boolean;
-
-  /**
-   * Run LLM clustering after this many buffered entries.
-   */
-  refresh_every_n?: number;
-}
-
 export interface SignalField {
   /**
    * Human prompt used by extractor.
@@ -208,9 +159,9 @@ export interface DomainCreateResponse {
   builtin?: boolean;
 
   /**
-   * Curated summary of what's in a domain's frequency space.
+   * Curated catalog of signal values in this domain's frequency space.
    */
-  catalog?: DomainCatalog | null;
+  catalog?: unknown;
 
   /**
    * Buffered raw signals awaiting LLM clustering (internal).
@@ -218,9 +169,9 @@ export interface DomainCreateResponse {
   catalog_buffer?: Array<CatalogBufferEntry>;
 
   /**
-   * Catalog settings on a domain.
+   * Catalog settings (see DomainCatalogConfig).
    */
-  catalog_config?: DomainCatalogConfig | null;
+  catalog_config?: unknown;
 
   created_at?: string | null;
 
@@ -267,9 +218,9 @@ export interface DomainRetrieveResponse {
   builtin?: boolean;
 
   /**
-   * Curated summary of what's in a domain's frequency space.
+   * Curated catalog of signal values in this domain's frequency space.
    */
-  catalog?: DomainCatalog | null;
+  catalog?: unknown;
 
   /**
    * Buffered raw signals awaiting LLM clustering (internal).
@@ -277,9 +228,9 @@ export interface DomainRetrieveResponse {
   catalog_buffer?: Array<CatalogBufferEntry>;
 
   /**
-   * Catalog settings on a domain.
+   * Catalog settings (see DomainCatalogConfig).
    */
-  catalog_config?: DomainCatalogConfig | null;
+  catalog_config?: unknown;
 
   created_at?: string | null;
 
@@ -326,9 +277,9 @@ export interface DomainUpdateResponse {
   builtin?: boolean;
 
   /**
-   * Curated summary of what's in a domain's frequency space.
+   * Curated catalog of signal values in this domain's frequency space.
    */
-  catalog?: DomainCatalog | null;
+  catalog?: unknown;
 
   /**
    * Buffered raw signals awaiting LLM clustering (internal).
@@ -336,9 +287,9 @@ export interface DomainUpdateResponse {
   catalog_buffer?: Array<CatalogBufferEntry>;
 
   /**
-   * Catalog settings on a domain.
+   * Catalog settings (see DomainCatalogConfig).
    */
-  catalog_config?: DomainCatalogConfig | null;
+  catalog_config?: unknown;
 
   created_at?: string | null;
 
@@ -390,9 +341,9 @@ export namespace DomainListResponse {
     builtin?: boolean;
 
     /**
-     * Curated summary of what's in a domain's frequency space.
+     * Curated catalog of signal values in this domain's frequency space.
      */
-    catalog?: DomainsAPI.DomainCatalog | null;
+    catalog?: unknown;
 
     /**
      * Buffered raw signals awaiting LLM clustering (internal).
@@ -400,9 +351,9 @@ export namespace DomainListResponse {
     catalog_buffer?: Array<DomainsAPI.CatalogBufferEntry>;
 
     /**
-     * Catalog settings on a domain.
+     * Catalog settings (see DomainCatalogConfig).
      */
-    catalog_config?: DomainsAPI.DomainCatalogConfig | null;
+    catalog_config?: unknown;
 
     created_at?: string | null;
 
@@ -463,9 +414,11 @@ export interface DomainCreateParams {
   signals: Array<SignalField>;
 
   /**
-   * Catalog settings on a domain.
+   * Catalog settings. When enabled (default), raw signal values are auto-accumulated
+   * on every transform call and periodically clustered by an LLM for introspection.
+   * Pass {enabled: false} to disable.
    */
-  catalog_config?: DomainCatalogConfig | null;
+  catalog_config?: unknown;
 
   /**
    * Domain-scoped CAESAR-VIII routing overrides (stored on graph_domains).
@@ -484,9 +437,10 @@ export interface DomainCreateParams {
 
 export interface DomainUpdateParams {
   /**
-   * Catalog settings on a domain.
+   * Update catalog settings. Pass {enabled: false} to disable signal accumulation.
+   * Omit to leave unchanged.
    */
-  catalog_config?: DomainCatalogConfig | null;
+  catalog_config?: unknown;
 
   /**
    * Updated description.
@@ -517,8 +471,6 @@ export declare namespace Domains {
     type CatalogBufferEntry as CatalogBufferEntry,
     type CatalogEntityCluster as CatalogEntityCluster,
     type CatalogRelationshipPattern as CatalogRelationshipPattern,
-    type DomainCatalog as DomainCatalog,
-    type DomainCatalogConfig as DomainCatalogConfig,
     type SignalField as SignalField,
     type DomainCreateResponse as DomainCreateResponse,
     type DomainRetrieveResponse as DomainRetrieveResponse,

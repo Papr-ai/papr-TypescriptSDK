@@ -1,29 +1,8 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 import { APIResource } from '../core/resource';
-import * as FrequenciesAPI from './frequencies';
-import { APIPromise } from '../core/api-promise';
-import { RequestOptions } from '../internal/request-options';
-import { path } from '../internal/utils/path';
 
-export class Frequencies extends APIResource {
-  /**
-   * Retrieve a specific frequency schema by its full ID (e.g.
-   * 'code_search:cosqa:2.0.0') or shorthand alias (e.g. 'cosqa').
-   */
-  retrieve(frequencySchemaID: string, options?: RequestOptions): APIPromise<FrequencyRetrieveResponse> {
-    return this._client.get(path`/v1/frequencies/${frequencySchemaID}`, options);
-  }
-
-  /**
-   * Returns all built-in frequency schemas with their field definitions and
-   * operational configuration. Use the schema_id or a shorthand alias when adding or
-   * searching memories with holographic embedding enabled.
-   */
-  list(options?: RequestOptions): APIPromise<FrequencyListResponse> {
-    return this._client.get('/v1/frequencies', options);
-  }
-}
+export class Frequencies extends APIResource {}
 
 /**
  * Single frequency band definition.
@@ -120,119 +99,9 @@ export interface SchemaConfigResponse {
   weight_mode?: string;
 }
 
-/**
- * Full frequency schema with fields and config.
- */
-export interface FrequencyRetrieveResponse {
-  /**
-   * Operational configuration
-   */
-  config: SchemaConfigResponse;
-
-  /**
-   * Domain (e.g. code_search, biomedical)
-   */
-  domain: string;
-
-  /**
-   * Frequency band definitions
-   */
-  frequencies: Array<FrequencyFieldResponse>;
-
-  /**
-   * Schema name
-   */
-  name: string;
-
-  /**
-   * Number of frequency bands
-   */
-  num_frequencies: number;
-
-  /**
-   * Unique schema ID (domain:name:version)
-   */
-  schema_id: string;
-
-  /**
-   * Schema version
-   */
-  version: string;
-
-  /**
-   * Human-readable description
-   */
-  description?: string;
-}
-
-/**
- * Response for listing all frequency schemas.
- */
-export interface FrequencyListResponse {
-  schemas: Array<FrequencyListResponse.Schema>;
-
-  total: number;
-
-  /**
-   * Shorthand aliases (e.g. 'cosqa' -> 'code_search:cosqa:2.0.0')
-   */
-  shortcuts?: { [key: string]: string };
-
-  success?: boolean;
-}
-
-export namespace FrequencyListResponse {
-  /**
-   * Full frequency schema with fields and config.
-   */
-  export interface Schema {
-    /**
-     * Operational configuration
-     */
-    config: FrequenciesAPI.SchemaConfigResponse;
-
-    /**
-     * Domain (e.g. code_search, biomedical)
-     */
-    domain: string;
-
-    /**
-     * Frequency band definitions
-     */
-    frequencies: Array<FrequenciesAPI.FrequencyFieldResponse>;
-
-    /**
-     * Schema name
-     */
-    name: string;
-
-    /**
-     * Number of frequency bands
-     */
-    num_frequencies: number;
-
-    /**
-     * Unique schema ID (domain:name:version)
-     */
-    schema_id: string;
-
-    /**
-     * Schema version
-     */
-    version: string;
-
-    /**
-     * Human-readable description
-     */
-    description?: string;
-  }
-}
-
 export declare namespace Frequencies {
   export {
     type FrequencyFieldResponse as FrequencyFieldResponse,
     type SchemaConfigResponse as SchemaConfigResponse,
-    type FrequencyRetrieveResponse as FrequencyRetrieveResponse,
-    type FrequencyListResponse as FrequencyListResponse,
   };
 }

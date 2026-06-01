@@ -299,54 +299,6 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/namespace/{namespace_id}/instance',
   },
   {
-    clientCallName: 'client.frequencies.retrieve',
-    fullyQualifiedName: 'frequencies.retrieve',
-    httpMethod: 'get',
-    httpPath: '/v1/frequencies/{frequency_schema_id}',
-  },
-  {
-    clientCallName: 'client.frequencies.list',
-    fullyQualifiedName: 'frequencies.list',
-    httpMethod: 'get',
-    httpPath: '/v1/frequencies',
-  },
-  {
-    clientCallName: 'client.holographic.extractMetadata',
-    fullyQualifiedName: 'holographic.extractMetadata',
-    httpMethod: 'post',
-    httpPath: '/v1/holographic/metadata',
-  },
-  {
-    clientCallName: 'client.holographic.rerank',
-    fullyQualifiedName: 'holographic.rerank',
-    httpMethod: 'post',
-    httpPath: '/v1/holographic/rerank',
-  },
-  {
-    clientCallName: 'client.holographic.transform.create',
-    fullyQualifiedName: 'holographic.transform.create',
-    httpMethod: 'post',
-    httpPath: '/v1/holographic/transform',
-  },
-  {
-    clientCallName: 'client.holographic.transform.createBatch',
-    fullyQualifiedName: 'holographic.transform.createBatch',
-    httpMethod: 'post',
-    httpPath: '/v1/holographic/transform/batch',
-  },
-  {
-    clientCallName: 'client.holographic.domains.create',
-    fullyQualifiedName: 'holographic.domains.create',
-    httpMethod: 'post',
-    httpPath: '/v1/holographic/domains',
-  },
-  {
-    clientCallName: 'client.holographic.domains.list',
-    fullyQualifiedName: 'holographic.domains.list',
-    httpMethod: 'get',
-    httpPath: '/v1/holographic/domains',
-  },
-  {
     clientCallName: 'client.organization.instance.retrieve',
     fullyQualifiedName: 'organization.instance.retrieve',
     httpMethod: 'get',
@@ -477,18 +429,6 @@ export const sdkMethods: SdkMethod[] = [
     fullyQualifiedName: 'graph.domains.delete',
     httpMethod: 'delete',
     httpPath: '/v1/graph/domains/{domain_id}',
-  },
-  {
-    clientCallName: 'client.graph.domains.catalog.retrieve',
-    fullyQualifiedName: 'graph.domains.catalog.retrieve',
-    httpMethod: 'get',
-    httpPath: '/v1/graph/domains/{domain_id}/catalog',
-  },
-  {
-    clientCallName: 'client.graph.domains.catalog.refresh',
-    fullyQualifiedName: 'graph.domains.catalog.refresh',
-    httpMethod: 'post',
-    httpPath: '/v1/graph/domains/{domain_id}/catalog/refresh',
   },
 ];
 

@@ -102,24 +102,9 @@ export class Memory extends APIResource {
    * ```
    */
   add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
-    const {
-      enable_holographic,
-      format,
-      frequency_schema_id,
-      skip_background_processing,
-      webhook_secret,
-      webhook_url,
-      ...body
-    } = params;
+    const { format, skip_background_processing, webhook_secret, webhook_url, ...body } = params;
     return this._client.post('/v1/memory', {
-      query: {
-        enable_holographic,
-        format,
-        frequency_schema_id,
-        skip_background_processing,
-        webhook_secret,
-        webhook_url,
-      },
+      query: { format, skip_background_processing, webhook_secret, webhook_url },
       body,
       ...options,
     });
@@ -157,12 +142,8 @@ export class Memory extends APIResource {
    * ```
    */
   addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<BatchMemoryResponse> {
-    const { enable_holographic, frequency_schema_id, skip_background_processing, ...body } = params;
-    return this._client.post('/v1/memory/batch', {
-      query: { enable_holographic, frequency_schema_id, skip_background_processing },
-      body,
-      ...options,
-    });
+    const { skip_background_processing, ...body } = params;
+    return this._client.post('/v1/memory/batch', { query: { skip_background_processing }, body, ...options });
   }
 
   /**
@@ -378,48 +359,17 @@ export interface AddMemory {
   external_user_id?: string | null;
 
   /**
-   * @deprecated Graph generation configuration
+   * @deprecated Use policy.graph instead.
    */
   graph_generation?: GraphGeneration | null;
 
   /**
-   * @deprecated DEPRECATED: Use policy.graph.link_to instead. Shorthand DSL for
-   * node/edge constraints (same as node_constraints, compact syntax). Expands and
-   * merges into memory_policy.node_constraints and edge_constraints at resolve time.
-   * Default create is upsert; use dict form with create='lookup' (or legacy 'never')
-   * for link-only. Formats: - String: 'Task:title' (semantic match on Task.title,
-   * upsert by default) - List: ['Task:title', 'Person:email'] (multiple
-   * constraints) - Dict: {'Task:title': {'set': {...}, 'create': 'lookup'}} (full
-   * options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example lookup-only: {'SecurityPolicy:name':
-   * {'create': 'lookup'}}
+   * @deprecated Use policy.graph.link_to instead.
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
   /**
-   * @deprecated Unified memory processing policy.
-   *
-   * This is the SINGLE source of truth for how a memory should be processed,
-   * combining graph generation control AND OMO (Open Memory Object) safety
-   * standards.
-   *
-   * **Graph Generation Modes:**
-   *
-   * - auto: LLM extracts entities freely (default)
-   * - manual: Developer provides exact nodes (no LLM extraction)
-   *
-   * **OMO Safety Standards:**
-   *
-   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
-   * - risk: Safety assessment (none, sensitive, flagged)
-   * - acl: Access control list for read/write permissions
-   *
-   * **Schema Integration:**
-   *
-   * - schema_id: Reference a schema that may have its own default memory_policy
-   * - Schema-level policies are merged with request-level (request takes precedence)
+   * @deprecated Use /policy instead.
    */
   memory_policy?: Shared.MemoryPolicy | null;
 
@@ -436,8 +386,7 @@ export interface AddMemory {
 
   /**
    * @deprecated DEPRECATED - Internal only. Auto-populated from API key scope. Do
-   * not set manually. The organization is resolved automatically from the API key's
-   * associated organization.
+   * not set manually.
    */
   organization_id?: string | null;
 
@@ -447,10 +396,7 @@ export interface AddMemory {
   policy?: Shared.MemoryAddPolicy | null;
 
   /**
-   * @deprecated DEPRECATED: Use 'memory_policy' instead. Migration options: 1.
-   * Specific memory: relationships=[{source: '$this', target: 'mem_123', type:
-   * 'FOLLOWS'}] 2. Previous memory: link_to_previous_memory=True 3. Related
-   * memories: link_to_related_memories=3
+   * @deprecated Use 'policy' instead.
    */
   relationships_json?: Array<RelationshipItem> | null;
 
@@ -460,8 +406,7 @@ export interface AddMemory {
   type?: MemoryType;
 
   /**
-   * @deprecated DEPRECATED: Use 'external_user_id' instead. Internal Papr Parse user
-   * ID. Most developers should not use this field directly.
+   * @deprecated Use 'external_user_id' instead. Internal Papr Parse user ID.
    */
   user_id?: string | null;
 }
@@ -892,8 +837,8 @@ export interface MemoryMetadata {
   useCaseClassificationScores?: Array<number> | null;
 
   /**
-   * @deprecated Use 'external_user_id' at request level instead. This field will be
-   * removed in v2.
+   * @deprecated DEPRECATED: Use 'external_user_id' at request level instead. This
+   * field will be removed in v2.
    */
   user_id?: string | null;
 
@@ -1257,23 +1202,10 @@ export interface MemoryAddParams {
   content: string;
 
   /**
-   * Query param: If True, applies holographic neural transforms and stores in
-   * holographic collection
-   */
-  enable_holographic?: boolean;
-
-  /**
    * Query param: Response format. Use 'omo' for Open Memory Object standard format
    * (portable across platforms).
    */
   format?: string | null;
-
-  /**
-   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
-   * 'scifact'). Required when enable_holographic=True. Call GET /v1/frequencies to
-   * see available schemas.
-   */
-  frequency_schema_id?: string | null;
 
   /**
    * Query param: If True, skips adding background tasks for processing
@@ -1312,18 +1244,7 @@ export interface MemoryAddParams {
   graph_generation?: GraphGeneration | null;
 
   /**
-   * @deprecated Body param: DEPRECATED: Use policy.graph.link_to instead. Shorthand
-   * DSL for node/edge constraints (same as node_constraints, compact syntax).
-   * Expands and merges into memory_policy.node_constraints and edge_constraints at
-   * resolve time. Default create is upsert; use dict form with create='lookup' (or
-   * legacy 'never') for link-only. Formats: - String: 'Task:title' (semantic match
-   * on Task.title, upsert by default) - List: ['Task:title', 'Person:email']
-   * (multiple constraints) - Dict: {'Task:title': {'set': {...}, 'create':
-   * 'lookup'}} (full options) Syntax: - Node: 'Type:property', 'Type:prop=value'
-   * (exact), 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property'
-   * (arrow syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) -
-   * Special: '$this', '$previous', '$context:N' Example lookup-only:
-   * {'SecurityPolicy:name': {'create': 'lookup'}}
+   * @deprecated Use policy.graph.link_to instead.
    */
   link_to?: string | Array<string> | { [key: string]: unknown } | null;
 
@@ -1364,9 +1285,8 @@ export interface MemoryAddParams {
   namespace_id?: string | null;
 
   /**
-   * @deprecated Body param: DEPRECATED - Internal only. Auto-populated from API key
-   * scope. Do not set manually. The organization is resolved automatically from the
-   * API key's associated organization.
+   * @deprecated DEPRECATED - Internal only. Auto-populated from API key scope. Do
+   * not set manually.
    */
   organization_id?: string | null;
 
@@ -1376,10 +1296,7 @@ export interface MemoryAddParams {
   policy?: Shared.MemoryAddPolicy | null;
 
   /**
-   * @deprecated Body param: DEPRECATED: Use 'memory_policy' instead. Migration
-   * options: 1. Specific memory: relationships=[{source: '$this', target: 'mem_123',
-   * type: 'FOLLOWS'}] 2. Previous memory: link_to_previous_memory=True 3. Related
-   * memories: link_to_related_memories=3
+   * @deprecated Use 'policy' instead.
    */
   relationships_json?: Array<RelationshipItem> | null;
 
@@ -1389,8 +1306,7 @@ export interface MemoryAddParams {
   type?: MemoryType;
 
   /**
-   * @deprecated Body param: DEPRECATED: Use 'external_user_id' instead. Internal
-   * Papr Parse user ID. Most developers should not use this field directly.
+   * @deprecated Use 'external_user_id' instead. Internal Papr Parse user ID.
    */
   user_id?: string | null;
 }
@@ -1400,19 +1316,6 @@ export interface MemoryAddBatchParams {
    * Body param: List of memory items to add in batch
    */
   memories: Array<AddMemory>;
-
-  /**
-   * Query param: If True, applies holographic neural transforms and stores in
-   * holographic collection
-   */
-  enable_holographic?: boolean;
-
-  /**
-   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
-   * 'scifact'). Required when enable_holographic=True. Call GET /v1/frequencies to
-   * see available schemas.
-   */
-  frequency_schema_id?: string | null;
 
   /**
    * Query param: If True, skips adding background tasks for processing
@@ -1648,7 +1551,10 @@ export interface MemorySearchParams {
   organization_id?: string | null;
 
   /**
-   * Body param: Policy for POST /v1/memory/search.
+   * @deprecated Body param: Policy for POST /v1/memory/search.
+   *
+   * External Cohere/OpenAI rerank and search-time ACL use top-level fields on
+   * SearchRequest (`reranking_config`, `search_acl`) until wired here.
    */
   policy?: MemorySearchParams.Policy | null;
 
@@ -1664,7 +1570,8 @@ export interface MemorySearchParams {
   rank_results?: boolean;
 
   /**
-   * Body param: Configuration for reranking memory search results
+   * Body param: Ranking provider for search results (cosine candidates → ranked
+   * list).
    */
   reranking_config?: MemorySearchParams.RerankingConfig | null;
 
@@ -1844,45 +1751,12 @@ export namespace MemorySearchParams {
   }
 
   /**
-   * Policy for POST /v1/memory/search.
+   * @deprecated Policy for POST /v1/memory/search.
+   *
+   * External Cohere/OpenAI rerank and search-time ACL use top-level fields on
+   * SearchRequest (`reranking_config`, `search_acl`) until wired here.
    */
   export interface Policy {
-    /**
-     * Simplified Access Control List configuration.
-     *
-     * Aligned with Open Memory Object (OMO) standard. See:
-     * https://github.com/anthropics/open-memory-object
-     *
-     * **Supported Entity Prefixes:**
-     *
-     * | Prefix           | Description           | Validation                           |
-     * | ---------------- | --------------------- | ------------------------------------ |
-     * | `user:`          | Internal Papr user ID | Validated against Parse users        |
-     * | `external_user:` | Your app's user ID    | Not validated (your responsibility)  |
-     * | `organization:`  | Organization ID       | Validated against your organizations |
-     * | `namespace:`     | Namespace ID          | Validated against your namespaces    |
-     * | `workspace:`     | Workspace ID          | Validated against your workspaces    |
-     * | `role:`          | Parse role ID         | Validated against your roles         |
-     *
-     * **Examples:**
-     *
-     * ```python
-     * acl = ACLConfig(
-     *     read=["external_user:alice_123", "organization:org_acme"],
-     *     write=["external_user:alice_123"]
-     * )
-     * ```
-     *
-     * **Validation Rules:**
-     *
-     * - Internal entities (user, organization, namespace, workspace, role) are
-     *   validated
-     * - External entities (external_user) are NOT validated - your app is responsible
-     * - Invalid internal entities will return an error
-     * - Unprefixed values default to `external_user:` for backwards compatibility
-     */
-    acl?: Shared.ACLConfig | null;
-
     /**
      * How the data owner allowed this memory to be stored/used.
      *
@@ -1891,8 +1765,6 @@ export namespace MemorySearchParams {
     consent?: 'explicit' | 'implicit' | 'terms' | 'none';
 
     graph?: Shared.GraphPolicyBlock | null;
-
-    rerank?: Policy.Rerank | null;
 
     /**
      * Post-ingest safety assessment of memory content.
@@ -1905,14 +1777,6 @@ export namespace MemorySearchParams {
   }
 
   export namespace Policy {
-    export interface Rerank {
-      enabled?: boolean;
-
-      model?: string | null;
-
-      provider?: string | null;
-    }
-
     export interface Vector {
       domain_id?: string | null;
 
@@ -1935,26 +1799,41 @@ export namespace MemorySearchParams {
   }
 
   /**
-   * Configuration for reranking memory search results
+   * Ranking provider for search results (cosine candidates → ranked list).
    */
   export interface RerankingConfig {
     /**
-     * Whether to enable reranking of search results
+     * Signal domain for papr_enhanced / papr_max (default general).
+     */
+    domain_id?: string | null;
+
+    /**
+     * When false, results stay in cosine order (same as provider=none).
      */
     reranking_enabled?: boolean;
 
     /**
-     * Model to use for reranking. OpenAI (LLM): 'gpt-5-nano' (fast reasoning,
-     * default), 'gpt-5-mini' (better quality reasoning). Cohere (cross-encoder):
-     * 'rerank-v3.5' (latest), 'rerank-english-v3.0', 'rerank-multilingual-v3.0'
+     * Model for cohere/openai providers. Cohere: rerank-v3.5. OpenAI: gpt-5-nano,
+     * gpt-5-mini.
      */
     reranking_model?: string;
 
     /**
-     * Reranking provider: 'openai' (better quality, slower) or 'cohere' (faster,
-     * optimized for reranking)
+     * Ranking provider: none (cosine), cohere, openai, papr_enhanced (graph rerank),
+     * papr_max (graph rerank + CE + EGR).
      */
-    reranking_provider?: 'openai' | 'cohere';
+    reranking_provider?: 'none' | 'cohere' | 'openai' | 'papr_enhanced' | 'papr_max';
+
+    return_debug?: boolean;
+
+    return_signal_scores?: boolean;
+
+    signal_multipliers?: { [key: string]: number | string } | null;
+
+    /**
+     * Min per-band scores for papr providers.
+     */
+    signal_thresholds?: { [key: string]: number } | null;
   }
 
   /**

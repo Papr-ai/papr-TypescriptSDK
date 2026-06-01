@@ -5,8 +5,6 @@ export {
   type CatalogBufferEntry,
   type CatalogEntityCluster,
   type CatalogRelationshipPattern,
-  type DomainCatalog,
-  type DomainCatalogConfig,
   type SignalField,
   type DomainCreateResponse,
   type DomainRetrieveResponse,

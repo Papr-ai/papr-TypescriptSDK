@@ -7,8 +7,6 @@ import {
   CatalogBufferEntry,
   CatalogEntityCluster,
   CatalogRelationshipPattern,
-  DomainCatalog,
-  DomainCatalogConfig,
   DomainCreateParams,
   DomainCreateResponse,
   DomainDeleteResponse,
@@ -342,8 +340,8 @@ export interface GraphRerankParams {
   domain_id?: string | null;
 
   /**
-   * Public: enhanced or max (CE reranker). Accepts deprecated 'fast'/'enhanced'
-   * aliases.
+   * Public: enhanced (CAESAR-8) or max (CE+entailment). Accepts deprecated
+   * 'fast'/'enhanced' aliases.
    */
   method?: 'fast' | 'enhanced';
 
@@ -503,8 +501,6 @@ export declare namespace Graph {
     type CatalogBufferEntry as CatalogBufferEntry,
     type CatalogEntityCluster as CatalogEntityCluster,
     type CatalogRelationshipPattern as CatalogRelationshipPattern,
-    type DomainCatalog as DomainCatalog,
-    type DomainCatalogConfig as DomainCatalogConfig,
     type SignalField as SignalField,
     type DomainCreateResponse as DomainCreateResponse,
     type DomainRetrieveResponse as DomainRetrieveResponse,
