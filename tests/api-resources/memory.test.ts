@@ -58,9 +58,7 @@ describe('resource memory', () => {
   test.skip('add: required and optional params', async () => {
     const response = await client.memory.add({
       content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
-      enable_holographic: true,
       format: 'format',
-      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
       webhook_secret: 'webhook_secret',
       webhook_url: 'webhook_url',
@@ -71,7 +69,7 @@ describe('resource memory', () => {
           role: 'assistant',
         },
       ],
-      external_user_id: 'external_user_id',
+      external_user_id: 'user_alice_123',
       graph_generation: {
         auto: {
           property_overrides: [
@@ -235,13 +233,13 @@ describe('resource memory', () => {
         category: 'preference',
         consent: 'consent',
         conversationId: 'conv-123',
-        createdAt: '2024-10-04T10:00:00Z',
-        customMetadata: { foo: 'string' },
+        createdAt: 'createdAt',
+        customMetadata: { project_id: 'q4-roadmap', meeting_type: 'planning' },
         'emoji tags': ['string'],
         'emotion tags': ['string'],
-        external_user_id: 'external_user_123',
-        external_user_read_access: ['external_user_123', 'external_user_789'],
-        external_user_write_access: ['external_user_123'],
+        external_user_id: 'external_user_id',
+        external_user_read_access: ['string'],
+        external_user_write_access: ['string'],
         goalClassificationScores: [0],
         hierarchical_structures: 'Business/Meetings/Project Planning',
         location: 'Conference Room A',
@@ -264,7 +262,7 @@ describe('resource memory', () => {
         sourceType: 'sourceType',
         sourceUrl: 'https://calendar.example.com/meeting/123',
         stepClassificationScores: [0],
-        topics: ['product', 'planning'],
+        topics: ['product', 'planning', 'meetings'],
         upload_id: 'upload_id',
         useCaseClassificationScores: [0],
         user_id: 'user_id',
@@ -278,11 +276,8 @@ describe('resource memory', () => {
       namespace_id: 'namespace_id',
       organization_id: 'organization_id',
       policy: {
-        acl: {
-          read: ['external_user:alice_123', 'organization:org_acme'],
-          write: ['external_user:alice_123'],
-        },
-        consent: 'explicit',
+        acl: { read: ['external_user:user_alice_123'], write: ['external_user:user_alice_123'] },
+        consent: 'implicit',
         graph: {
           edge_constraints: [
             {
@@ -334,8 +329,8 @@ describe('resource memory', () => {
               when: { foo: 'bar' },
             },
           ],
-          link_to: 'string',
-          mode: 'none',
+          link_to: ['Person:name~John Smith', 'Company:name~Acme Corp', 'Meeting:title~Q4 project timeline'],
+          mode: 'auto',
           node_constraints: [
             {
               create: 'upsert',
@@ -406,8 +401,8 @@ describe('resource memory', () => {
         },
         risk: 'none',
         transform_embedding: {
-          domain_id: 'domain_id',
-          mode: 'none',
+          domain_id: 'general',
+          mode: 'auto',
           signals: { foo: 'string' },
         },
       },
@@ -455,7 +450,7 @@ describe('resource memory', () => {
               role: 'assistant',
             },
           ],
-          external_user_id: 'external_user_id',
+          external_user_id: 'user_alice_123',
           graph_generation: {
             auto: {
               property_overrides: [
@@ -662,11 +657,8 @@ describe('resource memory', () => {
           namespace_id: 'namespace_id',
           organization_id: 'organization_id',
           policy: {
-            acl: {
-              read: ['external_user:alice_123', 'organization:org_acme'],
-              write: ['external_user:alice_123'],
-            },
-            consent: 'explicit',
+            acl: { read: ['external_user:user_alice_123'], write: ['external_user:user_alice_123'] },
+            consent: 'implicit',
             graph: {
               edge_constraints: [
                 {
@@ -718,8 +710,12 @@ describe('resource memory', () => {
                   when: { foo: 'bar' },
                 },
               ],
-              link_to: 'string',
-              mode: 'none',
+              link_to: [
+                'Person:name~John Smith',
+                'Company:name~Acme Corp',
+                'Meeting:title~Q4 project timeline',
+              ],
+              mode: 'auto',
               node_constraints: [
                 {
                   create: 'upsert',
@@ -790,8 +786,8 @@ describe('resource memory', () => {
             },
             risk: 'none',
             transform_embedding: {
-              domain_id: 'domain_id',
-              mode: 'none',
+              domain_id: 'general',
+              mode: 'auto',
               signals: { foo: 'string' },
             },
           },
@@ -816,7 +812,7 @@ describe('resource memory', () => {
               role: 'assistant',
             },
           ],
-          external_user_id: 'external_user_id',
+          external_user_id: 'user_alice_123',
           graph_generation: {
             auto: {
               property_overrides: [
@@ -1023,11 +1019,8 @@ describe('resource memory', () => {
           namespace_id: 'namespace_id',
           organization_id: 'organization_id',
           policy: {
-            acl: {
-              read: ['external_user:alice_123', 'organization:org_acme'],
-              write: ['external_user:alice_123'],
-            },
-            consent: 'explicit',
+            acl: { read: ['external_user:user_alice_123'], write: ['external_user:user_alice_123'] },
+            consent: 'implicit',
             graph: {
               edge_constraints: [
                 {
@@ -1079,8 +1072,12 @@ describe('resource memory', () => {
                   when: { foo: 'bar' },
                 },
               ],
-              link_to: 'string',
-              mode: 'none',
+              link_to: [
+                'Person:name~John Smith',
+                'Company:name~Acme Corp',
+                'Meeting:title~Q4 project timeline',
+              ],
+              mode: 'auto',
               node_constraints: [
                 {
                   create: 'upsert',
@@ -1151,8 +1148,8 @@ describe('resource memory', () => {
             },
             risk: 'none',
             transform_embedding: {
-              domain_id: 'domain_id',
-              mode: 'none',
+              domain_id: 'general',
+              mode: 'auto',
               signals: { foo: 'string' },
             },
           },
@@ -1169,8 +1166,6 @@ describe('resource memory', () => {
           user_id: 'user_id',
         },
       ],
-      enable_holographic: true,
-      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
       batch_size: 10,
       external_user_id: 'external_user_abcde',
@@ -1646,10 +1641,6 @@ describe('resource memory', () => {
       },
       organization_id: 'organization_id',
       policy: {
-        acl: {
-          read: ['external_user:alice_123', 'organization:org_acme'],
-          write: ['external_user:alice_123'],
-        },
         consent: 'explicit',
         graph: {
           edge_constraints: [
@@ -1772,11 +1763,6 @@ describe('resource memory', () => {
           ],
           schema_id: 'schema_id',
         },
-        rerank: {
-          enabled: true,
-          model: 'model',
-          provider: 'provider',
-        },
         risk: 'none',
         vector: {
           domain_id: 'domain_id',
@@ -1789,9 +1775,14 @@ describe('resource memory', () => {
       },
       rank_results: true,
       reranking_config: {
+        domain_id: 'general',
         reranking_enabled: true,
-        reranking_model: 'gpt-5-nano',
-        reranking_provider: 'openai',
+        reranking_model: 'rerank-v3.5',
+        reranking_provider: 'cohere',
+        return_debug: true,
+        return_signal_scores: true,
+        signal_multipliers: { foo: 0 },
+        signal_thresholds: { foo: 0 },
       },
       schema_id: 'schema_id',
       search_acl: {

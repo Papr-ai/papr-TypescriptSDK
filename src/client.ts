@@ -35,13 +35,7 @@ import {
   FeedbackSubmitParams,
   ParsePointer,
 } from './resources/feedback';
-import {
-  Frequencies,
-  FrequencyFieldResponse,
-  FrequencyListResponse,
-  FrequencyRetrieveResponse,
-  SchemaConfigResponse,
-} from './resources/frequencies';
+import { Frequencies, FrequencyFieldResponse, SchemaConfigResponse } from './resources/frequencies';
 import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
 import { Login, LoginInitiateResponse } from './resources/login';
 import { Logout, LogoutPerformResponse } from './resources/logout';
@@ -129,13 +123,7 @@ import {
   GraphTransformParams,
   GraphTransformResponse,
 } from './resources/graph/graph';
-import {
-  Holographic,
-  HolographicExtractMetadataParams,
-  HolographicExtractMetadataResponse,
-  HolographicRerankParams,
-  HolographicRerankResponse,
-} from './resources/holographic/holographic';
+import { Holographic } from './resources/holographic/holographic';
 import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
 import {
   InstanceConfigItem,
@@ -1088,17 +1076,9 @@ export declare namespace Papr {
     Frequencies as Frequencies,
     type FrequencyFieldResponse as FrequencyFieldResponse,
     type SchemaConfigResponse as SchemaConfigResponse,
-    type FrequencyRetrieveResponse as FrequencyRetrieveResponse,
-    type FrequencyListResponse as FrequencyListResponse,
   };
 
-  export {
-    Holographic as Holographic,
-    type HolographicExtractMetadataResponse as HolographicExtractMetadataResponse,
-    type HolographicRerankResponse as HolographicRerankResponse,
-    type HolographicExtractMetadataParams as HolographicExtractMetadataParams,
-    type HolographicRerankParams as HolographicRerankParams,
-  };
+  export { Holographic as Holographic };
 
   export { Organization as Organization };
 

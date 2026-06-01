@@ -231,50 +231,16 @@ Types:
 
 - <code><a href="./src/resources/frequencies.ts">FrequencyFieldResponse</a></code>
 - <code><a href="./src/resources/frequencies.ts">SchemaConfigResponse</a></code>
-- <code><a href="./src/resources/frequencies.ts">FrequencyRetrieveResponse</a></code>
-- <code><a href="./src/resources/frequencies.ts">FrequencyListResponse</a></code>
-
-Methods:
-
-- <code title="get /v1/frequencies/{frequency_schema_id}">client.frequencies.<a href="./src/resources/frequencies.ts">retrieve</a>(frequencySchemaID) -> FrequencyRetrieveResponse</code>
-- <code title="get /v1/frequencies">client.frequencies.<a href="./src/resources/frequencies.ts">list</a>() -> FrequencyListResponse</code>
 
 # Holographic
-
-Types:
-
-- <code><a href="./src/resources/holographic/holographic.ts">HolographicExtractMetadataResponse</a></code>
-- <code><a href="./src/resources/holographic/holographic.ts">HolographicRerankResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/holographic/metadata">client.holographic.<a href="./src/resources/holographic/holographic.ts">extractMetadata</a>({ ...params }) -> HolographicExtractMetadataResponse</code>
-- <code title="post /v1/holographic/rerank">client.holographic.<a href="./src/resources/holographic/holographic.ts">rerank</a>({ ...params }) -> HolographicRerankResponse</code>
 
 ## Transform
 
 Types:
 
 - <code><a href="./src/resources/holographic/transform.ts">TransformData</a></code>
-- <code><a href="./src/resources/holographic/transform.ts">TransformCreateResponse</a></code>
-- <code><a href="./src/resources/holographic/transform.ts">TransformCreateBatchResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/holographic/transform">client.holographic.transform.<a href="./src/resources/holographic/transform.ts">create</a>({ ...params }) -> TransformCreateResponse</code>
-- <code title="post /v1/holographic/transform/batch">client.holographic.transform.<a href="./src/resources/holographic/transform.ts">createBatch</a>({ ...params }) -> TransformCreateBatchResponse</code>
 
 ## Domains
-
-Types:
-
-- <code><a href="./src/resources/holographic/domains.ts">DomainCreateResponse</a></code>
-- <code><a href="./src/resources/holographic/domains.ts">DomainListResponse</a></code>
-
-Methods:
-
-- <code title="post /v1/holographic/domains">client.holographic.domains.<a href="./src/resources/holographic/domains.ts">create</a>({ ...params }) -> DomainCreateResponse</code>
-- <code title="get /v1/holographic/domains">client.holographic.domains.<a href="./src/resources/holographic/domains.ts">list</a>() -> DomainListResponse</code>
 
 # Organization
 
@@ -427,8 +393,6 @@ Types:
 - <code><a href="./src/resources/graph/domains/domains.ts">CatalogBufferEntry</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">CatalogEntityCluster</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">CatalogRelationshipPattern</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainCatalog</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainCatalogConfig</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">SignalField</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">DomainCreateResponse</a></code>
 - <code><a href="./src/resources/graph/domains/domains.ts">DomainRetrieveResponse</a></code>
@@ -445,8 +409,3 @@ Methods:
 - <code title="delete /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">delete</a>(domainID) -> DomainDeleteResponse</code>
 
 ### Catalog
-
-Methods:
-
-- <code title="get /v1/graph/domains/{domain_id}/catalog">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">retrieve</a>(domainID) -> DomainCatalog</code>
-- <code title="post /v1/graph/domains/{domain_id}/catalog/refresh">client.graph.domains.catalog.<a href="./src/resources/graph/domains/catalog.ts">refresh</a>(domainID) -> DomainCatalog</code>
