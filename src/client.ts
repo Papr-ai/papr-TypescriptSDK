@@ -35,7 +35,6 @@ import {
   FeedbackSubmitParams,
   ParsePointer,
 } from './resources/feedback';
-import { Frequencies, FrequencyFieldResponse, SchemaConfigResponse } from './resources/frequencies';
 import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
 import { Login, LoginInitiateResponse } from './resources/login';
 import { Logout, LogoutPerformResponse } from './resources/logout';
@@ -123,7 +122,6 @@ import {
   GraphTransformParams,
   GraphTransformResponse,
 } from './resources/graph/graph';
-import { Holographic } from './resources/holographic/holographic';
 import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
 import {
   InstanceConfigItem,
@@ -909,8 +907,6 @@ export class Papr {
   omo: API.Omo = new API.Omo(this);
   sync: API.Sync = new API.Sync(this);
   namespace: API.Namespace = new API.Namespace(this);
-  frequencies: API.Frequencies = new API.Frequencies(this);
-  holographic: API.Holographic = new API.Holographic(this);
   organization: API.Organization = new API.Organization(this);
   ai: API.AI = new API.AI(this);
   telemetry: API.Telemetry = new API.Telemetry(this);
@@ -932,8 +928,6 @@ Papr.Messages = Messages;
 Papr.Omo = Omo;
 Papr.Sync = Sync;
 Papr.Namespace = Namespace;
-Papr.Frequencies = Frequencies;
-Papr.Holographic = Holographic;
 Papr.Organization = Organization;
 Papr.AI = AI;
 Papr.Telemetry = Telemetry;
@@ -1071,14 +1065,6 @@ export declare namespace Papr {
     type NamespaceDeleteParams as NamespaceDeleteParams,
     type NamespaceCreateAPIKeyParams as NamespaceCreateAPIKeyParams,
   };
-
-  export {
-    Frequencies as Frequencies,
-    type FrequencyFieldResponse as FrequencyFieldResponse,
-    type SchemaConfigResponse as SchemaConfigResponse,
-  };
-
-  export { Holographic as Holographic };
 
   export { Organization as Organization };
 

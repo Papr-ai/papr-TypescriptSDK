@@ -2,7 +2,7 @@
 
 import { APIResource } from '../../core/resource';
 import * as GraphAPI from './graph';
-import * as DomainsAPI from './domains/domains';
+import * as DomainsAPI from './domains';
 import {
   CatalogBufferEntry,
   CatalogEntityCluster,
@@ -16,7 +16,7 @@ import {
   DomainUpdateResponse,
   Domains,
   SignalField,
-} from './domains/domains';
+} from './domains';
 import { APIPromise } from '../../core/api-promise';
 import { RequestOptions } from '../../internal/request-options';
 

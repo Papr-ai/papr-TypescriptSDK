@@ -42,7 +42,6 @@ describe('resource domains', () => {
           weight: 0,
         },
       ],
-      catalog_config: {},
       routing_config: {
         caesar4_source: 'caesar4_source',
         ce_gate_min_phi: 0,
