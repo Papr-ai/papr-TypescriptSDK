@@ -225,23 +225,6 @@ Methods:
 - <code title="put /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">update</a>(namespaceID, { ...params }) -> InstanceUpdateResponse</code>
 - <code title="delete /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">delete</a>(namespaceID) -> InstanceDeleteResponse</code>
 
-# Frequencies
-
-Types:
-
-- <code><a href="./src/resources/frequencies.ts">FrequencyFieldResponse</a></code>
-- <code><a href="./src/resources/frequencies.ts">SchemaConfigResponse</a></code>
-
-# Holographic
-
-## Transform
-
-Types:
-
-- <code><a href="./src/resources/holographic/transform.ts">TransformData</a></code>
-
-## Domains
-
 # Organization
 
 ## Instance
@@ -390,22 +373,20 @@ Methods:
 
 Types:
 
-- <code><a href="./src/resources/graph/domains/domains.ts">CatalogBufferEntry</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">CatalogEntityCluster</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">CatalogRelationshipPattern</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">SignalField</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainCreateResponse</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainRetrieveResponse</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainUpdateResponse</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainListResponse</a></code>
-- <code><a href="./src/resources/graph/domains/domains.ts">DomainDeleteResponse</a></code>
+- <code><a href="./src/resources/graph/domains.ts">CatalogBufferEntry</a></code>
+- <code><a href="./src/resources/graph/domains.ts">CatalogEntityCluster</a></code>
+- <code><a href="./src/resources/graph/domains.ts">CatalogRelationshipPattern</a></code>
+- <code><a href="./src/resources/graph/domains.ts">SignalField</a></code>
+- <code><a href="./src/resources/graph/domains.ts">DomainCreateResponse</a></code>
+- <code><a href="./src/resources/graph/domains.ts">DomainRetrieveResponse</a></code>
+- <code><a href="./src/resources/graph/domains.ts">DomainUpdateResponse</a></code>
+- <code><a href="./src/resources/graph/domains.ts">DomainListResponse</a></code>
+- <code><a href="./src/resources/graph/domains.ts">DomainDeleteResponse</a></code>
 
 Methods:
 
-- <code title="post /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">create</a>({ ...params }) -> DomainCreateResponse</code>
-- <code title="get /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">retrieve</a>(domainID) -> DomainRetrieveResponse</code>
-- <code title="put /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">update</a>(domainID, { ...params }) -> DomainUpdateResponse</code>
-- <code title="get /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">list</a>() -> DomainListResponse</code>
-- <code title="delete /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains/domains.ts">delete</a>(domainID) -> DomainDeleteResponse</code>
-
-### Catalog
+- <code title="post /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains.ts">create</a>({ ...params }) -> DomainCreateResponse</code>
+- <code title="get /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains.ts">retrieve</a>(domainID) -> DomainRetrieveResponse</code>
+- <code title="put /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains.ts">update</a>(domainID, { ...params }) -> DomainUpdateResponse</code>
+- <code title="get /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains.ts">list</a>() -> DomainListResponse</code>
+- <code title="delete /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains.ts">delete</a>(domainID) -> DomainDeleteResponse</code>

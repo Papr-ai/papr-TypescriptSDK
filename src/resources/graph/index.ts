@@ -13,7 +13,7 @@ export {
   type DomainDeleteResponse,
   type DomainCreateParams,
   type DomainUpdateParams,
-} from './domains/index';
+} from './domains';
 export {
   Graph,
   type DocumentInput,
