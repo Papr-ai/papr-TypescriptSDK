@@ -47,7 +47,8 @@ export class Sessions extends APIResource {
    *     - **medium_term**: Last ~100 messages compressed
    *     - **long_term**: Full session compressed
    *     - **topics**: Key topics discussed
-   *     - **enhanced_fields**: Project context, tech stack, key decisions, next steps, files accessed
+   *     - **session_intent / current_state / next_steps**: Structured session context for agents
+   *     - **project_context / files_accessed / technical_details**: Project and file operation metadata
    *
    *     **Perfect for**:
    *     - Reducing token usage in LLM prompts (96% savings)
@@ -160,6 +161,21 @@ export class Sessions extends APIResource {
  */
 export interface ConversationSummaryResponse {
   /**
+   * Current progress: what is working, not working, blocked, or unverified
+   */
+  current_state?: string | null;
+
+  /**
+   * Files read, modified, created, or deleted during the session
+   */
+  files_accessed?: { [key: string]: unknown } | null;
+
+  /**
+   * Important decisions made and their reasoning
+   */
+  key_decisions?: Array<string>;
+
+  /**
    * When summaries were last updated
    */
   last_updated?: string | null;
@@ -175,9 +191,29 @@ export interface ConversationSummaryResponse {
   medium_term?: string | null;
 
   /**
+   * Specific actionable next steps
+   */
+  next_steps?: Array<string>;
+
+  /**
+   * Detected project context (name, path, tech stack, current task)
+   */
+  project_context?: { [key: string]: unknown } | null;
+
+  /**
+   * What the user is trying to accomplish in this session
+   */
+  session_intent?: string | null;
+
+  /**
    * Summary of last 15 messages
    */
   short_term?: string | null;
+
+  /**
+   * Technical details to remember (URLs, errors, config values, function names)
+   */
+  technical_details?: Array<string>;
 
   /**
    * Key topics discussed
@@ -259,7 +295,7 @@ export namespace SessionRetrieveHistoryResponse {
     /**
      * Content of the message - can be a simple string or structured content objects
      */
-    content: string | Array<{ [key: string]: unknown }>;
+    content: string | Array<Message.UnionMember1>;
 
     /**
      * When the message was created
@@ -285,6 +321,25 @@ export namespace SessionRetrieveHistoryResponse {
      * Status of background processing (queued, analyzing, completed, failed)
      */
     processing_status?: string;
+  }
+
+  export namespace Message {
+    /**
+     * Structured message content block (OpenAPI-typed alternative to free-form dicts).
+     */
+    export interface UnionMember1 {
+      /**
+       * Content block type (e.g. 'text')
+       */
+      type: string;
+
+      /**
+       * Text payload when type is 'text'
+       */
+      text?: string | null;
+
+      [k: string]: unknown;
+    }
   }
 }
 

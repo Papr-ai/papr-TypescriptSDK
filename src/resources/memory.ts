@@ -102,9 +102,24 @@ export class Memory extends APIResource {
    * ```
    */
   add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
-    const { format, skip_background_processing, webhook_secret, webhook_url, ...body } = params;
+    const {
+      enable_holographic,
+      format,
+      frequency_schema_id,
+      skip_background_processing,
+      webhook_secret,
+      webhook_url,
+      ...body
+    } = params;
     return this._client.post('/v1/memory', {
-      query: { format, skip_background_processing, webhook_secret, webhook_url },
+      query: {
+        enable_holographic,
+        format,
+        frequency_schema_id,
+        skip_background_processing,
+        webhook_secret,
+        webhook_url,
+      },
       body,
       ...options,
     });
@@ -1202,10 +1217,23 @@ export interface MemoryAddParams {
   content: string;
 
   /**
+   * Query param: If True, applies holographic neural transforms and stores in
+   * holographic collection
+   */
+  enable_holographic?: boolean;
+
+  /**
    * Query param: Response format. Use 'omo' for Open Memory Object standard format
    * (portable across platforms).
    */
   format?: string | null;
+
+  /**
+   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
+   * 'scifact'). Required when enable_holographic=True. Call GET /v1/frequencies to
+   * see available schemas.
+   */
+  frequency_schema_id?: string | null;
 
   /**
    * Query param: If True, skips adding background tasks for processing
