@@ -1575,17 +1575,6 @@ describe('resource memory', () => {
       response_format: 'json',
       enable_agentic_graph: false,
       external_user_id: 'external_user_123',
-      holographic_config: {
-        enabled: true,
-        frequency_filters: { foo: 0 },
-        frequency_schema_id: 'cosqa',
-        hcond_boost_factor: 0.12,
-        hcond_boost_threshold: 0.35,
-        hcond_penalty_factor: 0.06,
-        include_frequency_scores: true,
-        scoring_method: 'egr_rerank',
-        search_mode: 'post_search',
-      },
       metadata: {
         acl: { foo: ['string'] },
         assistantMessage: 'assistantMessage',

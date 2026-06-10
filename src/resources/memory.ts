@@ -1587,11 +1587,6 @@ export interface MemorySearchParams {
   external_user_id?: string | null;
 
   /**
-   * @deprecated DEPRECATED: Use reranking_config provider papr_enhanced or papr_max.
-   */
-  holographic_config?: MemorySearchParams.HolographicConfig | null;
-
-  /**
    * Body param: Metadata for memory request
    */
   metadata?: MemoryMetadata | null;
@@ -1700,69 +1695,6 @@ export interface MemorySearchParams {
 }
 
 export namespace MemorySearchParams {
-  /**
-   * @deprecated DEPRECATED: Use reranking_config provider papr_enhanced or papr_max.
-   */
-  export interface HolographicConfig {
-    /**
-     * Whether to enable holographic embedding transforms
-     */
-    enabled?: boolean;
-
-    /**
-     * Filter results by minimum alignment on specific frequency dimensions. Keys are
-     * field names (e.g., 'programming_domain', 'primary_operation'), values are
-     * minimum alignment scores (0.0-1.0). Example: {'programming_domain': 0.8,
-     * 'primary_operation': 0.7} Only returns results that match at least 80% on domain
-     * AND 70% on operation. Call GET /v1/frequencies to see available field names for
-     * each schema.
-     */
-    frequency_filters?: { [key: string]: number } | null;
-
-    /**
-     * Frequency schema for holographic scoring. Use full ID (e.g.
-     * 'code_search:cosqa:2.0.0') or shorthand (e.g. 'cosqa'). Call GET /v1/frequencies
-     * to see available schemas and shortcuts.
-     */
-    frequency_schema_id?: string | null;
-
-    /**
-     * Maximum boost to add for high alignment (0.0-0.5)
-     */
-    hcond_boost_factor?: number;
-
-    /**
-     * Phase alignment threshold above which to apply boost (0.0-1.0)
-     */
-    hcond_boost_threshold?: number;
-
-    /**
-     * Maximum penalty for low alignment (0.0-0.5)
-     */
-    hcond_penalty_factor?: number;
-
-    /**
-     * If true, each result includes a per-frequency score breakdown showing how well
-     * the query matched the document on each dimension (e.g., programming_domain:
-     * 0.95, primary_operation: 0.72). Useful for understanding WHY a result ranked
-     * high or low.
-     */
-    include_frequency_scores?: boolean;
-
-    /**
-     * Scoring method for holographic search results. Default: 'egr_rerank' (highest
-     * accuracy, requires GPU). Options include: baseline, caesar8, egr_rerank, and
-     * 160+ others. If null, uses the schema's default_scoring_method.
-     */
-    scoring_method?: string | null;
-
-    /**
-     * Search mode: 'disabled' (off), 'integrated' (search transformed embeddings),
-     * 'post_search' (fetch then rerank with H-COND)
-     */
-    search_mode?: 'disabled' | 'integrated' | 'post_search';
-  }
-
   /**
    * Filter for Open Memory Object (OMO) safety standards in search/retrieval.
    *
