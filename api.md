@@ -97,7 +97,7 @@ Types:
 Methods:
 
 - <code title="delete /v1/document/{upload_id}">client.document.<a href="./src/resources/document.ts">cancelProcessing</a>(uploadID) -> DocumentCancelProcessingResponse</code>
-- <code title="get /v1/document/status/{upload_id}">client.document.<a href="./src/resources/document.ts">getStatus</a>(uploadID) -> DocumentGetStatusResponse</code>
+- <code title="get /v1/document/status/{upload_id}">client.document.<a href="./src/resources/document.ts">getStatus</a>(uploadID, { ...params }) -> DocumentGetStatusResponse</code>
 - <code title="post /v1/document">client.document.<a href="./src/resources/document.ts">upload</a>({ ...params }) -> DocumentUploadResponse</code>
 
 # Schemas
@@ -119,7 +119,7 @@ Methods:
 - <code title="get /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">retrieve</a>(schemaID) -> SchemaRetrieveResponse</code>
 - <code title="put /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">update</a>(schemaID, { ...params }) -> SchemaUpdateResponse</code>
 - <code title="get /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">list</a>({ ...params }) -> SchemaListResponse</code>
-- <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> unknown</code>
+- <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> SchemaDeleteResponse</code>
 
 # Graphql
 
@@ -130,8 +130,8 @@ Types:
 
 Methods:
 
-- <code title="get /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">playground</a>() -> unknown</code>
-- <code title="post /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">query</a>() -> unknown</code>
+- <code title="get /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">playground</a>() -> GraphqlPlaygroundResponse</code>
+- <code title="post /v1/graphql">client.graphql.<a href="./src/resources/graphql.ts">query</a>() -> GraphqlQueryResponse</code>
 
 # Messages
 
@@ -157,11 +157,11 @@ Types:
 
 Methods:
 
-- <code title="patch /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">update</a>(sessionID, { ...params }) -> unknown</code>
+- <code title="patch /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">update</a>(sessionID, { ...params }) -> SessionUpdateResponse</code>
 - <code title="get /v1/messages/sessions/{session_id}/compress">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">compress</a>(sessionID) -> SessionCompressResponse</code>
-- <code title="post /v1/messages/sessions/{session_id}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">process</a>(sessionID) -> unknown</code>
+- <code title="post /v1/messages/sessions/{session_id}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">process</a>(sessionID) -> SessionProcessResponse</code>
 - <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>
-- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> unknown</code>
+- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> SessionRetrieveStatusResponse</code>
 
 # Omo
 
@@ -174,7 +174,7 @@ Types:
 Methods:
 
 - <code title="post /v1/omo/export">client.omo.<a href="./src/resources/omo.ts">exportMemories</a>({ ...params }) -> OmoExportMemoriesResponse</code>
-- <code title="get /v1/omo/export.json">client.omo.<a href="./src/resources/omo.ts">exportMemoriesAsJson</a>({ ...params }) -> unknown</code>
+- <code title="get /v1/omo/export.json">client.omo.<a href="./src/resources/omo.ts">exportMemoriesAsJson</a>({ ...params }) -> OmoExportMemoriesAsJsonResponse</code>
 - <code title="post /v1/omo/import">client.omo.<a href="./src/resources/omo.ts">importMemories</a>({ ...params }) -> OmoImportMemoriesResponse</code>
 
 # Sync
@@ -250,7 +250,7 @@ Types:
 
 Methods:
 
-- <code title="get /v1/ai/usage">client.ai.<a href="./src/resources/ai/ai.ts">getUsage</a>() -> unknown</code>
+- <code title="get /v1/ai/usage">client.ai.<a href="./src/resources/ai/ai.ts">getUsage</a>() -> AIGetUsageResponse</code>
 
 ## OpenAI
 
@@ -260,7 +260,7 @@ Types:
 
 Methods:
 
-- <code title="post /v1/ai/openai/responses">client.ai.openai.<a href="./src/resources/ai/openai/openai.ts">createResponse</a>() -> unknown</code>
+- <code title="post /v1/ai/openai/responses">client.ai.openai.<a href="./src/resources/ai/openai/openai.ts">createResponse</a>() -> OpenAICreateResponseResponse</code>
 
 ### Chat
 
@@ -270,7 +270,7 @@ Types:
 
 Methods:
 
-- <code title="post /v1/ai/openai/chat/completions">client.ai.openai.chat.<a href="./src/resources/ai/openai/chat.ts">createCompletion</a>() -> unknown</code>
+- <code title="post /v1/ai/openai/chat/completions">client.ai.openai.chat.<a href="./src/resources/ai/openai/chat.ts">createCompletion</a>() -> ChatCreateCompletionResponse</code>
 
 ## Anthropic
 
@@ -280,7 +280,7 @@ Types:
 
 Methods:
 
-- <code title="post /v1/ai/anthropic/messages">client.ai.anthropic.<a href="./src/resources/ai/anthropic.ts">sendMessage</a>() -> unknown</code>
+- <code title="post /v1/ai/anthropic/messages">client.ai.anthropic.<a href="./src/resources/ai/anthropic.ts">sendMessage</a>() -> AnthropicSendMessageResponse</code>
 
 ## Google
 
@@ -293,8 +293,8 @@ Types:
 
 Methods:
 
-- <code title="post /v1/ai/google/models/{model_id}:generateContent">client.ai.google.models.<a href="./src/resources/ai/google/models.ts">generateContent</a>(modelID) -> unknown</code>
-- <code title="post /v1/ai/google/models/{model_id}:streamGenerateContent">client.ai.google.models.<a href="./src/resources/ai/google/models.ts">streamGenerateContent</a>(modelID) -> unknown</code>
+- <code title="post /v1/ai/google/models/{model_id}:generateContent">client.ai.google.models.<a href="./src/resources/ai/google/models.ts">generateContent</a>(modelID) -> ModelGenerateContentResponse</code>
+- <code title="post /v1/ai/google/models/{model_id}:streamGenerateContent">client.ai.google.models.<a href="./src/resources/ai/google/models.ts">streamGenerateContent</a>(modelID) -> ModelStreamGenerateContentResponse</code>
 
 # Telemetry
 

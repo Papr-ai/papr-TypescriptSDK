@@ -30,7 +30,11 @@ export class Sessions extends APIResource {
    * );
    * ```
    */
-  update(sessionID: string, body: SessionUpdateParams, options?: RequestOptions): APIPromise<unknown> {
+  update(
+    sessionID: string,
+    body: SessionUpdateParams,
+    options?: RequestOptions,
+  ): APIPromise<SessionUpdateResponse> {
     return this._client.patch(path`/v1/messages/sessions/${sessionID}`, { body, ...options });
   }
 
@@ -93,7 +97,7 @@ export class Sessions extends APIResource {
    * );
    * ```
    */
-  process(sessionID: string, options?: RequestOptions): APIPromise<unknown> {
+  process(sessionID: string, options?: RequestOptions): APIPromise<SessionProcessResponse> {
     return this._client.post(path`/v1/messages/sessions/${sessionID}/process`, options);
   }
 
@@ -151,7 +155,7 @@ export class Sessions extends APIResource {
    *   );
    * ```
    */
-  retrieveStatus(sessionID: string, options?: RequestOptions): APIPromise<unknown> {
+  retrieveStatus(sessionID: string, options?: RequestOptions): APIPromise<SessionRetrieveStatusResponse> {
     return this._client.get(path`/v1/messages/sessions/${sessionID}/status`, options);
   }
 }
@@ -221,7 +225,10 @@ export interface ConversationSummaryResponse {
   topics?: Array<string>;
 }
 
-export type SessionUpdateResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type SessionUpdateResponse = { [key: string]: unknown };
 
 /**
  * Response model for session summarization endpoint
@@ -254,7 +261,10 @@ export interface SessionCompressResponse {
   message_count?: number | null;
 }
 
-export type SessionProcessResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type SessionProcessResponse = { [key: string]: unknown };
 
 /**
  * Response model for retrieving message history
@@ -324,7 +334,10 @@ export namespace SessionRetrieveHistoryResponse {
   }
 }
 
-export type SessionRetrieveStatusResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type SessionRetrieveStatusResponse = { [key: string]: unknown };
 
 export interface SessionUpdateParams {
   /**
