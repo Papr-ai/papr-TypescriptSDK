@@ -1168,8 +1168,6 @@ describe('resource memory', () => {
           user_id: 'user_id',
         },
       ],
-      enable_holographic: true,
-      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
       batch_size: 10,
       external_user_id: 'external_user_abcde',

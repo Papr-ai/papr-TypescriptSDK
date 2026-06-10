@@ -157,12 +157,8 @@ export class Memory extends APIResource {
    * ```
    */
   addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<BatchMemoryResponse> {
-    const { enable_holographic, frequency_schema_id, skip_background_processing, ...body } = params;
-    return this._client.post('/v1/memory/batch', {
-      query: { enable_holographic, frequency_schema_id, skip_background_processing },
-      body,
-      ...options,
-    });
+    const { skip_background_processing, ...body } = params;
+    return this._client.post('/v1/memory/batch', { query: { skip_background_processing }, body, ...options });
   }
 
   /**
@@ -1391,19 +1387,6 @@ export interface MemoryAddBatchParams {
    * Body param: List of memory items to add in batch
    */
   memories: Array<AddMemory>;
-
-  /**
-   * Query param: If True, applies holographic neural transforms and stores in
-   * holographic collection
-   */
-  enable_holographic?: boolean;
-
-  /**
-   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
-   * 'scifact'). Required when enable_holographic=True. Call GET /v1/frequencies to
-   * see available schemas.
-   */
-  frequency_schema_id?: string | null;
 
   /**
    * Query param: If True, skips adding background tasks for processing
