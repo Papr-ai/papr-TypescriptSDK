@@ -73,8 +73,6 @@ export interface MessageContentBlock {
    * Text payload when type is 'text'
    */
   text?: string | null;
-
-  [k: string]: unknown;
 }
 
 /**

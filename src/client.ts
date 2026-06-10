@@ -21,6 +21,7 @@ import { Callback, CallbackProcessResponse } from './resources/callback';
 import {
   Document,
   DocumentCancelProcessingResponse,
+  DocumentGetStatusParams,
   DocumentGetStatusResponse,
   DocumentUploadParams,
   DocumentUploadResponse,
@@ -1005,6 +1006,7 @@ export declare namespace Papr {
     type DocumentCancelProcessingResponse as DocumentCancelProcessingResponse,
     type DocumentGetStatusResponse as DocumentGetStatusResponse,
     type DocumentUploadResponse as DocumentUploadResponse,
+    type DocumentGetStatusParams as DocumentGetStatusParams,
     type DocumentUploadParams as DocumentUploadParams,
   };
 
