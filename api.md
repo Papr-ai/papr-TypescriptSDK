@@ -137,6 +137,7 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/messages/messages.ts">MessageContentBlock</a></code>
 - <code><a href="./src/resources/messages/messages.ts">MessageStoreResponse</a></code>
 
 Methods:

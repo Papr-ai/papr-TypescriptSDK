@@ -61,13 +61,30 @@ export class Messages extends APIResource {
 }
 
 /**
+ * Structured message content block (OpenAPI-typed alternative to free-form dicts).
+ */
+export interface MessageContentBlock {
+  /**
+   * Content block type (e.g. 'text')
+   */
+  type: string;
+
+  /**
+   * Text payload when type is 'text'
+   */
+  text?: string | null;
+
+  [k: string]: unknown;
+}
+
+/**
  * Response model for message storage
  */
 export interface MessageStoreResponse {
   /**
    * Content of the message - can be a simple string or structured content objects
    */
-  content: string | Array<MessageStoreResponse.UnionMember1>;
+  content: string | unknown;
 
   /**
    * When the message was created
@@ -95,31 +112,12 @@ export interface MessageStoreResponse {
   processing_status?: string;
 }
 
-export namespace MessageStoreResponse {
-  /**
-   * Structured message content block (OpenAPI-typed alternative to free-form dicts).
-   */
-  export interface UnionMember1 {
-    /**
-     * Content block type (e.g. 'text')
-     */
-    type: string;
-
-    /**
-     * Text payload when type is 'text'
-     */
-    text?: string | null;
-
-    [k: string]: unknown;
-  }
-}
-
 export interface MessageStoreParams {
   /**
    * The content of the chat message - can be a simple string or structured content
    * objects
    */
-  content: string | Array<MessageStoreParams.UnionMember1>;
+  content: string | unknown;
 
   /**
    * Role of the message sender (user or assistant)
@@ -216,29 +214,14 @@ export interface MessageStoreParams {
   user_id?: string | null;
 }
 
-export namespace MessageStoreParams {
-  /**
-   * Structured message content block (OpenAPI-typed alternative to free-form dicts).
-   */
-  export interface UnionMember1 {
-    /**
-     * Content block type (e.g. 'text')
-     */
-    type: string;
-
-    /**
-     * Text payload when type is 'text'
-     */
-    text?: string | null;
-
-    [k: string]: unknown;
-  }
-}
-
 Messages.Sessions = Sessions;
 
 export declare namespace Messages {
-  export { type MessageStoreResponse as MessageStoreResponse, type MessageStoreParams as MessageStoreParams };
+  export {
+    type MessageContentBlock as MessageContentBlock,
+    type MessageStoreResponse as MessageStoreResponse,
+    type MessageStoreParams as MessageStoreParams,
+  };
 
   export {
     Sessions as Sessions,

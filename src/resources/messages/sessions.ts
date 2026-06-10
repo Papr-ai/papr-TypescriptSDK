@@ -295,7 +295,7 @@ export namespace SessionRetrieveHistoryResponse {
     /**
      * Content of the message - can be a simple string or structured content objects
      */
-    content: string | Array<Message.UnionMember1>;
+    content: string | unknown;
 
     /**
      * When the message was created
@@ -321,25 +321,6 @@ export namespace SessionRetrieveHistoryResponse {
      * Status of background processing (queued, analyzing, completed, failed)
      */
     processing_status?: string;
-  }
-
-  export namespace Message {
-    /**
-     * Structured message content block (OpenAPI-typed alternative to free-form dicts).
-     */
-    export interface UnionMember1 {
-      /**
-       * Content block type (e.g. 'text')
-       */
-      type: string;
-
-      /**
-       * Text payload when type is 'text'
-       */
-      text?: string | null;
-
-      [k: string]: unknown;
-    }
   }
 }
 
