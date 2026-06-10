@@ -122,7 +122,12 @@ import {
   GraphTransformParams,
   GraphTransformResponse,
 } from './resources/graph/graph';
-import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
+import {
+  MessageContentBlock,
+  MessageStoreParams,
+  MessageStoreResponse,
+  Messages,
+} from './resources/messages/messages';
 import {
   InstanceConfigItem,
   Namespace,
@@ -1026,6 +1031,7 @@ export declare namespace Papr {
 
   export {
     Messages as Messages,
+    type MessageContentBlock as MessageContentBlock,
     type MessageStoreResponse as MessageStoreResponse,
     type MessageStoreParams as MessageStoreParams,
   };

@@ -61,7 +61,12 @@ export {
   type MemoryGetParams,
   type MemorySearchParams,
 } from './memory';
-export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
+export {
+  Messages,
+  type MessageContentBlock,
+  type MessageStoreResponse,
+  type MessageStoreParams,
+} from './messages/messages';
 export {
   Namespace,
   type InstanceConfigItem,
