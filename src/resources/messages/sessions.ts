@@ -259,7 +259,7 @@ export namespace SessionRetrieveHistoryResponse {
     /**
      * Content of the message - can be a simple string or structured content objects
      */
-    content: string | unknown;
+    content: string | Array<{ [key: string]: unknown }>;
 
     /**
      * When the message was created
