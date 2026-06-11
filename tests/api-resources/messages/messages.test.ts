@@ -31,6 +31,7 @@ describe('resource messages', () => {
       role: 'user',
       sessionId: 'session_123',
       context: [{ foo: 'bar' }],
+      external_user_id: 'external_user_id',
       graph_generation: {
         auto: {
           property_overrides: [
@@ -372,6 +373,7 @@ describe('resource messages', () => {
       process_messages: true,
       relationships_json: [{ foo: 'bar' }],
       title: 'Q4 Product Planning',
+      user_id: 'user_id',
     });
   });
 });

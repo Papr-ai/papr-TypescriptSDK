@@ -146,7 +146,7 @@ export class Schemas extends APIResource {
    *     associated graph nodes/relationships are preserved for data integrity.
    *     User must have write access to the schema.
    */
-  delete(schemaID: string, options?: RequestOptions): APIPromise<unknown> {
+  delete(schemaID: string, options?: RequestOptions): APIPromise<SchemaDeleteResponse> {
     return this._client.delete(path`/v1/schemas/${schemaID}`, options);
   }
 }
@@ -869,7 +869,15 @@ export interface SchemaListResponse {
   total?: number;
 }
 
-export type SchemaDeleteResponse = unknown;
+/**
+ * Response model for schema deletion.
+ */
+export interface SchemaDeleteResponse {
+  /**
+   * Deletion status message
+   */
+  message: string;
+}
 
 export interface SchemaCreateParams {
   name: string;

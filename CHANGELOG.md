@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.8.0 (2026-06-11)
+
+Full Changelog: [v2.7.0...v2.8.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.7.0...v2.8.0)
+
+### Features
+
+* **api:** Inline message content schema without refs to fix ContentVariant1 Stainless error. ([bcd2f23](https://github.com/Papr-ai/papr-TypescriptSDK/commit/bcd2f232297dd7b80112011abff8e4581d881ea6))
+* **api:** manual updates ([79d498f](https://github.com/Papr-ai/papr-TypescriptSDK/commit/79d498f1490094f202cc7f5398d5f68339a1ed32))
+* **api:** manual updates ([e907267](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e907267c966a6b41d62c82c355767e81e68d05f5))
+* **api:** manual updates ([8e60100](https://github.com/Papr-ai/papr-TypescriptSDK/commit/8e601007bca8f181c9e383361c067075b231cc0b))
+* **api:** manual updates ([5bea114](https://github.com/Papr-ai/papr-TypescriptSDK/commit/5bea1147d545039a8372287ec833e0dec1ad98f3))
+* **api:** manual updates ([fc429e6](https://github.com/Papr-ai/papr-TypescriptSDK/commit/fc429e6ae27f607ccf37affed250ff7539b4a103))
+* **api:** manual updates ([a656600](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a656600af53965a3eaba914f0fdea85bbdfe57c1))
+* **api:** manual updates ([9d6cb36](https://github.com/Papr-ai/papr-TypescriptSDK/commit/9d6cb3604c1c123ac425602c79f73aa8869e1048))
+* **api:** manual updates ([745870c](https://github.com/Papr-ai/papr-TypescriptSDK/commit/745870c074ec2b1ce4cb1e8a2e38910186cc72e1))
+* **api:** manual updates ([a8fb783](https://github.com/Papr-ai/papr-TypescriptSDK/commit/a8fb7837060546996724107d7e4a4759a969fd98))
+* **api:** Remove ContentVariant1 openapi transforms that caused self-referencing schema errors. ([37cb389](https://github.com/Papr-ai/papr-TypescriptSDK/commit/37cb38963fb315793cc9c19bcc824574202d6cb9))
+
 ## 2.7.0 (2026-06-01)
 
 Full Changelog: [v2.6.0...v2.7.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.6.0...v2.7.0)

@@ -67,7 +67,7 @@ export interface MessageStoreResponse {
   /**
    * Content of the message - can be a simple string or structured content objects
    */
-  content: string | Array<{ [key: string]: unknown }>;
+  content: string | Array<MessageStoreResponse.UnionMember1>;
 
   /**
    * When the message was created
@@ -95,12 +95,29 @@ export interface MessageStoreResponse {
   processing_status?: string;
 }
 
+export namespace MessageStoreResponse {
+  /**
+   * Structured message content block (OpenAPI-typed alternative to free-form dicts).
+   */
+  export interface UnionMember1 {
+    /**
+     * Content block type (e.g. 'text')
+     */
+    type: string;
+
+    /**
+     * Text payload when type is 'text'
+     */
+    text?: string | null;
+  }
+}
+
 export interface MessageStoreParams {
   /**
    * The content of the chat message - can be a simple string or structured content
    * objects
    */
-  content: string | Array<{ [key: string]: unknown }>;
+  content: string | Array<MessageStoreParams.UnionMember1>;
 
   /**
    * Role of the message sender (user or assistant)
@@ -116,6 +133,12 @@ export interface MessageStoreParams {
    * Optional context for the message (conversation history or relevant context)
    */
   context?: Array<{ [key: string]: unknown }> | null;
+
+  /**
+   * Your application's external user identifier. Papr resolves or creates internal
+   * users automatically. Use for third-party integrations.
+   */
+  external_user_id?: string | null;
 
   /**
    * Graph generation configuration
@@ -183,6 +206,29 @@ export interface MessageStoreParams {
    * for easy identification.
    */
   title?: string | null;
+
+  /**
+   * Internal Papr Parse user ID (\_User.objectId). Use when you already have the
+   * resolved user, e.g. first-party Papr apps after login.
+   */
+  user_id?: string | null;
+}
+
+export namespace MessageStoreParams {
+  /**
+   * Structured message content block (OpenAPI-typed alternative to free-form dicts).
+   */
+  export interface UnionMember1 {
+    /**
+     * Content block type (e.g. 'text')
+     */
+    type: string;
+
+    /**
+     * Text payload when type is 'text'
+     */
+    text?: string | null;
+  }
 }
 
 Messages.Sessions = Sessions;
