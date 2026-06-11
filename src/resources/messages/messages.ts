@@ -61,21 +61,6 @@ export class Messages extends APIResource {
 }
 
 /**
- * Structured message content block (OpenAPI-typed alternative to free-form dicts).
- */
-export interface MessageContentBlock {
-  /**
-   * Content block type (e.g. 'text')
-   */
-  type: string;
-
-  /**
-   * Text payload when type is 'text'
-   */
-  text?: string | null;
-}
-
-/**
  * Response model for message storage
  */
 export interface MessageStoreResponse {
@@ -131,12 +116,6 @@ export interface MessageStoreParams {
    * Optional context for the message (conversation history or relevant context)
    */
   context?: Array<{ [key: string]: unknown }> | null;
-
-  /**
-   * Your application's external user identifier. Papr resolves or creates internal
-   * users automatically. Use for third-party integrations.
-   */
-  external_user_id?: string | null;
 
   /**
    * Graph generation configuration
@@ -204,22 +183,12 @@ export interface MessageStoreParams {
    * for easy identification.
    */
   title?: string | null;
-
-  /**
-   * Internal Papr Parse user ID (\_User.objectId). Use when you already have the
-   * resolved user, e.g. first-party Papr apps after login.
-   */
-  user_id?: string | null;
 }
 
 Messages.Sessions = Sessions;
 
 export declare namespace Messages {
-  export {
-    type MessageContentBlock as MessageContentBlock,
-    type MessageStoreResponse as MessageStoreResponse,
-    type MessageStoreParams as MessageStoreParams,
-  };
+  export { type MessageStoreResponse as MessageStoreResponse, type MessageStoreParams as MessageStoreParams };
 
   export {
     Sessions as Sessions,
