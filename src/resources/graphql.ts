@@ -8,7 +8,7 @@ export class Graphql extends APIResource {
   /**
    * GraphQL Playground (development only)
    */
-  playground(options?: RequestOptions): APIPromise<GraphqlPlaygroundResponse> {
+  playground(options?: RequestOptions): APIPromise<unknown> {
     return this._client.get('/v1/graphql', options);
   }
 
@@ -16,8 +16,7 @@ export class Graphql extends APIResource {
    * GraphQL endpoint for querying PAPR Memory using GraphQL.
    *
    *     This endpoint proxies GraphQL queries to Neo4j's hosted GraphQL endpoint,
-   *     automatically applying multi-tenant authorization filters based on user_id, workspace_id,
-   *     organization_id, and namespace_id.
+   *     automatically applying multi-tenant authorization filters based on user_id and workspace_id.
    *
    *     **Authentication Required**:
    *     One of the following authentication methods must be used:
@@ -47,23 +46,16 @@ export class Graphql extends APIResource {
    *     }
    *     ```
    *
-   *     All queries are automatically filtered by user_id, workspace_id, organization_id,
-   *     and namespace_id for security.
+   *     All queries are automatically filtered by user_id and workspace_id for security.
    */
-  query(options?: RequestOptions): APIPromise<GraphqlQueryResponse> {
+  query(options?: RequestOptions): APIPromise<unknown> {
     return this._client.post('/v1/graphql', options);
   }
 }
 
-/**
- * Generic JSON response object
- */
-export type GraphqlPlaygroundResponse = { [key: string]: unknown };
+export type GraphqlPlaygroundResponse = unknown;
 
-/**
- * Generic JSON response object
- */
-export type GraphqlQueryResponse = { [key: string]: unknown };
+export type GraphqlQueryResponse = unknown;
 
 export declare namespace Graphql {
   export {

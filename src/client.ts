@@ -21,7 +21,6 @@ import { Callback, CallbackProcessResponse } from './resources/callback';
 import {
   Document,
   DocumentCancelProcessingResponse,
-  DocumentGetStatusParams,
   DocumentGetStatusResponse,
   DocumentUploadParams,
   DocumentUploadResponse,
@@ -123,12 +122,7 @@ import {
   GraphTransformParams,
   GraphTransformResponse,
 } from './resources/graph/graph';
-import {
-  MessageContentBlock,
-  MessageStoreParams,
-  MessageStoreResponse,
-  Messages,
-} from './resources/messages/messages';
+import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
 import {
   InstanceConfigItem,
   Namespace,
@@ -1006,7 +1000,6 @@ export declare namespace Papr {
     type DocumentCancelProcessingResponse as DocumentCancelProcessingResponse,
     type DocumentGetStatusResponse as DocumentGetStatusResponse,
     type DocumentUploadResponse as DocumentUploadResponse,
-    type DocumentGetStatusParams as DocumentGetStatusParams,
     type DocumentUploadParams as DocumentUploadParams,
   };
 
@@ -1033,7 +1026,6 @@ export declare namespace Papr {
 
   export {
     Messages as Messages,
-    type MessageContentBlock as MessageContentBlock,
     type MessageStoreResponse as MessageStoreResponse,
     type MessageStoreParams as MessageStoreParams,
   };

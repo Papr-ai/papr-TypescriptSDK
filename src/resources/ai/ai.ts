@@ -18,15 +18,12 @@ export class AI extends APIResource {
   /**
    * Get user's AI proxy usage stats and subscription info.
    */
-  getUsage(options?: RequestOptions): APIPromise<AIGetUsageResponse> {
+  getUsage(options?: RequestOptions): APIPromise<unknown> {
     return this._client.get('/v1/ai/usage', options);
   }
 }
 
-/**
- * Generic JSON response object
- */
-export type AIGetUsageResponse = { [key: string]: unknown };
+export type AIGetUsageResponse = unknown;
 
 AI.OpenAI = OpenAI;
 AI.Anthropic = Anthropic;

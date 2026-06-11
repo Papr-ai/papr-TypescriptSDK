@@ -12,15 +12,12 @@ export class OpenAI extends APIResource {
   /**
    * OpenAI Responses API proxy (GPT-5+, o-series reasoning models)
    */
-  createResponse(options?: RequestOptions): APIPromise<OpenAICreateResponseResponse> {
+  createResponse(options?: RequestOptions): APIPromise<unknown> {
     return this._client.post('/v1/ai/openai/responses', options);
   }
 }
 
-/**
- * Generic JSON response object
- */
-export type OpenAICreateResponseResponse = { [key: string]: unknown };
+export type OpenAICreateResponseResponse = unknown;
 
 OpenAI.Chat = Chat;
 

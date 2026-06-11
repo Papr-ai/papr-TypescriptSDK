@@ -23,10 +23,7 @@ export class Omo extends APIResource {
   /**
    * Export memories in OMO JSON file format for download.
    */
-  exportMemoriesAsJson(
-    query: OmoExportMemoriesAsJsonParams,
-    options?: RequestOptions,
-  ): APIPromise<OmoExportMemoriesAsJsonResponse> {
+  exportMemoriesAsJson(query: OmoExportMemoriesAsJsonParams, options?: RequestOptions): APIPromise<unknown> {
     return this._client.get('/v1/omo/export.json', { query, ...options });
   }
 
@@ -66,10 +63,7 @@ export interface OmoExportMemoriesResponse {
   status?: string;
 }
 
-/**
- * Generic JSON response object
- */
-export type OmoExportMemoriesAsJsonResponse = { [key: string]: unknown };
+export type OmoExportMemoriesAsJsonResponse = unknown;
 
 /**
  * Response model for OMO import.
