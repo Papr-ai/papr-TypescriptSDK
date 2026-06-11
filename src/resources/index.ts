@@ -2,7 +2,7 @@
 
 export * from './shared';
 export { AI, type AIGetUsageResponse } from './ai/ai';
-export { Callback } from './callback';
+export { Callback, type CallbackProcessResponse } from './callback';
 export {
   Document,
   type DocumentCancelProcessingResponse,
@@ -31,9 +31,9 @@ export {
   type GraphTransformParams,
 } from './graph/graph';
 export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
-export { Login } from './login';
-export { Logout } from './logout';
-export { Me } from './me';
+export { Login, type LoginInitiateResponse } from './login';
+export { Logout, type LogoutPerformResponse } from './logout';
+export { Me, type MeRetrieveResponse } from './me';
 export {
   Memory,
   type AddMemory,
@@ -62,7 +62,12 @@ export {
   type MemoryGetParams,
   type MemorySearchParams,
 } from './memory';
-export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
+export {
+  Messages,
+  type MessageContentBlock,
+  type MessageStoreResponse,
+  type MessageStoreParams,
+} from './messages/messages';
 export {
   Namespace,
   type InstanceConfigItem,
@@ -112,7 +117,7 @@ export {
   type SyncGetTiersParams,
 } from './sync';
 export { Telemetry, type TelemetryTrackEventResponse, type TelemetryTrackEventParams } from './telemetry';
-export { Token } from './token';
+export { Token, type TokenCreateResponse } from './token';
 export {
   User,
   type UserResponse,

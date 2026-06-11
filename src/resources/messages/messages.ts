@@ -61,6 +61,21 @@ export class Messages extends APIResource {
 }
 
 /**
+ * Structured message content block (OpenAPI-typed alternative to free-form dicts).
+ */
+export interface MessageContentBlock {
+  /**
+   * Content block type (e.g. 'text')
+   */
+  type: string;
+
+  /**
+   * Text payload when type is 'text'
+   */
+  text?: string | null;
+}
+
+/**
  * Response model for message storage
  */
 export interface MessageStoreResponse {
@@ -200,7 +215,11 @@ export interface MessageStoreParams {
 Messages.Sessions = Sessions;
 
 export declare namespace Messages {
-  export { type MessageStoreResponse as MessageStoreResponse, type MessageStoreParams as MessageStoreParams };
+  export {
+    type MessageContentBlock as MessageContentBlock,
+    type MessageStoreResponse as MessageStoreResponse,
+    type MessageStoreParams as MessageStoreParams,
+  };
 
   export {
     Sessions as Sessions,

@@ -2007,6 +2007,149 @@ const EMBEDDED_METHODS: MethodEntry[] = [
     },
   },
   {
+    name: 'initiate',
+    endpoint: '/login',
+    httpMethod: 'get',
+    summary: 'Login',
+    description:
+      'OAuth2 login endpoint. Initiates the OAuth2 authorization code flow.\n    \n    **Query Parameters:**\n    - `redirect_uri`: The URI to redirect to after authentication (required)\n    - `state`: A random string for CSRF protection (optional but recommended)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint with `redirect_uri` and `state`\n    2. This endpoint redirects user to Auth0 for authentication\n    3. After authentication, Auth0 redirects to `/callback` with authorization code\n    4. `/callback` redirects back to the original `redirect_uri` with code and state\n    \n    **Example:**\n    ```\n    GET /login?redirect_uri=https://chat.openai.com&state=abc123\n    ```',
+    stainlessPath: '(resource) login > (method) initiate',
+    qualified: 'client.login.initiate',
+    response: '{ message?: string; redirect_url?: string; }',
+    markdown:
+      "## initiate\n\n`client.login.initiate(): { message?: string; redirect_url?: string; }`\n\n**get** `/login`\n\nOAuth2 login endpoint. Initiates the OAuth2 authorization code flow.\n    \n    **Query Parameters:**\n    - `redirect_uri`: The URI to redirect to after authentication (required)\n    - `state`: A random string for CSRF protection (optional but recommended)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint with `redirect_uri` and `state`\n    2. This endpoint redirects user to Auth0 for authentication\n    3. After authentication, Auth0 redirects to `/callback` with authorization code\n    4. `/callback` redirects back to the original `redirect_uri` with code and state\n    \n    **Example:**\n    ```\n    GET /login?redirect_uri=https://chat.openai.com&state=abc123\n    ```\n\n### Returns\n\n- `{ message?: string; redirect_url?: string; }`\n  Response model for OAuth2 login endpoint\n\n  - `message?: string`\n  - `redirect_url?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.login.initiate();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      typescript: {
+        method: 'client.login.initiate',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.login.initiate();\n\nconsole.log(response.message);",
+      },
+      python: {
+        method: 'login.initiate',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.login.initiate()\nprint(response.message)',
+      },
+      http: {
+        example: 'curl https://memory.papr.ai/login \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+    },
+  },
+  {
+    name: 'process',
+    endpoint: '/callback',
+    httpMethod: 'get',
+    summary: 'Callback',
+    description:
+      'OAuth2 callback endpoint. Processes the authorization code from Auth0.\n    \n    **Query Parameters:**\n    - `code`: Authorization code from Auth0 (required)\n    - `state`: State parameter for CSRF protection (required)\n    \n    **Flow:**\n    1. Auth0 redirects to this endpoint after successful authentication\n    2. This endpoint validates the authorization code and state\n    3. Redirects back to the original `redirect_uri` with code and state\n    4. Client can then exchange the code for tokens at `/token` endpoint\n    \n    **Security:**\n    - Validates state parameter to prevent CSRF attacks\n    - Checks authorization code expiration\n    - Cleans up session data after processing',
+    stainlessPath: '(resource) callback > (method) process',
+    qualified: 'client.callback.process',
+    response: '{ code?: string; message?: string; state?: string; }',
+    markdown:
+      "## process\n\n`client.callback.process(): { code?: string; message?: string; state?: string; }`\n\n**get** `/callback`\n\nOAuth2 callback endpoint. Processes the authorization code from Auth0.\n    \n    **Query Parameters:**\n    - `code`: Authorization code from Auth0 (required)\n    - `state`: State parameter for CSRF protection (required)\n    \n    **Flow:**\n    1. Auth0 redirects to this endpoint after successful authentication\n    2. This endpoint validates the authorization code and state\n    3. Redirects back to the original `redirect_uri` with code and state\n    4. Client can then exchange the code for tokens at `/token` endpoint\n    \n    **Security:**\n    - Validates state parameter to prevent CSRF attacks\n    - Checks authorization code expiration\n    - Cleans up session data after processing\n\n### Returns\n\n- `{ code?: string; message?: string; state?: string; }`\n  Response model for OAuth2 callback endpoint\n\n  - `code?: string`\n  - `message?: string`\n  - `state?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.callback.process();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      typescript: {
+        method: 'client.callback.process',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.callback.process();\n\nconsole.log(response.code);",
+      },
+      python: {
+        method: 'callback.process',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.callback.process()\nprint(response.code)',
+      },
+      http: {
+        example: 'curl https://memory.papr.ai/callback \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+    },
+  },
+  {
+    name: 'create',
+    endpoint: '/token',
+    httpMethod: 'post',
+    summary: 'Token',
+    description:
+      'OAuth2 token endpoint. Exchanges authorization code for access tokens.\n    \n    **Request Body (JSON or Form):**\n    - `grant_type`: OAuth2 grant type - "authorization_code" or "refresh_token" (required)\n    - `code`: Authorization code from OAuth2 callback (required for authorization_code grant)\n    - `redirect_uri`: Redirect URI used in authorization (required for authorization_code grant)\n    - `client_type`: Client type - "papr_plugin" or "browser_extension" (optional, default: papr_plugin)\n    - `refresh_token`: Refresh token for token refresh (required for refresh_token grant)\n    \n    **Response:**\n    - `access_token`: OAuth2 access token for API authentication\n    - `token_type`: Token type (Bearer)\n    - `expires_in`: Token expiration time in seconds\n    - `refresh_token`: Refresh token for getting new access tokens\n    - `scope`: OAuth2 scopes granted\n    - `user_id`: User ID from Auth0\n    \n    **Example Request:**\n    ```json\n    {\n        "grant_type": "authorization_code",\n        "code": "abc123...",\n        "redirect_uri": "https://chat.openai.com",\n        "client_type": "papr_plugin"\n    }\n    ```',
+    stainlessPath: '(resource) token > (method) create',
+    qualified: 'client.token.create',
+    response:
+      '{ access_token: string; expires_in: number; scope: string; message?: string; refresh_token?: string; token_type?: string; user_id?: string; }',
+    markdown:
+      '## create\n\n`client.token.create(): { access_token: string; expires_in: number; scope: string; message?: string; refresh_token?: string; token_type?: string; user_id?: string; }`\n\n**post** `/token`\n\nOAuth2 token endpoint. Exchanges authorization code for access tokens.\n    \n    **Request Body (JSON or Form):**\n    - `grant_type`: OAuth2 grant type - "authorization_code" or "refresh_token" (required)\n    - `code`: Authorization code from OAuth2 callback (required for authorization_code grant)\n    - `redirect_uri`: Redirect URI used in authorization (required for authorization_code grant)\n    - `client_type`: Client type - "papr_plugin" or "browser_extension" (optional, default: papr_plugin)\n    - `refresh_token`: Refresh token for token refresh (required for refresh_token grant)\n    \n    **Response:**\n    - `access_token`: OAuth2 access token for API authentication\n    - `token_type`: Token type (Bearer)\n    - `expires_in`: Token expiration time in seconds\n    - `refresh_token`: Refresh token for getting new access tokens\n    - `scope`: OAuth2 scopes granted\n    - `user_id`: User ID from Auth0\n    \n    **Example Request:**\n    ```json\n    {\n        "grant_type": "authorization_code",\n        "code": "abc123...",\n        "redirect_uri": "https://chat.openai.com",\n        "client_type": "papr_plugin"\n    }\n    ```\n\n### Returns\n\n- `{ access_token: string; expires_in: number; scope: string; message?: string; refresh_token?: string; token_type?: string; user_id?: string; }`\n  Response model for OAuth2 token endpoint\n\n  - `access_token: string`\n  - `expires_in: number`\n  - `scope: string`\n  - `message?: string`\n  - `refresh_token?: string`\n  - `token_type?: string`\n  - `user_id?: string`\n\n### Example\n\n```typescript\nimport Papr from \'@papr/memory\';\n\nconst client = new Papr();\n\nconst token = await client.token.create();\n\nconsole.log(token);\n```',
+    perLanguage: {
+      typescript: {
+        method: 'client.token.create',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst token = await client.token.create();\n\nconsole.log(token.user_id);",
+      },
+      python: {
+        method: 'token.create',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ntoken = client.token.create()\nprint(token.user_id)',
+      },
+      http: {
+        example:
+          'curl https://memory.papr.ai/token \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+    },
+  },
+  {
+    name: 'retrieve',
+    endpoint: '/me',
+    httpMethod: 'get',
+    summary: 'Me',
+    description:
+      'Get current user information. Validates authentication and returns user details.\n    \n    **Authentication Required:**\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header: `Authorization: Bearer <access_token>`\n    - Session token in `Authorization` header: `Authorization: Session <session_token>`\n    - API Key in `Authorization` header: `Authorization: APIKey <api_key>`\n    \n    **Headers:**\n    - `Authorization`: Authentication token (required)\n    - `X-Client-Type`: Client type for logging (optional, default: papr_plugin)\n    \n    **Response:**\n    - `user_id`: Internal user ID\n    - `sessionToken`: Session token for API access (if available)\n    - `imageUrl`: User profile image URL (if available)\n    - `displayName`: User display name (if available)\n    - `email`: User email address (if available)\n    - `message`: Authentication status message\n    \n    **Example:**\n    ```\n    GET /me\n    Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\n    X-Client-Type: papr_plugin\n    ```',
+    stainlessPath: '(resource) me > (method) retrieve',
+    qualified: 'client.me.retrieve',
+    response:
+      '{ user_id: string; displayName?: string; email?: string; imageUrl?: string; message?: string; sessionToken?: string; }',
+    markdown:
+      "## retrieve\n\n`client.me.retrieve(): { user_id: string; displayName?: string; email?: string; imageUrl?: string; message?: string; sessionToken?: string; }`\n\n**get** `/me`\n\nGet current user information. Validates authentication and returns user details.\n    \n    **Authentication Required:**\n    One of the following authentication methods must be used:\n    - Bearer token in `Authorization` header: `Authorization: Bearer <access_token>`\n    - Session token in `Authorization` header: `Authorization: Session <session_token>`\n    - API Key in `Authorization` header: `Authorization: APIKey <api_key>`\n    \n    **Headers:**\n    - `Authorization`: Authentication token (required)\n    - `X-Client-Type`: Client type for logging (optional, default: papr_plugin)\n    \n    **Response:**\n    - `user_id`: Internal user ID\n    - `sessionToken`: Session token for API access (if available)\n    - `imageUrl`: User profile image URL (if available)\n    - `displayName`: User display name (if available)\n    - `email`: User email address (if available)\n    - `message`: Authentication status message\n    \n    **Example:**\n    ```\n    GET /me\n    Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...\n    X-Client-Type: papr_plugin\n    ```\n\n### Returns\n\n- `{ user_id: string; displayName?: string; email?: string; imageUrl?: string; message?: string; sessionToken?: string; }`\n  Response model for /me endpoint\n\n  - `user_id: string`\n  - `displayName?: string`\n  - `email?: string`\n  - `imageUrl?: string`\n  - `message?: string`\n  - `sessionToken?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst me = await client.me.retrieve();\n\nconsole.log(me);\n```",
+    perLanguage: {
+      typescript: {
+        method: 'client.me.retrieve',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst me = await client.me.retrieve();\n\nconsole.log(me.user_id);",
+      },
+      python: {
+        method: 'me.retrieve',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nme = client.me.retrieve()\nprint(me.user_id)',
+      },
+      http: {
+        example: 'curl https://memory.papr.ai/me \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+    },
+  },
+  {
+    name: 'perform',
+    endpoint: '/logout',
+    httpMethod: 'get',
+    summary: 'Logout',
+    description:
+      "OAuth2 logout endpoint. Logs out the user from Auth0 and redirects to specified URL.\n    \n    **Query Parameters:**\n    - `returnTo`: URL to redirect to after logout (optional, default: extension logout page)\n    - `client_type`: Client type for determining Auth0 client ID (optional, default: papr_plugin)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint\n    2. This endpoint redirects to Auth0 logout URL\n    3. Auth0 logs out the user and redirects to the specified return URL\n    \n    **Example:**\n    ```\n    GET /logout?returnTo=https://chat.openai.com\n    ```\n    \n    **Note:** This endpoint initiates the logout process. The actual logout completion happens on Auth0's side.",
+    stainlessPath: '(resource) logout > (method) perform',
+    qualified: 'client.logout.perform',
+    response: '{ logout_url: string; message?: string; }',
+    markdown:
+      "## perform\n\n`client.logout.perform(): { logout_url: string; message?: string; }`\n\n**get** `/logout`\n\nOAuth2 logout endpoint. Logs out the user from Auth0 and redirects to specified URL.\n    \n    **Query Parameters:**\n    - `returnTo`: URL to redirect to after logout (optional, default: extension logout page)\n    - `client_type`: Client type for determining Auth0 client ID (optional, default: papr_plugin)\n    \n    **Flow:**\n    1. Client redirects user to this endpoint\n    2. This endpoint redirects to Auth0 logout URL\n    3. Auth0 logs out the user and redirects to the specified return URL\n    \n    **Example:**\n    ```\n    GET /logout?returnTo=https://chat.openai.com\n    ```\n    \n    **Note:** This endpoint initiates the logout process. The actual logout completion happens on Auth0's side.\n\n### Returns\n\n- `{ logout_url: string; message?: string; }`\n  Response model for logout endpoint\n\n  - `logout_url: string`\n  - `message?: string`\n\n### Example\n\n```typescript\nimport Papr from '@papr/memory';\n\nconst client = new Papr();\n\nconst response = await client.logout.perform();\n\nconsole.log(response);\n```",
+    perLanguage: {
+      typescript: {
+        method: 'client.logout.perform',
+        example:
+          "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.logout.perform();\n\nconsole.log(response.logout_url);",
+      },
+      python: {
+        method: 'logout.perform',
+        example:
+          'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.logout.perform()\nprint(response.logout_url)',
+      },
+      http: {
+        example: 'curl https://memory.papr.ai/logout \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
+    },
+  },
+  {
     name: 'transform',
     endpoint: '/v1/graph/transform',
     httpMethod: 'post',
