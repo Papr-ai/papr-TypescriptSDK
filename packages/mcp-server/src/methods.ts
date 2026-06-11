@@ -359,36 +359,6 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/telemetry/events',
   },
   {
-    clientCallName: 'client.login.initiate',
-    fullyQualifiedName: 'login.initiate',
-    httpMethod: 'get',
-    httpPath: '/login',
-  },
-  {
-    clientCallName: 'client.callback.process',
-    fullyQualifiedName: 'callback.process',
-    httpMethod: 'get',
-    httpPath: '/callback',
-  },
-  {
-    clientCallName: 'client.token.create',
-    fullyQualifiedName: 'token.create',
-    httpMethod: 'post',
-    httpPath: '/token',
-  },
-  {
-    clientCallName: 'client.me.retrieve',
-    fullyQualifiedName: 'me.retrieve',
-    httpMethod: 'get',
-    httpPath: '/me',
-  },
-  {
-    clientCallName: 'client.logout.perform',
-    fullyQualifiedName: 'logout.perform',
-    httpMethod: 'get',
-    httpPath: '/logout',
-  },
-  {
     clientCallName: 'client.graph.rerank',
     fullyQualifiedName: 'graph.rerank',
     httpMethod: 'post',
