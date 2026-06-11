@@ -17,10 +17,17 @@ export class Document extends APIResource {
   }
 
   /**
-   * Get processing status for an uploaded document
+   * Get processing status for an uploaded document.
+   *
+   * Pass `?timeline=true` to include step-by-step processing detail without changing
+   * the default flat status fields.
    */
-  getStatus(uploadID: string, options?: RequestOptions): APIPromise<DocumentGetStatusResponse> {
-    return this._client.get(path`/v1/document/status/${uploadID}`, options);
+  getStatus(
+    uploadID: string,
+    query: DocumentGetStatusParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<DocumentGetStatusResponse> {
+    return this._client.get(path`/v1/document/status/${uploadID}`, { query, ...options });
   }
 
   /**
@@ -44,7 +51,149 @@ export class Document extends APIResource {
 
 export type DocumentCancelProcessingResponse = { [key: string]: unknown };
 
-export type DocumentGetStatusResponse = { [key: string]: unknown };
+/**
+ * GET /v1/document/status/{upload_id} response. Pass ?timeline=true to include
+ * timeline.
+ */
+export interface DocumentGetStatusResponse {
+  /**
+   * Current processing status
+   */
+  status: string;
+
+  /**
+   * Document upload identifier
+   */
+  upload_id: string;
+
+  /**
+   * Current page being processed
+   */
+  current_page?: number | null;
+
+  /**
+   * Customer-safe error message when processing failed
+   */
+  error?: string | null;
+
+  /**
+   * Additional status message
+   */
+  message?: string | null;
+
+  /**
+   * User-facing document Post ID, when available
+   */
+  page_id?: string | null;
+
+  /**
+   * Overall progress from 0.0 to 1.0
+   */
+  progress?: number | null;
+
+  /**
+   * Optional step-by-step detail included when GET
+   * /document/status/{id}?timeline=true.
+   */
+  timeline?: DocumentGetStatusResponse.Timeline | null;
+
+  /**
+   * Timestamp of the latest status update
+   */
+  timestamp?: string | null;
+
+  /**
+   * Total pages in the document
+   */
+  total_pages?: number | null;
+
+  /**
+   * Processing backend type
+   */
+  workflow_type?: string | null;
+}
+
+export namespace DocumentGetStatusResponse {
+  /**
+   * Optional step-by-step detail included when GET
+   * /document/status/{id}?timeline=true.
+   */
+  export interface Timeline {
+    /**
+     * Ordered processing steps with per-step status and timing
+     */
+    steps?: Array<Timeline.Step>;
+
+    /**
+     * Total elapsed processing time in milliseconds
+     */
+    total_elapsed_ms?: number | null;
+
+    /**
+     * Timestamp of the latest timeline update
+     */
+    updated_at?: string | null;
+  }
+
+  export namespace Timeline {
+    export interface Step {
+      /**
+       * Stable step identifier for UI rendering
+       */
+      id: string;
+
+      /**
+       * Customer-facing step description
+       */
+      description: string;
+
+      /**
+       * Customer-facing step title
+       */
+      label: string;
+
+      /**
+       * Current state of this step
+       */
+      status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'skipped';
+
+      /**
+       * When this step completed
+       */
+      completed_at?: string | null;
+
+      /**
+       * Step duration in milliseconds
+       */
+      duration_ms?: number | null;
+
+      /**
+       * Customer-safe error message for failed steps
+       */
+      error?: string | null;
+
+      /**
+       * User-facing document Post ID, when available
+       */
+      page_id?: string | null;
+
+      /**
+       * Overall pipeline progress when this step was last updated (0.0-1.0)
+       */
+      progress?: number | null;
+
+      /**
+       * When this step started
+       */
+      started_at?: string | null;
+
+      /**
+       * Total pages processed, when known
+       */
+      total_pages?: number | null;
+    }
+  }
+}
 
 export interface DocumentUploadResponse {
   /**
@@ -123,6 +272,14 @@ export namespace DocumentUploadResponse {
   }
 }
 
+export interface DocumentGetStatusParams {
+  /**
+   * When true, include a `timeline` object with ordered processing steps, per-step
+   * status, and timing. Default response shape is unchanged.
+   */
+  timeline?: boolean;
+}
+
 export interface DocumentUploadParams {
   file: Uploadable;
 
@@ -169,7 +326,7 @@ export interface DocumentUploadParams {
   /**
    * Preferred provider for document processing.
    */
-  preferred_provider?: 'gemini' | 'tensorlake' | 'reducto' | 'auto' | null;
+  preferred_provider?: 'gemini' | 'tensorlake' | 'reducto' | 'paddleocr' | 'auto' | null;
 
   property_overrides?: string | null;
 
@@ -191,6 +348,7 @@ export declare namespace Document {
     type DocumentCancelProcessingResponse as DocumentCancelProcessingResponse,
     type DocumentGetStatusResponse as DocumentGetStatusResponse,
     type DocumentUploadResponse as DocumentUploadResponse,
+    type DocumentGetStatusParams as DocumentGetStatusParams,
     type DocumentUploadParams as DocumentUploadParams,
   };
 }

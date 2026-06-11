@@ -154,6 +154,21 @@ export interface DomainCreateResponse {
    */
   builtin?: boolean;
 
+  /**
+   * Curated summary of what's in a domain's frequency space.
+   */
+  catalog?: DomainCreateResponse.Catalog | null;
+
+  /**
+   * Buffered raw signals awaiting LLM clustering (internal).
+   */
+  catalog_buffer?: Array<CatalogBufferEntry>;
+
+  /**
+   * Catalog settings on a domain.
+   */
+  catalog_config?: DomainCreateResponse.CatalogConfig | null;
+
   created_at?: string | null;
 
   /**
@@ -182,6 +197,57 @@ export interface DomainCreateResponse {
    * Domain-level default signal multipliers (see GraphDomainCreate).
    */
   signal_multipliers?: { [key: string]: number } | null;
+}
+
+export namespace DomainCreateResponse {
+  /**
+   * Curated summary of what's in a domain's frequency space.
+   */
+  export interface Catalog {
+    /**
+     * Signal band name -> total doc count.
+     */
+    domain_distribution?: { [key: string]: number };
+
+    entity_clusters?: Array<DomainsAPI.CatalogEntityCluster>;
+
+    /**
+     * ISO timestamp of last LLM clustering run.
+     */
+    last_refreshed?: string | null;
+
+    /**
+     * ISO timestamp of last buffer append.
+     */
+    last_updated?: string | null;
+
+    relationship_patterns?: Array<DomainsAPI.CatalogRelationshipPattern>;
+
+    /**
+     * Per-band raw value counts, e.g. {'domain': {'Health': 500, 'Tech': 200}}.
+     */
+    signal_value_counts?: { [key: string]: { [key: string]: number } };
+
+    /**
+     * Total transforms processed.
+     */
+    total_documents?: number;
+  }
+
+  /**
+   * Catalog settings on a domain.
+   */
+  export interface CatalogConfig {
+    /**
+     * Whether to auto-accumulate signals on transform.
+     */
+    enabled?: boolean;
+
+    /**
+     * Run LLM clustering after this many buffered entries.
+     */
+    refresh_every_n?: number;
+  }
 }
 
 export interface DomainRetrieveResponse {
@@ -198,6 +264,21 @@ export interface DomainRetrieveResponse {
    */
   builtin?: boolean;
 
+  /**
+   * Curated summary of what's in a domain's frequency space.
+   */
+  catalog?: DomainRetrieveResponse.Catalog | null;
+
+  /**
+   * Buffered raw signals awaiting LLM clustering (internal).
+   */
+  catalog_buffer?: Array<CatalogBufferEntry>;
+
+  /**
+   * Catalog settings on a domain.
+   */
+  catalog_config?: DomainRetrieveResponse.CatalogConfig | null;
+
   created_at?: string | null;
 
   /**
@@ -228,6 +309,57 @@ export interface DomainRetrieveResponse {
   signal_multipliers?: { [key: string]: number } | null;
 }
 
+export namespace DomainRetrieveResponse {
+  /**
+   * Curated summary of what's in a domain's frequency space.
+   */
+  export interface Catalog {
+    /**
+     * Signal band name -> total doc count.
+     */
+    domain_distribution?: { [key: string]: number };
+
+    entity_clusters?: Array<DomainsAPI.CatalogEntityCluster>;
+
+    /**
+     * ISO timestamp of last LLM clustering run.
+     */
+    last_refreshed?: string | null;
+
+    /**
+     * ISO timestamp of last buffer append.
+     */
+    last_updated?: string | null;
+
+    relationship_patterns?: Array<DomainsAPI.CatalogRelationshipPattern>;
+
+    /**
+     * Per-band raw value counts, e.g. {'domain': {'Health': 500, 'Tech': 200}}.
+     */
+    signal_value_counts?: { [key: string]: { [key: string]: number } };
+
+    /**
+     * Total transforms processed.
+     */
+    total_documents?: number;
+  }
+
+  /**
+   * Catalog settings on a domain.
+   */
+  export interface CatalogConfig {
+    /**
+     * Whether to auto-accumulate signals on transform.
+     */
+    enabled?: boolean;
+
+    /**
+     * Run LLM clustering after this many buffered entries.
+     */
+    refresh_every_n?: number;
+  }
+}
+
 export interface DomainUpdateResponse {
   description: string;
 
@@ -241,6 +373,21 @@ export interface DomainUpdateResponse {
    * True for built-in domains shipped with Papr (read-only).
    */
   builtin?: boolean;
+
+  /**
+   * Curated summary of what's in a domain's frequency space.
+   */
+  catalog?: DomainUpdateResponse.Catalog | null;
+
+  /**
+   * Buffered raw signals awaiting LLM clustering (internal).
+   */
+  catalog_buffer?: Array<CatalogBufferEntry>;
+
+  /**
+   * Catalog settings on a domain.
+   */
+  catalog_config?: DomainUpdateResponse.CatalogConfig | null;
 
   created_at?: string | null;
 
@@ -270,6 +417,57 @@ export interface DomainUpdateResponse {
    * Domain-level default signal multipliers (see GraphDomainCreate).
    */
   signal_multipliers?: { [key: string]: number } | null;
+}
+
+export namespace DomainUpdateResponse {
+  /**
+   * Curated summary of what's in a domain's frequency space.
+   */
+  export interface Catalog {
+    /**
+     * Signal band name -> total doc count.
+     */
+    domain_distribution?: { [key: string]: number };
+
+    entity_clusters?: Array<DomainsAPI.CatalogEntityCluster>;
+
+    /**
+     * ISO timestamp of last LLM clustering run.
+     */
+    last_refreshed?: string | null;
+
+    /**
+     * ISO timestamp of last buffer append.
+     */
+    last_updated?: string | null;
+
+    relationship_patterns?: Array<DomainsAPI.CatalogRelationshipPattern>;
+
+    /**
+     * Per-band raw value counts, e.g. {'domain': {'Health': 500, 'Tech': 200}}.
+     */
+    signal_value_counts?: { [key: string]: { [key: string]: number } };
+
+    /**
+     * Total transforms processed.
+     */
+    total_documents?: number;
+  }
+
+  /**
+   * Catalog settings on a domain.
+   */
+  export interface CatalogConfig {
+    /**
+     * Whether to auto-accumulate signals on transform.
+     */
+    enabled?: boolean;
+
+    /**
+     * Run LLM clustering after this many buffered entries.
+     */
+    refresh_every_n?: number;
+  }
 }
 
 export interface DomainListResponse {
@@ -290,6 +488,21 @@ export namespace DomainListResponse {
      * True for built-in domains shipped with Papr (read-only).
      */
     builtin?: boolean;
+
+    /**
+     * Curated summary of what's in a domain's frequency space.
+     */
+    catalog?: Domain.Catalog | null;
+
+    /**
+     * Buffered raw signals awaiting LLM clustering (internal).
+     */
+    catalog_buffer?: Array<DomainsAPI.CatalogBufferEntry>;
+
+    /**
+     * Catalog settings on a domain.
+     */
+    catalog_config?: Domain.CatalogConfig | null;
 
     created_at?: string | null;
 
@@ -319,6 +532,57 @@ export namespace DomainListResponse {
      * Domain-level default signal multipliers (see GraphDomainCreate).
      */
     signal_multipliers?: { [key: string]: number } | null;
+  }
+
+  export namespace Domain {
+    /**
+     * Curated summary of what's in a domain's frequency space.
+     */
+    export interface Catalog {
+      /**
+       * Signal band name -> total doc count.
+       */
+      domain_distribution?: { [key: string]: number };
+
+      entity_clusters?: Array<DomainsAPI.CatalogEntityCluster>;
+
+      /**
+       * ISO timestamp of last LLM clustering run.
+       */
+      last_refreshed?: string | null;
+
+      /**
+       * ISO timestamp of last buffer append.
+       */
+      last_updated?: string | null;
+
+      relationship_patterns?: Array<DomainsAPI.CatalogRelationshipPattern>;
+
+      /**
+       * Per-band raw value counts, e.g. {'domain': {'Health': 500, 'Tech': 200}}.
+       */
+      signal_value_counts?: { [key: string]: { [key: string]: number } };
+
+      /**
+       * Total transforms processed.
+       */
+      total_documents?: number;
+    }
+
+    /**
+     * Catalog settings on a domain.
+     */
+    export interface CatalogConfig {
+      /**
+       * Whether to auto-accumulate signals on transform.
+       */
+      enabled?: boolean;
+
+      /**
+       * Run LLM clustering after this many buffered entries.
+       */
+      refresh_every_n?: number;
+    }
   }
 }
 
@@ -350,6 +614,11 @@ export interface DomainCreateParams {
   signals: Array<SignalField>;
 
   /**
+   * Catalog settings on a domain.
+   */
+  catalog_config?: DomainCreateParams.CatalogConfig | null;
+
+  /**
    * Domain-scoped CAESAR-VIII routing overrides (stored on graph_domains).
    */
   routing_config?: GraphAPI.GraphDomainRoutingConfig | null;
@@ -364,7 +633,29 @@ export interface DomainCreateParams {
   signal_multipliers?: { [key: string]: number } | null;
 }
 
+export namespace DomainCreateParams {
+  /**
+   * Catalog settings on a domain.
+   */
+  export interface CatalogConfig {
+    /**
+     * Whether to auto-accumulate signals on transform.
+     */
+    enabled?: boolean;
+
+    /**
+     * Run LLM clustering after this many buffered entries.
+     */
+    refresh_every_n?: number;
+  }
+}
+
 export interface DomainUpdateParams {
+  /**
+   * Catalog settings on a domain.
+   */
+  catalog_config?: DomainUpdateParams.CatalogConfig | null;
+
   /**
    * Updated description.
    */
@@ -385,6 +676,23 @@ export interface DomainUpdateParams {
    * clear all multipliers. Omit the field to leave existing multipliers unchanged.
    */
   signal_multipliers?: { [key: string]: number } | null;
+}
+
+export namespace DomainUpdateParams {
+  /**
+   * Catalog settings on a domain.
+   */
+  export interface CatalogConfig {
+    /**
+     * Whether to auto-accumulate signals on transform.
+     */
+    enabled?: boolean;
+
+    /**
+     * Run LLM clustering after this many buffered entries.
+     */
+    refresh_every_n?: number;
+  }
 }
 
 export declare namespace Domains {

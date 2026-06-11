@@ -58,7 +58,9 @@ describe('resource memory', () => {
   test.skip('add: required and optional params', async () => {
     const response = await client.memory.add({
       content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
+      enable_holographic: true,
       format: 'format',
+      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
       webhook_secret: 'webhook_secret',
       webhook_url: 'webhook_url',
@@ -234,7 +236,7 @@ describe('resource memory', () => {
         consent: 'consent',
         conversationId: 'conv-123',
         createdAt: 'createdAt',
-        customMetadata: { project_id: 'q4-roadmap', meeting_type: 'planning' },
+        customMetadata: { meeting_type: 'planning', project_id: 'q4-roadmap' },
         'emoji tags': ['string'],
         'emotion tags': ['string'],
         external_user_id: 'external_user_id',
@@ -1166,6 +1168,8 @@ describe('resource memory', () => {
           user_id: 'user_id',
         },
       ],
+      enable_holographic: true,
+      frequency_schema_id: 'frequency_schema_id',
       skip_background_processing: true,
       batch_size: 10,
       external_user_id: 'external_user_abcde',

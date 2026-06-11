@@ -33,6 +33,14 @@ describe('resource document', () => {
   });
 
   // Mock server tests are disabled
+  test.skip('getStatus: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.document.getStatus('upload_id', { timeline: true }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Mock server tests are disabled
   test.skip('upload: only required params', async () => {
     const responsePromise = client.document.upload({
       file: await toFile(Buffer.from('Example data'), 'README.md'),
