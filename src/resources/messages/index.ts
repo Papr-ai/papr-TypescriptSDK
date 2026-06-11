@@ -1,6 +1,11 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages';
+export {
+  Messages,
+  type MessageContentBlock,
+  type MessageStoreResponse,
+  type MessageStoreParams,
+} from './messages';
 export {
   Sessions,
   type ConversationSummaryResponse,

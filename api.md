@@ -137,6 +137,7 @@ Methods:
 
 Types:
 
+- <code><a href="./src/resources/messages/messages.ts">MessageContentBlock</a></code>
 - <code><a href="./src/resources/messages/messages.ts">MessageStoreResponse</a></code>
 
 Methods:
@@ -307,13 +308,53 @@ Methods:
 
 # Login
 
+Types:
+
+- <code><a href="./src/resources/login.ts">LoginInitiateResponse</a></code>
+
+Methods:
+
+- <code title="get /login">client.login.<a href="./src/resources/login.ts">initiate</a>() -> LoginInitiateResponse</code>
+
 # Callback
+
+Types:
+
+- <code><a href="./src/resources/callback.ts">CallbackProcessResponse</a></code>
+
+Methods:
+
+- <code title="get /callback">client.callback.<a href="./src/resources/callback.ts">process</a>() -> CallbackProcessResponse</code>
 
 # Token
 
+Types:
+
+- <code><a href="./src/resources/token.ts">TokenCreateResponse</a></code>
+
+Methods:
+
+- <code title="post /token">client.token.<a href="./src/resources/token.ts">create</a>() -> TokenCreateResponse</code>
+
 # Me
 
+Types:
+
+- <code><a href="./src/resources/me.ts">MeRetrieveResponse</a></code>
+
+Methods:
+
+- <code title="get /me">client.me.<a href="./src/resources/me.ts">retrieve</a>() -> MeRetrieveResponse</code>
+
 # Logout
+
+Types:
+
+- <code><a href="./src/resources/logout.ts">LogoutPerformResponse</a></code>
+
+Methods:
+
+- <code title="get /logout">client.logout.<a href="./src/resources/logout.ts">perform</a>() -> LogoutPerformResponse</code>
 
 # Graph
 

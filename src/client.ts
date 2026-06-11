@@ -17,7 +17,7 @@ import * as Errors from './core/error';
 import * as Uploads from './core/uploads';
 import * as API from './resources/index';
 import { APIPromise } from './core/api-promise';
-import { Callback } from './resources/callback';
+import { Callback, CallbackProcessResponse } from './resources/callback';
 import {
   Document,
   DocumentCancelProcessingResponse,
@@ -37,9 +37,9 @@ import {
   ParsePointer,
 } from './resources/feedback';
 import { Graphql, GraphqlPlaygroundResponse, GraphqlQueryResponse } from './resources/graphql';
-import { Login } from './resources/login';
-import { Logout } from './resources/logout';
-import { Me } from './resources/me';
+import { Login, LoginInitiateResponse } from './resources/login';
+import { Logout, LogoutPerformResponse } from './resources/logout';
+import { Me, MeRetrieveResponse } from './resources/me';
 import {
   AddMemory,
   AddMemoryResponse,
@@ -99,7 +99,7 @@ import {
   SyncGetTiersResponse,
 } from './resources/sync';
 import { Telemetry, TelemetryTrackEventParams, TelemetryTrackEventResponse } from './resources/telemetry';
-import { Token } from './resources/token';
+import { Token, TokenCreateResponse } from './resources/token';
 import {
   User,
   UserCreateBatchParams,
@@ -123,7 +123,12 @@ import {
   GraphTransformParams,
   GraphTransformResponse,
 } from './resources/graph/graph';
-import { MessageStoreParams, MessageStoreResponse, Messages } from './resources/messages/messages';
+import {
+  MessageContentBlock,
+  MessageStoreParams,
+  MessageStoreResponse,
+  Messages,
+} from './resources/messages/messages';
 import {
   InstanceConfigItem,
   Namespace,
@@ -1028,6 +1033,7 @@ export declare namespace Papr {
 
   export {
     Messages as Messages,
+    type MessageContentBlock as MessageContentBlock,
     type MessageStoreResponse as MessageStoreResponse,
     type MessageStoreParams as MessageStoreParams,
   };
@@ -1078,15 +1084,15 @@ export declare namespace Papr {
     type TelemetryTrackEventParams as TelemetryTrackEventParams,
   };
 
-  export { Login as Login };
+  export { Login as Login, type LoginInitiateResponse as LoginInitiateResponse };
 
-  export { Callback as Callback };
+  export { Callback as Callback, type CallbackProcessResponse as CallbackProcessResponse };
 
-  export { Token as Token };
+  export { Token as Token, type TokenCreateResponse as TokenCreateResponse };
 
-  export { Me as Me };
+  export { Me as Me, type MeRetrieveResponse as MeRetrieveResponse };
 
-  export { Logout as Logout };
+  export { Logout as Logout, type LogoutPerformResponse as LogoutPerformResponse };
 
   export {
     Graph as Graph,
