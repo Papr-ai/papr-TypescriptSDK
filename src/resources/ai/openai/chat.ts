@@ -8,12 +8,15 @@ export class Chat extends APIResource {
   /**
    * OpenAI Chat Completions API proxy (GPT-4, GPT-4-turbo, etc.)
    */
-  createCompletion(options?: RequestOptions): APIPromise<unknown> {
+  createCompletion(options?: RequestOptions): APIPromise<ChatCreateCompletionResponse> {
     return this._client.post('/v1/ai/openai/chat/completions', options);
   }
 }
 
-export type ChatCreateCompletionResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type ChatCreateCompletionResponse = { [key: string]: unknown };
 
 export declare namespace Chat {
   export { type ChatCreateCompletionResponse as ChatCreateCompletionResponse };

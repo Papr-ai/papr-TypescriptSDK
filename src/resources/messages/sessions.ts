@@ -30,7 +30,11 @@ export class Sessions extends APIResource {
    * );
    * ```
    */
-  update(sessionID: string, body: SessionUpdateParams, options?: RequestOptions): APIPromise<unknown> {
+  update(
+    sessionID: string,
+    body: SessionUpdateParams,
+    options?: RequestOptions,
+  ): APIPromise<SessionUpdateResponse> {
     return this._client.patch(path`/v1/messages/sessions/${sessionID}`, { body, ...options });
   }
 
@@ -47,7 +51,8 @@ export class Sessions extends APIResource {
    *     - **medium_term**: Last ~100 messages compressed
    *     - **long_term**: Full session compressed
    *     - **topics**: Key topics discussed
-   *     - **enhanced_fields**: Project context, tech stack, key decisions, next steps, files accessed
+   *     - **session_intent / current_state / next_steps**: Structured session context for agents
+   *     - **project_context / files_accessed / technical_details**: Project and file operation metadata
    *
    *     **Perfect for**:
    *     - Reducing token usage in LLM prompts (96% savings)
@@ -92,7 +97,7 @@ export class Sessions extends APIResource {
    * );
    * ```
    */
-  process(sessionID: string, options?: RequestOptions): APIPromise<unknown> {
+  process(sessionID: string, options?: RequestOptions): APIPromise<SessionProcessResponse> {
     return this._client.post(path`/v1/messages/sessions/${sessionID}/process`, options);
   }
 
@@ -150,7 +155,7 @@ export class Sessions extends APIResource {
    *   );
    * ```
    */
-  retrieveStatus(sessionID: string, options?: RequestOptions): APIPromise<unknown> {
+  retrieveStatus(sessionID: string, options?: RequestOptions): APIPromise<SessionRetrieveStatusResponse> {
     return this._client.get(path`/v1/messages/sessions/${sessionID}/status`, options);
   }
 }
@@ -159,6 +164,21 @@ export class Sessions extends APIResource {
  * Hierarchical conversation summaries for context window compression
  */
 export interface ConversationSummaryResponse {
+  /**
+   * Current progress: what is working, not working, blocked, or unverified
+   */
+  current_state?: string | null;
+
+  /**
+   * Files read, modified, created, or deleted during the session
+   */
+  files_accessed?: { [key: string]: unknown } | null;
+
+  /**
+   * Important decisions made and their reasoning
+   */
+  key_decisions?: Array<string>;
+
   /**
    * When summaries were last updated
    */
@@ -175,9 +195,29 @@ export interface ConversationSummaryResponse {
   medium_term?: string | null;
 
   /**
+   * Specific actionable next steps
+   */
+  next_steps?: Array<string>;
+
+  /**
+   * Detected project context (name, path, tech stack, current task)
+   */
+  project_context?: { [key: string]: unknown } | null;
+
+  /**
+   * What the user is trying to accomplish in this session
+   */
+  session_intent?: string | null;
+
+  /**
    * Summary of last 15 messages
    */
   short_term?: string | null;
+
+  /**
+   * Technical details to remember (URLs, errors, config values, function names)
+   */
+  technical_details?: Array<string>;
 
   /**
    * Key topics discussed
@@ -185,7 +225,10 @@ export interface ConversationSummaryResponse {
   topics?: Array<string>;
 }
 
-export type SessionUpdateResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type SessionUpdateResponse = { [key: string]: unknown };
 
 /**
  * Response model for session summarization endpoint
@@ -218,7 +261,10 @@ export interface SessionCompressResponse {
   message_count?: number | null;
 }
 
-export type SessionProcessResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type SessionProcessResponse = { [key: string]: unknown };
 
 /**
  * Response model for retrieving message history
@@ -259,7 +305,7 @@ export namespace SessionRetrieveHistoryResponse {
     /**
      * Content of the message - can be a simple string or structured content objects
      */
-    content: string | Array<{ [key: string]: unknown }>;
+    content: string | Array<Message.UnionMember1>;
 
     /**
      * When the message was created
@@ -286,9 +332,29 @@ export namespace SessionRetrieveHistoryResponse {
      */
     processing_status?: string;
   }
+
+  export namespace Message {
+    /**
+     * Structured message content block (OpenAPI-typed alternative to free-form dicts).
+     */
+    export interface UnionMember1 {
+      /**
+       * Content block type (e.g. 'text')
+       */
+      type: string;
+
+      /**
+       * Text payload when type is 'text'
+       */
+      text?: string | null;
+    }
+  }
 }
 
-export type SessionRetrieveStatusResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type SessionRetrieveStatusResponse = { [key: string]: unknown };
 
 export interface SessionUpdateParams {
   /**

@@ -8,12 +8,15 @@ export class Anthropic extends APIResource {
   /**
    * Anthropic Messages API proxy (Claude models)
    */
-  sendMessage(options?: RequestOptions): APIPromise<unknown> {
+  sendMessage(options?: RequestOptions): APIPromise<AnthropicSendMessageResponse> {
     return this._client.post('/v1/ai/anthropic/messages', options);
   }
 }
 
-export type AnthropicSendMessageResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type AnthropicSendMessageResponse = { [key: string]: unknown };
 
 export declare namespace Anthropic {
   export { type AnthropicSendMessageResponse as AnthropicSendMessageResponse };

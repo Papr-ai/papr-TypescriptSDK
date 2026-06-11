@@ -9,21 +9,30 @@ export class Models extends APIResource {
   /**
    * Google Gemini generateContent API proxy
    */
-  generateContent(modelID: string, options?: RequestOptions): APIPromise<unknown> {
+  generateContent(modelID: string, options?: RequestOptions): APIPromise<ModelGenerateContentResponse> {
     return this._client.post(path`/v1/ai/google/models/${modelID}:generateContent`, options);
   }
 
   /**
    * Google Gemini streamGenerateContent API proxy
    */
-  streamGenerateContent(modelID: string, options?: RequestOptions): APIPromise<unknown> {
+  streamGenerateContent(
+    modelID: string,
+    options?: RequestOptions,
+  ): APIPromise<ModelStreamGenerateContentResponse> {
     return this._client.post(path`/v1/ai/google/models/${modelID}:streamGenerateContent`, options);
   }
 }
 
-export type ModelGenerateContentResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type ModelGenerateContentResponse = { [key: string]: unknown };
 
-export type ModelStreamGenerateContentResponse = unknown;
+/**
+ * Generic JSON response object
+ */
+export type ModelStreamGenerateContentResponse = { [key: string]: unknown };
 
 export declare namespace Models {
   export {

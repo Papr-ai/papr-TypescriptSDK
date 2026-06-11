@@ -8,6 +8,7 @@ export {
   type DocumentCancelProcessingResponse,
   type DocumentGetStatusResponse,
   type DocumentUploadResponse,
+  type DocumentGetStatusParams,
   type DocumentUploadParams,
 } from './document';
 export {
