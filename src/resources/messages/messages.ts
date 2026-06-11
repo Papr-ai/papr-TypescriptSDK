@@ -67,7 +67,7 @@ export interface MessageStoreResponse {
   /**
    * Content of the message - can be a simple string or structured content objects
    */
-  content: string | unknown;
+  content: string | Array<{ [key: string]: unknown }>;
 
   /**
    * When the message was created
@@ -100,7 +100,7 @@ export interface MessageStoreParams {
    * The content of the chat message - can be a simple string or structured content
    * objects
    */
-  content: string | unknown;
+  content: string | Array<{ [key: string]: unknown }>;
 
   /**
    * Role of the message sender (user or assistant)
