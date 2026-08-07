@@ -6,7 +6,7 @@ Types:
 - <code><a href="./src/resources/shared.ts">AddMemoryItem</a></code>
 - <code><a href="./src/resources/shared.ts">EdgeConstraintInput</a></code>
 - <code><a href="./src/resources/shared.ts">GraphPolicyBlock</a></code>
-- <code><a href="./src/resources/shared.ts">Memory</a></code>
+- <code><a href="./src/resources/shared.ts">MemoryObject</a></code>
 - <code><a href="./src/resources/shared.ts">MemoryAddPolicy</a></code>
 - <code><a href="./src/resources/shared.ts">MemoryPolicy</a></code>
 - <code><a href="./src/resources/shared.ts">NodeConstraintInput</a></code>
