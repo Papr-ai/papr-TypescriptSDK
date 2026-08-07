@@ -9,6 +9,18 @@ const client = new Papr({
 
 describe('resource sync', () => {
   // Mock server tests are disabled
+  test.skip('getTiers', async () => {
+    const responsePromise = client.sync.getTiers({});
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
   test.skip('getDelta', async () => {
     const responsePromise = client.sync.getDelta();
     const rawResponse = await responsePromise.asResponse();
@@ -34,17 +46,5 @@ describe('resource sync', () => {
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Papr.NotFoundError);
-  });
-
-  // Mock server tests are disabled
-  test.skip('getTiers', async () => {
-    const responsePromise = client.sync.getTiers({});
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
   });
 });

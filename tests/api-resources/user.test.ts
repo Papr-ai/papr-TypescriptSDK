@@ -31,18 +31,6 @@ describe('resource user', () => {
   });
 
   // Mock server tests are disabled
-  test.skip('update', async () => {
-    const responsePromise = client.user.update('user_id', {});
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
   test.skip('list', async () => {
     const responsePromise = client.user.list();
     const rawResponse = await responsePromise.asResponse();
@@ -68,6 +56,18 @@ describe('resource user', () => {
         { path: '/_stainless_unknown_path' },
       ),
     ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Mock server tests are disabled
+  test.skip('get', async () => {
+    const responsePromise = client.user.get('user_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
   });
 
   // Mock server tests are disabled
@@ -117,8 +117,8 @@ describe('resource user', () => {
   });
 
   // Mock server tests are disabled
-  test.skip('get', async () => {
-    const responsePromise = client.user.get('user_id');
+  test.skip('update', async () => {
+    const responsePromise = client.user.update('user_id', {});
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;

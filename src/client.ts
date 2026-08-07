@@ -834,11 +834,19 @@ export class Papr {
     return () => controller.abort();
   }
 
-  private buildBody({ options: { body, headers: rawHeaders } }: { options: FinalRequestOptions }): {
+  private buildBody({ options }: { options: FinalRequestOptions }): {
     bodyHeaders: HeadersLike;
     body: BodyInit | undefined;
   } {
+    const { body, headers: rawHeaders } = options;
     if (!body) {
+      // A resource method always passes a `body` key when its operation defines a
+      // request body, even if the caller omitted an optional body param. Keep the
+      // content-type for those, and only elide it for operations with no body at
+      // all (e.g. GET/DELETE).
+      if (body == null && 'body' in options) {
+        return this.#encoder({ body, headers: buildHeaders([rawHeaders]) });
+      }
       return { bodyHeaders: undefined, body: undefined };
     }
     const headers = buildHeaders([rawHeaders]);
@@ -950,10 +958,10 @@ export declare namespace Papr {
     type UserDeleteResponse as UserDeleteResponse,
     type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
-    type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
+    type UserUpdateParams as UserUpdateParams,
   };
 
   export {
@@ -976,12 +984,12 @@ export declare namespace Papr {
     type MemoryDeleteResponse as MemoryDeleteResponse,
     type MemoryRetrieveBatchStatusResponse as MemoryRetrieveBatchStatusResponse,
     type MemoryRetrieveStatusResponse as MemoryRetrieveStatusResponse,
+    type MemoryAddParams as MemoryAddParams,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
-    type MemoryAddParams as MemoryAddParams,
-    type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemoryDeleteAllParams as MemoryDeleteAllParams,
     type MemoryGetParams as MemoryGetParams,
+    type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemorySearchParams as MemorySearchParams,
   };
 
@@ -1001,8 +1009,8 @@ export declare namespace Papr {
     type DocumentCancelProcessingResponse as DocumentCancelProcessingResponse,
     type DocumentGetStatusResponse as DocumentGetStatusResponse,
     type DocumentUploadResponse as DocumentUploadResponse,
-    type DocumentGetStatusParams as DocumentGetStatusParams,
     type DocumentUploadParams as DocumentUploadParams,
+    type DocumentGetStatusParams as DocumentGetStatusParams,
   };
 
   export {
@@ -1016,8 +1024,8 @@ export declare namespace Papr {
     type SchemaListResponse as SchemaListResponse,
     type SchemaDeleteResponse as SchemaDeleteResponse,
     type SchemaCreateParams as SchemaCreateParams,
-    type SchemaUpdateParams as SchemaUpdateParams,
     type SchemaListParams as SchemaListParams,
+    type SchemaUpdateParams as SchemaUpdateParams,
   };
 
   export {
@@ -1038,16 +1046,16 @@ export declare namespace Papr {
     type OmoExportMemoriesAsJsonResponse as OmoExportMemoriesAsJsonResponse,
     type OmoImportMemoriesResponse as OmoImportMemoriesResponse,
     type OmoExportMemoriesParams as OmoExportMemoriesParams,
-    type OmoExportMemoriesAsJsonParams as OmoExportMemoriesAsJsonParams,
     type OmoImportMemoriesParams as OmoImportMemoriesParams,
+    type OmoExportMemoriesAsJsonParams as OmoExportMemoriesAsJsonParams,
   };
 
   export {
     Sync as Sync,
     type SyncGetDeltaResponse as SyncGetDeltaResponse,
     type SyncGetTiersResponse as SyncGetTiersResponse,
-    type SyncGetDeltaParams as SyncGetDeltaParams,
     type SyncGetTiersParams as SyncGetTiersParams,
+    type SyncGetDeltaParams as SyncGetDeltaParams,
   };
 
   export {
@@ -1062,8 +1070,8 @@ export declare namespace Papr {
     type NamespaceDeleteResponse as NamespaceDeleteResponse,
     type NamespaceCreateAPIKeyResponse as NamespaceCreateAPIKeyResponse,
     type NamespaceCreateParams as NamespaceCreateParams,
-    type NamespaceUpdateParams as NamespaceUpdateParams,
     type NamespaceListParams as NamespaceListParams,
+    type NamespaceUpdateParams as NamespaceUpdateParams,
     type NamespaceDeleteParams as NamespaceDeleteParams,
     type NamespaceCreateAPIKeyParams as NamespaceCreateAPIKeyParams,
   };
@@ -1094,8 +1102,8 @@ export declare namespace Papr {
     type GraphDomainRoutingConfig as GraphDomainRoutingConfig,
     type GraphRerankResponse as GraphRerankResponse,
     type GraphTransformResponse as GraphTransformResponse,
-    type GraphRerankParams as GraphRerankParams,
     type GraphTransformParams as GraphTransformParams,
+    type GraphRerankParams as GraphRerankParams,
   };
 
   export type ACLConfig = API.ACLConfig;

@@ -9,38 +9,6 @@ const client = new Papr({
 
 describe('resource document', () => {
   // Mock server tests are disabled
-  test.skip('cancelProcessing', async () => {
-    const responsePromise = client.document.cancelProcessing('upload_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('getStatus', async () => {
-    const responsePromise = client.document.getStatus('upload_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('getStatus: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.document.getStatus('upload_id', { timeline: true }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(Papr.NotFoundError);
-  });
-
-  // Mock server tests are disabled
   test.skip('upload: only required params', async () => {
     const responsePromise = client.document.upload({
       file: await toFile(Buffer.from('Example data'), 'README.md'),
@@ -74,5 +42,37 @@ describe('resource document', () => {
       webhook_secret: 'webhook_secret',
       webhook_url: 'webhook_url',
     });
+  });
+
+  // Mock server tests are disabled
+  test.skip('getStatus', async () => {
+    const responsePromise = client.document.getStatus('upload_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('getStatus: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.document.getStatus('upload_id', { timeline: true }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Mock server tests are disabled
+  test.skip('cancelProcessing', async () => {
+    const responsePromise = client.document.cancelProcessing('upload_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
   });
 });

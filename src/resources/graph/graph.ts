@@ -24,13 +24,6 @@ export class Graph extends APIResource {
   domains: DomainsAPI.Domains = new DomainsAPI.Domains(this._client);
 
   /**
-   * Rerank candidate documents against a query
-   */
-  rerank(body: GraphRerankParams, options?: RequestOptions): APIPromise<GraphRerankResponse> {
-    return this._client.post('/v1/graph/rerank', { body, ...options });
-  }
-
-  /**
    * Vector-store agnostic producer.
    *
    * Returns everything you'd want to index in any vector DB -- base embedding,
@@ -42,6 +35,13 @@ export class Graph extends APIResource {
    */
   transform(body: GraphTransformParams, options?: RequestOptions): APIPromise<GraphTransformResponse> {
     return this._client.post('/v1/graph/transform', { body, ...options });
+  }
+
+  /**
+   * Rerank candidate documents against a query
+   */
+  rerank(body: GraphRerankParams, options?: RequestOptions): APIPromise<GraphRerankResponse> {
+    return this._client.post('/v1/graph/rerank', { body, ...options });
   }
 }
 
@@ -318,6 +318,50 @@ export interface GraphTransformResponse {
   signals?: { [key: string]: string };
 }
 
+export interface GraphTransformParams {
+  /**
+   * Source text to transform.
+   */
+  text: string;
+
+  /**
+   * Domain shortname or full schema id controlling which frequency bands and
+   * extraction rules are used. Built-in shortnames: "general" (default), "code",
+   * "cosqa", "codetrans", "codetransocean", "codetransocean_hybrid", "text2sql",
+   * "scifact", "nfcorpus", "fiqa", "legal", "medical", "ecommerce", "coffee_shops".
+   * You can also pass a full schema id (e.g. "code_search:cosqa:2.0.0") or a custom
+   * domain_id registered via POST /v1/graph/domains.
+   */
+  domain_id?: string | null;
+
+  /**
+   * Optional caller-provided base embedding (Qwen 2560-d). If omitted, the server
+   * computes it.
+   */
+  embedding?: Array<number> | null;
+
+  /**
+   * Free-form user metadata to attach (optional, not used for scoring).
+   */
+  metadata?: { [key: string]: unknown } | null;
+
+  /**
+   * If true, include the base + bands concatenation embedding.
+   */
+  return_concat?: boolean;
+
+  /**
+   * If true, include the rot_v3 vector in the response.
+   */
+  return_rot_v3?: boolean;
+
+  /**
+   * Embedder for per-band signal vectors. 'sbert' (384d, default) is ~10x cheaper to
+   * store than 'qwen' (2560d, matched to base).
+   */
+  signal_embedder?: 'sbert' | 'qwen';
+}
+
 export interface GraphRerankParams {
   /**
    * Candidate documents (string or DocumentInput with pre-computed artifacts).
@@ -440,50 +484,6 @@ export namespace GraphRerankParams {
   }
 }
 
-export interface GraphTransformParams {
-  /**
-   * Source text to transform.
-   */
-  text: string;
-
-  /**
-   * Domain shortname or full schema id controlling which frequency bands and
-   * extraction rules are used. Built-in shortnames: "general" (default), "code",
-   * "cosqa", "codetrans", "codetransocean", "codetransocean_hybrid", "text2sql",
-   * "scifact", "nfcorpus", "fiqa", "legal", "medical", "ecommerce", "coffee_shops".
-   * You can also pass a full schema id (e.g. "code_search:cosqa:2.0.0") or a custom
-   * domain_id registered via POST /v1/graph/domains.
-   */
-  domain_id?: string | null;
-
-  /**
-   * Optional caller-provided base embedding (Qwen 2560-d). If omitted, the server
-   * computes it.
-   */
-  embedding?: Array<number> | null;
-
-  /**
-   * Free-form user metadata to attach (optional, not used for scoring).
-   */
-  metadata?: { [key: string]: unknown } | null;
-
-  /**
-   * If true, include the base + bands concatenation embedding.
-   */
-  return_concat?: boolean;
-
-  /**
-   * If true, include the rot_v3 vector in the response.
-   */
-  return_rot_v3?: boolean;
-
-  /**
-   * Embedder for per-band signal vectors. 'sbert' (384d, default) is ~10x cheaper to
-   * store than 'qwen' (2560d, matched to base).
-   */
-  signal_embedder?: 'sbert' | 'qwen';
-}
-
 Graph.Domains = Domains;
 
 export declare namespace Graph {
@@ -492,8 +492,8 @@ export declare namespace Graph {
     type GraphDomainRoutingConfig as GraphDomainRoutingConfig,
     type GraphRerankResponse as GraphRerankResponse,
     type GraphTransformResponse as GraphTransformResponse,
-    type GraphRerankParams as GraphRerankParams,
     type GraphTransformParams as GraphTransformParams,
+    type GraphRerankParams as GraphRerankParams,
   };
 
   export {

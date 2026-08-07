@@ -7,22 +7,6 @@ import { RequestOptions } from '../internal/request-options';
 
 export class Sync extends APIResource {
   /**
-   * Return upserts/deletes since the provided cursor for a user/workspace. Cursor is
-   * an opaque watermark over updatedAt and objectId.
-   *
-   * @example
-   * ```ts
-   * const response = await client.sync.getDelta();
-   * ```
-   */
-  getDelta(
-    query: SyncGetDeltaParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<SyncGetDeltaResponse> {
-    return this._client.get('/v1/sync/delta', { query, ...options });
-  }
-
-  /**
    * Return initial Tier 0 (goals/OKRs/use-cases --> tier 0 memories) and Tier 1 (hot
    * memories) for the requesting user/workspace.
    *
@@ -36,6 +20,22 @@ export class Sync extends APIResource {
    */
   getTiers(body: SyncGetTiersParams, options?: RequestOptions): APIPromise<SyncGetTiersResponse> {
     return this._client.post('/v1/sync/tiers', { body, ...options });
+  }
+
+  /**
+   * Return upserts/deletes since the provided cursor for a user/workspace. Cursor is
+   * an opaque watermark over updatedAt and objectId.
+   *
+   * @example
+   * ```ts
+   * const response = await client.sync.getDelta();
+   * ```
+   */
+  getDelta(
+    query: SyncGetDeltaParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<SyncGetDeltaResponse> {
+    return this._client.get('/v1/sync/delta', { query, ...options });
   }
 }
 
@@ -89,19 +89,6 @@ export interface SyncGetTiersResponse {
    * Transition items between tiers
    */
   transitions?: Array<{ [key: string]: unknown }>;
-}
-
-export interface SyncGetDeltaParams {
-  /**
-   * Opaque cursor from previous sync
-   */
-  cursor?: string | null;
-
-  include_embeddings?: boolean;
-
-  limit?: number;
-
-  workspace_id?: string | null;
 }
 
 export interface SyncGetTiersParams {
@@ -169,11 +156,24 @@ export interface SyncGetTiersParams {
   workspace_id?: string | null;
 }
 
+export interface SyncGetDeltaParams {
+  /**
+   * Opaque cursor from previous sync
+   */
+  cursor?: string | null;
+
+  include_embeddings?: boolean;
+
+  limit?: number;
+
+  workspace_id?: string | null;
+}
+
 export declare namespace Sync {
   export {
     type SyncGetDeltaResponse as SyncGetDeltaResponse,
     type SyncGetTiersResponse as SyncGetTiersResponse,
-    type SyncGetDeltaParams as SyncGetDeltaParams,
     type SyncGetTiersParams as SyncGetTiersParams,
+    type SyncGetDeltaParams as SyncGetDeltaParams,
   };
 }

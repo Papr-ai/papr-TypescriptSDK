@@ -28,7 +28,7 @@ export const newMcpServer = async ({
   new McpServer(
     {
       name: 'papr_memory_api',
-      version: '2.8.0',
+      version: '0.0.1',
     },
     {
       instructions: await getInstructions({ stainlessApiKey, customInstructionsPath }),
@@ -182,7 +182,7 @@ export function selectTools(options?: McpOptions): McpTool[] {
     includedTools.push(
       codeTool({
         blockedMethods: blockedMethodsForCodeTool(options),
-        codeExecutionMode: options?.codeExecutionMode ?? 'stainless-sandbox',
+        codeExecutionMode: options?.codeExecutionMode ?? 'local',
       }),
     );
   }

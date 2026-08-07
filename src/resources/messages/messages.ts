@@ -244,7 +244,7 @@ export declare namespace Messages {
     type SessionProcessResponse as SessionProcessResponse,
     type SessionRetrieveHistoryResponse as SessionRetrieveHistoryResponse,
     type SessionRetrieveStatusResponse as SessionRetrieveStatusResponse,
-    type SessionUpdateParams as SessionUpdateParams,
     type SessionRetrieveHistoryParams as SessionRetrieveHistoryParams,
+    type SessionUpdateParams as SessionUpdateParams,
   };
 }

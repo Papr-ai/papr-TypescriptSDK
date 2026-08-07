@@ -8,32 +8,6 @@ import { path } from '../internal/utils/path';
 
 export class Feedback extends APIResource {
   /**
-   * Retrieve feedback by ID.
-   *
-   *     This endpoint allows developers to fetch feedback details by feedback ID.
-   *     Only the user who created the feedback or users with appropriate permissions can access it.
-   *
-   *     **Authentication Required**:
-   *     One of the following authentication methods must be used:
-   *     - Bearer token in `Authorization` header
-   *     - API Key in `X-API-Key` header
-   *     - Session token in `X-Session-Token` header
-   *
-   *     **Required Headers**:
-   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
-   *
-   * @example
-   * ```ts
-   * const feedbackResponse = await client.feedback.getByID(
-   *   'feedback_id',
-   * );
-   * ```
-   */
-  getByID(feedbackID: string, options?: RequestOptions): APIPromise<FeedbackResponse> {
-    return this._client.get(path`/v1/feedback/${feedbackID}`, options);
-  }
-
-  /**
    * Submit feedback on search results to help improve model performance.
    *
    *     This endpoint allows developers to provide feedback on:
@@ -106,6 +80,32 @@ export class Feedback extends APIResource {
    */
   submitBatch(body: FeedbackSubmitBatchParams, options?: RequestOptions): APIPromise<BatchResponse> {
     return this._client.post('/v1/feedback/batch', { body, ...options });
+  }
+
+  /**
+   * Retrieve feedback by ID.
+   *
+   *     This endpoint allows developers to fetch feedback details by feedback ID.
+   *     Only the user who created the feedback or users with appropriate permissions can access it.
+   *
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
+   *
+   *     **Required Headers**:
+   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+   *
+   * @example
+   * ```ts
+   * const feedbackResponse = await client.feedback.getByID(
+   *   'feedback_id',
+   * );
+   * ```
+   */
+  getByID(feedbackID: string, options?: RequestOptions): APIPromise<FeedbackResponse> {
+    return this._client.get(path`/v1/feedback/${feedbackID}`, options);
   }
 }
 

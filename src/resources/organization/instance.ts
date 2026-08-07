@@ -7,19 +7,6 @@ import { RequestOptions } from '../../internal/request-options';
 
 export class Instance extends APIResource {
   /**
-   * Get organization-level instance configuration (masked passwords).
-   *
-   * @example
-   * ```ts
-   * const instance =
-   *   await client.organization.instance.retrieve();
-   * ```
-   */
-  retrieve(options?: RequestOptions): APIPromise<InstanceRetrieveResponse> {
-    return this._client.get('/v1/organization/instance', options);
-  }
-
-  /**
    * Set default dedicated instance configuration for the organization (inherited by
    * namespaces without their own config).
    *
@@ -32,6 +19,19 @@ export class Instance extends APIResource {
   update(params: InstanceUpdateParams, options?: RequestOptions): APIPromise<InstanceUpdateResponse> {
     const { validate, ...body } = params;
     return this._client.put('/v1/organization/instance', { query: { validate }, body, ...options });
+  }
+
+  /**
+   * Get organization-level instance configuration (masked passwords).
+   *
+   * @example
+   * ```ts
+   * const instance =
+   *   await client.organization.instance.retrieve();
+   * ```
+   */
+  retrieve(options?: RequestOptions): APIPromise<InstanceRetrieveResponse> {
+    return this._client.get('/v1/organization/instance', options);
   }
 
   /**

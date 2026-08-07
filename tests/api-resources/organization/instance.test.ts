@@ -9,8 +9,8 @@ const client = new Papr({
 
 describe('resource instance', () => {
   // Mock server tests are disabled
-  test.skip('retrieve', async () => {
-    const responsePromise = client.organization.instance.retrieve();
+  test.skip('update', async () => {
+    const responsePromise = client.organization.instance.update({});
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;
@@ -21,8 +21,8 @@ describe('resource instance', () => {
   });
 
   // Mock server tests are disabled
-  test.skip('update', async () => {
-    const responsePromise = client.organization.instance.update({});
+  test.skip('retrieve', async () => {
+    const responsePromise = client.organization.instance.retrieve();
     const rawResponse = await responsePromise.asResponse();
     expect(rawResponse).toBeInstanceOf(Response);
     const response = await responsePromise;

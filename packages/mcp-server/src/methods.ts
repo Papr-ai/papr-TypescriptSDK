@@ -17,16 +17,16 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/user',
   },
   {
-    clientCallName: 'client.user.update',
-    fullyQualifiedName: 'user.update',
-    httpMethod: 'put',
-    httpPath: '/v1/user/{user_id}',
-  },
-  {
     clientCallName: 'client.user.list',
     fullyQualifiedName: 'user.list',
     httpMethod: 'get',
     httpPath: '/v1/user',
+  },
+  {
+    clientCallName: 'client.user.get',
+    fullyQualifiedName: 'user.get',
+    httpMethod: 'get',
+    httpPath: '/v1/user/{user_id}',
   },
   {
     clientCallName: 'client.user.delete',
@@ -41,10 +41,16 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/user/batch',
   },
   {
-    clientCallName: 'client.user.get',
-    fullyQualifiedName: 'user.get',
-    httpMethod: 'get',
+    clientCallName: 'client.user.update',
+    fullyQualifiedName: 'user.update',
+    httpMethod: 'put',
     httpPath: '/v1/user/{user_id}',
+  },
+  {
+    clientCallName: 'client.memory.add',
+    fullyQualifiedName: 'memory.add',
+    httpMethod: 'post',
+    httpPath: '/v1/memory',
   },
   {
     clientCallName: 'client.memory.update',
@@ -59,18 +65,6 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/memory/{memory_id}',
   },
   {
-    clientCallName: 'client.memory.add',
-    fullyQualifiedName: 'memory.add',
-    httpMethod: 'post',
-    httpPath: '/v1/memory',
-  },
-  {
-    clientCallName: 'client.memory.addBatch',
-    fullyQualifiedName: 'memory.addBatch',
-    httpMethod: 'post',
-    httpPath: '/v1/memory/batch',
-  },
-  {
     clientCallName: 'client.memory.deleteAll',
     fullyQualifiedName: 'memory.deleteAll',
     httpMethod: 'delete',
@@ -83,16 +77,10 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/memory/{memory_id}',
   },
   {
-    clientCallName: 'client.memory.retrieveBatchStatus',
-    fullyQualifiedName: 'memory.retrieveBatchStatus',
-    httpMethod: 'get',
-    httpPath: '/v1/memory/batch/status/{batch_id}',
-  },
-  {
-    clientCallName: 'client.memory.retrieveStatus',
-    fullyQualifiedName: 'memory.retrieveStatus',
-    httpMethod: 'get',
-    httpPath: '/v1/memory/status/{memory_id}',
+    clientCallName: 'client.memory.addBatch',
+    fullyQualifiedName: 'memory.addBatch',
+    httpMethod: 'post',
+    httpPath: '/v1/memory/batch',
   },
   {
     clientCallName: 'client.memory.search',
@@ -101,10 +89,16 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/memory/search',
   },
   {
-    clientCallName: 'client.feedback.getByID',
-    fullyQualifiedName: 'feedback.getByID',
+    clientCallName: 'client.memory.retrieveStatus',
+    fullyQualifiedName: 'memory.retrieveStatus',
     httpMethod: 'get',
-    httpPath: '/v1/feedback/{feedback_id}',
+    httpPath: '/v1/memory/status/{memory_id}',
+  },
+  {
+    clientCallName: 'client.memory.retrieveBatchStatus',
+    fullyQualifiedName: 'memory.retrieveBatchStatus',
+    httpMethod: 'get',
+    httpPath: '/v1/memory/batch/status/{batch_id}',
   },
   {
     clientCallName: 'client.feedback.submit',
@@ -119,16 +113,10 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/feedback/batch',
   },
   {
-    clientCallName: 'client.document.cancelProcessing',
-    fullyQualifiedName: 'document.cancelProcessing',
-    httpMethod: 'delete',
-    httpPath: '/v1/document/{upload_id}',
-  },
-  {
-    clientCallName: 'client.document.getStatus',
-    fullyQualifiedName: 'document.getStatus',
+    clientCallName: 'client.feedback.getByID',
+    fullyQualifiedName: 'feedback.getByID',
     httpMethod: 'get',
-    httpPath: '/v1/document/status/{upload_id}',
+    httpPath: '/v1/feedback/{feedback_id}',
   },
   {
     clientCallName: 'client.document.upload',
@@ -137,9 +125,27 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/document',
   },
   {
+    clientCallName: 'client.document.getStatus',
+    fullyQualifiedName: 'document.getStatus',
+    httpMethod: 'get',
+    httpPath: '/v1/document/status/{upload_id}',
+  },
+  {
+    clientCallName: 'client.document.cancelProcessing',
+    fullyQualifiedName: 'document.cancelProcessing',
+    httpMethod: 'delete',
+    httpPath: '/v1/document/{upload_id}',
+  },
+  {
     clientCallName: 'client.schemas.create',
     fullyQualifiedName: 'schemas.create',
     httpMethod: 'post',
+    httpPath: '/v1/schemas',
+  },
+  {
+    clientCallName: 'client.schemas.list',
+    fullyQualifiedName: 'schemas.list',
+    httpMethod: 'get',
     httpPath: '/v1/schemas',
   },
   {
@@ -153,12 +159,6 @@ export const sdkMethods: SdkMethod[] = [
     fullyQualifiedName: 'schemas.update',
     httpMethod: 'put',
     httpPath: '/v1/schemas/{schema_id}',
-  },
-  {
-    clientCallName: 'client.schemas.list',
-    fullyQualifiedName: 'schemas.list',
-    httpMethod: 'get',
-    httpPath: '/v1/schemas',
   },
   {
     clientCallName: 'client.schemas.delete',
@@ -185,10 +185,16 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/messages',
   },
   {
-    clientCallName: 'client.messages.sessions.update',
-    fullyQualifiedName: 'messages.sessions.update',
-    httpMethod: 'patch',
+    clientCallName: 'client.messages.sessions.retrieveHistory',
+    fullyQualifiedName: 'messages.sessions.retrieveHistory',
+    httpMethod: 'get',
     httpPath: '/v1/messages/sessions/{session_id}',
+  },
+  {
+    clientCallName: 'client.messages.sessions.retrieveStatus',
+    fullyQualifiedName: 'messages.sessions.retrieveStatus',
+    httpMethod: 'get',
+    httpPath: '/v1/messages/sessions/{session_id}/status',
   },
   {
     clientCallName: 'client.messages.sessions.compress',
@@ -203,16 +209,10 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/messages/sessions/{session_id}/process',
   },
   {
-    clientCallName: 'client.messages.sessions.retrieveHistory',
-    fullyQualifiedName: 'messages.sessions.retrieveHistory',
-    httpMethod: 'get',
+    clientCallName: 'client.messages.sessions.update',
+    fullyQualifiedName: 'messages.sessions.update',
+    httpMethod: 'patch',
     httpPath: '/v1/messages/sessions/{session_id}',
-  },
-  {
-    clientCallName: 'client.messages.sessions.retrieveStatus',
-    fullyQualifiedName: 'messages.sessions.retrieveStatus',
-    httpMethod: 'get',
-    httpPath: '/v1/messages/sessions/{session_id}/status',
   },
   {
     clientCallName: 'client.omo.exportMemories',
@@ -221,22 +221,16 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/omo/export',
   },
   {
-    clientCallName: 'client.omo.exportMemoriesAsJson',
-    fullyQualifiedName: 'omo.exportMemoriesAsJson',
-    httpMethod: 'get',
-    httpPath: '/v1/omo/export.json',
-  },
-  {
     clientCallName: 'client.omo.importMemories',
     fullyQualifiedName: 'omo.importMemories',
     httpMethod: 'post',
     httpPath: '/v1/omo/import',
   },
   {
-    clientCallName: 'client.sync.getDelta',
-    fullyQualifiedName: 'sync.getDelta',
+    clientCallName: 'client.omo.exportMemoriesAsJson',
+    fullyQualifiedName: 'omo.exportMemoriesAsJson',
     httpMethod: 'get',
-    httpPath: '/v1/sync/delta',
+    httpPath: '/v1/omo/export.json',
   },
   {
     clientCallName: 'client.sync.getTiers',
@@ -245,9 +239,21 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/sync/tiers',
   },
   {
+    clientCallName: 'client.sync.getDelta',
+    fullyQualifiedName: 'sync.getDelta',
+    httpMethod: 'get',
+    httpPath: '/v1/sync/delta',
+  },
+  {
     clientCallName: 'client.namespace.create',
     fullyQualifiedName: 'namespace.create',
     httpMethod: 'post',
+    httpPath: '/v1/namespace',
+  },
+  {
+    clientCallName: 'client.namespace.list',
+    fullyQualifiedName: 'namespace.list',
+    httpMethod: 'get',
     httpPath: '/v1/namespace',
   },
   {
@@ -263,12 +269,6 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/namespace/{namespace_id}',
   },
   {
-    clientCallName: 'client.namespace.list',
-    fullyQualifiedName: 'namespace.list',
-    httpMethod: 'get',
-    httpPath: '/v1/namespace',
-  },
-  {
     clientCallName: 'client.namespace.delete',
     fullyQualifiedName: 'namespace.delete',
     httpMethod: 'delete',
@@ -281,15 +281,15 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/namespace/{namespace_id}/api-keys',
   },
   {
-    clientCallName: 'client.namespace.instance.retrieve',
-    fullyQualifiedName: 'namespace.instance.retrieve',
-    httpMethod: 'get',
-    httpPath: '/v1/namespace/{namespace_id}/instance',
-  },
-  {
     clientCallName: 'client.namespace.instance.update',
     fullyQualifiedName: 'namespace.instance.update',
     httpMethod: 'put',
+    httpPath: '/v1/namespace/{namespace_id}/instance',
+  },
+  {
+    clientCallName: 'client.namespace.instance.retrieve',
+    fullyQualifiedName: 'namespace.instance.retrieve',
+    httpMethod: 'get',
     httpPath: '/v1/namespace/{namespace_id}/instance',
   },
   {
@@ -299,15 +299,15 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/v1/namespace/{namespace_id}/instance',
   },
   {
-    clientCallName: 'client.organization.instance.retrieve',
-    fullyQualifiedName: 'organization.instance.retrieve',
-    httpMethod: 'get',
-    httpPath: '/v1/organization/instance',
-  },
-  {
     clientCallName: 'client.organization.instance.update',
     fullyQualifiedName: 'organization.instance.update',
     httpMethod: 'put',
+    httpPath: '/v1/organization/instance',
+  },
+  {
+    clientCallName: 'client.organization.instance.retrieve',
+    fullyQualifiedName: 'organization.instance.retrieve',
+    httpMethod: 'get',
     httpPath: '/v1/organization/instance',
   },
   {
@@ -389,16 +389,22 @@ export const sdkMethods: SdkMethod[] = [
     httpPath: '/logout',
   },
   {
+    clientCallName: 'client.graph.transform',
+    fullyQualifiedName: 'graph.transform',
+    httpMethod: 'post',
+    httpPath: '/v1/graph/transform',
+  },
+  {
     clientCallName: 'client.graph.rerank',
     fullyQualifiedName: 'graph.rerank',
     httpMethod: 'post',
     httpPath: '/v1/graph/rerank',
   },
   {
-    clientCallName: 'client.graph.transform',
-    fullyQualifiedName: 'graph.transform',
-    httpMethod: 'post',
-    httpPath: '/v1/graph/transform',
+    clientCallName: 'client.graph.domains.list',
+    fullyQualifiedName: 'graph.domains.list',
+    httpMethod: 'get',
+    httpPath: '/v1/graph/domains',
   },
   {
     clientCallName: 'client.graph.domains.create',
@@ -417,12 +423,6 @@ export const sdkMethods: SdkMethod[] = [
     fullyQualifiedName: 'graph.domains.update',
     httpMethod: 'put',
     httpPath: '/v1/graph/domains/{domain_id}',
-  },
-  {
-    clientCallName: 'client.graph.domains.list',
-    fullyQualifiedName: 'graph.domains.list',
-    httpMethod: 'get',
-    httpPath: '/v1/graph/domains',
   },
   {
     clientCallName: 'client.graph.domains.delete',

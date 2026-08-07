@@ -9,6 +9,31 @@ const client = new Papr({
 
 describe('resource graph', () => {
   // Mock server tests are disabled
+  test.skip('transform: only required params', async () => {
+    const responsePromise = client.graph.transform({ text: 'text' });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('transform: required and optional params', async () => {
+    const response = await client.graph.transform({
+      text: 'text',
+      domain_id: 'domain_id',
+      embedding: [0],
+      metadata: { foo: 'bar' },
+      return_concat: true,
+      return_rot_v3: true,
+      signal_embedder: 'sbert',
+    });
+  });
+
+  // Mock server tests are disabled
   test.skip('rerank: only required params', async () => {
     const responsePromise = client.graph.rerank({ documents: ['string'], query: 'string' });
     const rawResponse = await responsePromise.asResponse();
@@ -44,31 +69,6 @@ describe('resource graph', () => {
       signal_filters: { foo: 0 },
       signal_multipliers: { foo: 'bar' },
       top_k: 1,
-    });
-  });
-
-  // Mock server tests are disabled
-  test.skip('transform: only required params', async () => {
-    const responsePromise = client.graph.transform({ text: 'text' });
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('transform: required and optional params', async () => {
-    const response = await client.graph.transform({
-      text: 'text',
-      domain_id: 'domain_id',
-      embedding: [0],
-      metadata: { foo: 'bar' },
-      return_concat: true,
-      return_rot_v3: true,
-      signal_embedder: 'sbert',
     });
   });
 });

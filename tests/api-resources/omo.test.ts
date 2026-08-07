@@ -26,23 +26,6 @@ describe('resource omo', () => {
   });
 
   // Mock server tests are disabled
-  test.skip('exportMemoriesAsJson: only required params', async () => {
-    const responsePromise = client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('exportMemoriesAsJson: required and optional params', async () => {
-    const response = await client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
-  });
-
-  // Mock server tests are disabled
   test.skip('importMemories: only required params', async () => {
     const responsePromise = client.omo.importMemories({ memories: [{ foo: 'bar' }] });
     const rawResponse = await responsePromise.asResponse();
@@ -57,5 +40,22 @@ describe('resource omo', () => {
   // Mock server tests are disabled
   test.skip('importMemories: required and optional params', async () => {
     const response = await client.omo.importMemories({ memories: [{ foo: 'bar' }], skip_duplicates: true });
+  });
+
+  // Mock server tests are disabled
+  test.skip('exportMemoriesAsJson: only required params', async () => {
+    const responsePromise = client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('exportMemoriesAsJson: required and optional params', async () => {
+    const response = await client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });
   });
 });

@@ -7,35 +7,61 @@ import { path } from '../../internal/utils/path';
 
 export class Sessions extends APIResource {
   /**
-   * Update session properties (e.g., title, metadata).
+   * Retrieve message history for a specific conversation session.
    *
    *     **Authentication Required**: Bearer token, API key, or session token
    *
-   *     **Updatable Fields**:
-   *     - `title`: Update the conversation title
-   *     - `metadata`: Update session metadata (merged with existing)
+   *     **Pagination**:
+   *     - Use `limit` and `skip` parameters for pagination
+   *     - Messages are returned in **reverse chronological order** (newest first)
+   *     - `total_count` indicates total messages in the session
    *
-   *     **Example Request**:
-   *     ```json
-   *     {
-   *         "title": "Updated Session Title",
-   *         "metadata": {"custom_field": "value"}
-   *     }
-   *     ```
+   *     **Summaries** (if available):
+   *     - Returns hierarchical conversation summaries (short/medium/long-term)
+   *     - Includes `context_for_llm` field with pre-compressed context
+   *     - Summaries are automatically generated every 15 messages
+   *     - Use `/sessions/{session_id}/compress` endpoint to retrieve on-demand
+   *
+   *     **Access Control**:
+   *     - Only returns messages for the authenticated user
+   *     - Workspace scoping is applied if available
    *
    * @example
    * ```ts
-   * const session = await client.messages.sessions.update(
-   *   'session_id',
-   * );
+   * const response =
+   *   await client.messages.sessions.retrieveHistory(
+   *     'session_id',
+   *   );
    * ```
    */
-  update(
+  retrieveHistory(
     sessionID: string,
-    body: SessionUpdateParams,
+    query: SessionRetrieveHistoryParams | null | undefined = {},
     options?: RequestOptions,
-  ): APIPromise<SessionUpdateResponse> {
-    return this._client.patch(path`/v1/messages/sessions/${sessionID}`, { body, ...options });
+  ): APIPromise<SessionRetrieveHistoryResponse> {
+    return this._client.get(path`/v1/messages/sessions/${sessionID}`, { query, ...options });
+  }
+
+  /**
+   * Get processing status for messages in a session.
+   *
+   *     **Authentication Required**: Bearer token, API key, or session token
+   *
+   *     **Status Information**:
+   *     - Total messages in session
+   *     - Processing status breakdown (queued, analyzing, completed, failed)
+   *     - Any messages with processing errors
+   *
+   * @example
+   * ```ts
+   * const response =
+   *   await client.messages.sessions.retrieveStatus(
+   *     'session_id',
+   *   );
+   * ```
+   */
+  retrieveStatus(sessionID: string, options?: RequestOptions): APIPromise<SessionRetrieveStatusResponse> {
+    return this._client.get(path`/v1/messages/sessions/${sessionID}/status`, options);
   }
 
   /**
@@ -102,61 +128,35 @@ export class Sessions extends APIResource {
   }
 
   /**
-   * Retrieve message history for a specific conversation session.
+   * Update session properties (e.g., title, metadata).
    *
    *     **Authentication Required**: Bearer token, API key, or session token
    *
-   *     **Pagination**:
-   *     - Use `limit` and `skip` parameters for pagination
-   *     - Messages are returned in **reverse chronological order** (newest first)
-   *     - `total_count` indicates total messages in the session
+   *     **Updatable Fields**:
+   *     - `title`: Update the conversation title
+   *     - `metadata`: Update session metadata (merged with existing)
    *
-   *     **Summaries** (if available):
-   *     - Returns hierarchical conversation summaries (short/medium/long-term)
-   *     - Includes `context_for_llm` field with pre-compressed context
-   *     - Summaries are automatically generated every 15 messages
-   *     - Use `/sessions/{session_id}/compress` endpoint to retrieve on-demand
-   *
-   *     **Access Control**:
-   *     - Only returns messages for the authenticated user
-   *     - Workspace scoping is applied if available
+   *     **Example Request**:
+   *     ```json
+   *     {
+   *         "title": "Updated Session Title",
+   *         "metadata": {"custom_field": "value"}
+   *     }
+   *     ```
    *
    * @example
    * ```ts
-   * const response =
-   *   await client.messages.sessions.retrieveHistory(
-   *     'session_id',
-   *   );
+   * const session = await client.messages.sessions.update(
+   *   'session_id',
+   * );
    * ```
    */
-  retrieveHistory(
+  update(
     sessionID: string,
-    query: SessionRetrieveHistoryParams | null | undefined = {},
+    body: SessionUpdateParams,
     options?: RequestOptions,
-  ): APIPromise<SessionRetrieveHistoryResponse> {
-    return this._client.get(path`/v1/messages/sessions/${sessionID}`, { query, ...options });
-  }
-
-  /**
-   * Get processing status for messages in a session.
-   *
-   *     **Authentication Required**: Bearer token, API key, or session token
-   *
-   *     **Status Information**:
-   *     - Total messages in session
-   *     - Processing status breakdown (queued, analyzing, completed, failed)
-   *     - Any messages with processing errors
-   *
-   * @example
-   * ```ts
-   * const response =
-   *   await client.messages.sessions.retrieveStatus(
-   *     'session_id',
-   *   );
-   * ```
-   */
-  retrieveStatus(sessionID: string, options?: RequestOptions): APIPromise<SessionRetrieveStatusResponse> {
-    return this._client.get(path`/v1/messages/sessions/${sessionID}/status`, options);
+  ): APIPromise<SessionUpdateResponse> {
+    return this._client.patch(path`/v1/messages/sessions/${sessionID}`, { body, ...options });
   }
 }
 
@@ -356,18 +356,6 @@ export namespace SessionRetrieveHistoryResponse {
  */
 export type SessionRetrieveStatusResponse = { [key: string]: unknown };
 
-export interface SessionUpdateParams {
-  /**
-   * Metadata to merge with existing session metadata
-   */
-  metadata?: { [key: string]: unknown } | null;
-
-  /**
-   * New title for the session
-   */
-  title?: string | null;
-}
-
 export interface SessionRetrieveHistoryParams {
   /**
    * Maximum number of messages to return
@@ -380,6 +368,18 @@ export interface SessionRetrieveHistoryParams {
   skip?: number;
 }
 
+export interface SessionUpdateParams {
+  /**
+   * Metadata to merge with existing session metadata
+   */
+  metadata?: { [key: string]: unknown } | null;
+
+  /**
+   * New title for the session
+   */
+  title?: string | null;
+}
+
 export declare namespace Sessions {
   export {
     type ConversationSummaryResponse as ConversationSummaryResponse,
@@ -388,7 +388,7 @@ export declare namespace Sessions {
     type SessionProcessResponse as SessionProcessResponse,
     type SessionRetrieveHistoryResponse as SessionRetrieveHistoryResponse,
     type SessionRetrieveStatusResponse as SessionRetrieveStatusResponse,
-    type SessionUpdateParams as SessionUpdateParams,
     type SessionRetrieveHistoryParams as SessionRetrieveHistoryParams,
+    type SessionUpdateParams as SessionUpdateParams,
   };
 }

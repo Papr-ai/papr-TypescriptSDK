@@ -21,16 +21,6 @@ export class Omo extends APIResource {
   }
 
   /**
-   * Export memories in OMO JSON file format for download.
-   */
-  exportMemoriesAsJson(
-    query: OmoExportMemoriesAsJsonParams,
-    options?: RequestOptions,
-  ): APIPromise<OmoExportMemoriesAsJsonResponse> {
-    return this._client.get('/v1/omo/export.json', { query, ...options });
-  }
-
-  /**
    * Import memories from Open Memory Object (OMO) standard format.
    *
    *     This enables importing memories from other OMO-compliant platforms.
@@ -42,6 +32,16 @@ export class Omo extends APIResource {
     options?: RequestOptions,
   ): APIPromise<OmoImportMemoriesResponse> {
     return this._client.post('/v1/omo/import', { body, ...options });
+  }
+
+  /**
+   * Export memories in OMO JSON file format for download.
+   */
+  exportMemoriesAsJson(
+    query: OmoExportMemoriesAsJsonParams,
+    options?: RequestOptions,
+  ): APIPromise<OmoExportMemoriesAsJsonResponse> {
+    return this._client.get('/v1/omo/export.json', { query, ...options });
   }
 }
 
@@ -107,13 +107,6 @@ export interface OmoExportMemoriesParams {
   memory_ids: Array<string>;
 }
 
-export interface OmoExportMemoriesAsJsonParams {
-  /**
-   * Comma-separated list of memory IDs
-   */
-  memory_ids: string;
-}
-
 export interface OmoImportMemoriesParams {
   /**
    * List of memories in OMO v1 format
@@ -126,13 +119,20 @@ export interface OmoImportMemoriesParams {
   skip_duplicates?: boolean;
 }
 
+export interface OmoExportMemoriesAsJsonParams {
+  /**
+   * Comma-separated list of memory IDs
+   */
+  memory_ids: string;
+}
+
 export declare namespace Omo {
   export {
     type OmoExportMemoriesResponse as OmoExportMemoriesResponse,
     type OmoExportMemoriesAsJsonResponse as OmoExportMemoriesAsJsonResponse,
     type OmoImportMemoriesResponse as OmoImportMemoriesResponse,
     type OmoExportMemoriesParams as OmoExportMemoriesParams,
-    type OmoExportMemoriesAsJsonParams as OmoExportMemoriesAsJsonParams,
     type OmoImportMemoriesParams as OmoImportMemoriesParams,
+    type OmoExportMemoriesAsJsonParams as OmoExportMemoriesAsJsonParams,
   };
 }

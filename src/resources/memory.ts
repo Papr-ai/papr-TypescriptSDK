@@ -10,6 +10,48 @@ import { path } from '../internal/utils/path';
 
 export class Memory extends APIResource {
   /**
+   * Add a new memory item to the system with size validation and background
+   * processing.
+   *
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
+   *
+   *     **Required Headers**:
+   *     - Content-Type: application/json
+   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
+   *
+   *     **Role-Based Memory Categories**:
+   *     - **User memories**: preference, task, goal, facts, context
+   *     - **Assistant memories**: skills, learning
+   *
+   *     **New Metadata Fields**:
+   *     - `metadata.role`: Optional field to specify who generated the memory (user or assistant)
+   *     - `metadata.category`: Optional field for memory categorization based on role
+   *     - Both fields are stored within metadata at the same level as topics, location, etc.
+   *
+   *     The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
+   *
+   * @example
+   * ```ts
+   * const addMemoryResponse = await client.memory.add({
+   *   content:
+   *     'Meeting with John Smith from Acme Corp about the Q4 project timeline',
+   * });
+   * ```
+   */
+  add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
+    const { format, skip_background_processing, webhook_secret, webhook_url, ...body } = params;
+    return this._client.post('/v1/memory', {
+      query: { format, skip_background_processing, webhook_secret, webhook_url },
+      body,
+      ...options,
+    });
+  }
+
+  /**
    * Update an existing memory item by ID.
    *
    *     **Authentication Required**:
@@ -66,88 +108,6 @@ export class Memory extends APIResource {
   ): APIPromise<MemoryDeleteResponse> {
     const { skip_parse } = params ?? {};
     return this._client.delete(path`/v1/memory/${memoryID}`, { query: { skip_parse }, ...options });
-  }
-
-  /**
-   * Add a new memory item to the system with size validation and background
-   * processing.
-   *
-   *     **Authentication Required**:
-   *     One of the following authentication methods must be used:
-   *     - Bearer token in `Authorization` header
-   *     - API Key in `X-API-Key` header
-   *     - Session token in `X-Session-Token` header
-   *
-   *     **Required Headers**:
-   *     - Content-Type: application/json
-   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
-   *
-   *     **Role-Based Memory Categories**:
-   *     - **User memories**: preference, task, goal, facts, context
-   *     - **Assistant memories**: skills, learning
-   *
-   *     **New Metadata Fields**:
-   *     - `metadata.role`: Optional field to specify who generated the memory (user or assistant)
-   *     - `metadata.category`: Optional field for memory categorization based on role
-   *     - Both fields are stored within metadata at the same level as topics, location, etc.
-   *
-   *     The API validates content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
-   *
-   * @example
-   * ```ts
-   * const addMemoryResponse = await client.memory.add({
-   *   content:
-   *     'Meeting with John Smith from Acme Corp about the Q4 project timeline',
-   * });
-   * ```
-   */
-  add(params: MemoryAddParams, options?: RequestOptions): APIPromise<AddMemoryResponse> {
-    const { format, skip_background_processing, webhook_secret, webhook_url, ...body } = params;
-    return this._client.post('/v1/memory', {
-      query: { format, skip_background_processing, webhook_secret, webhook_url },
-      body,
-      ...options,
-    });
-  }
-
-  /**
-   * Add multiple memory items in a batch with size validation and background
-   * processing.
-   *
-   *     **Authentication Required**:
-   *     One of the following authentication methods must be used:
-   *     - Bearer token in `Authorization` header
-   *     - API Key in `X-API-Key` header
-   *     - Session token in `X-Session-Token` header
-   *
-   *     **Required Headers**:
-   *     - Content-Type: application/json
-   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
-   *
-   *     The API validates individual memory content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
-   *
-   * @example
-   * ```ts
-   * const batchMemoryResponse = await client.memory.addBatch({
-   *   memories: [
-   *     {
-   *       content:
-   *         'Meeting notes from the product planning session',
-   *     },
-   *     {
-   *       content: 'Follow-up tasks from the planning meeting',
-   *     },
-   *   ],
-   * });
-   * ```
-   */
-  addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<BatchMemoryResponse> {
-    const { enable_holographic, frequency_schema_id, skip_background_processing, ...body } = params;
-    return this._client.post('/v1/memory/batch', {
-      query: { enable_holographic, frequency_schema_id, skip_background_processing },
-      body,
-      ...options,
-    });
   }
 
   /**
@@ -211,49 +171,43 @@ export class Memory extends APIResource {
   }
 
   /**
-   * Get processing status for a batch of memories.
+   * Add multiple memory items in a batch with size validation and background
+   * processing.
    *
-   *     Returns overall batch progress and per-memory status breakdown.
-   *     The `batch_id` is returned in the POST /v1/memory/batch response.
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
    *
-   *     For real-time updates, connect to WebSocket at `/ws/memory-status`.
+   *     **Required Headers**:
+   *     - Content-Type: application/json
+   *     - X-Client-Type: (e.g., 'papr_plugin', 'browser_extension')
    *
-   * @example
-   * ```ts
-   * const response = await client.memory.retrieveBatchStatus(
-   *   'batch_id',
-   * );
-   * ```
-   */
-  retrieveBatchStatus(
-    batchID: string,
-    options?: RequestOptions,
-  ): APIPromise<MemoryRetrieveBatchStatusResponse> {
-    return this._client.get(path`/v1/memory/batch/status/${batchID}`, options);
-  }
-
-  /**
-   * Get processing status for a memory item.
-   *
-   *     Returns the current processing lifecycle stage:
-   *     - `queued` — Accepted, waiting to be processed
-   *     - `quick_saved` — Quick add complete (stored in DB + vector store), background processing pending
-   *     - `processing` — Background processing in progress (graph indexing, Neo4j nodes, enrichment)
-   *     - `completed` — All processing finished
-   *     - `failed` — Processing failed
-   *
-   *     Use this endpoint to poll for completion after adding a memory.
-   *     For real-time updates, connect to WebSocket at `/ws/memory-status/{memory_id}`.
+   *     The API validates individual memory content size against MAX_CONTENT_LENGTH environment variable (defaults to 15000 bytes).
    *
    * @example
    * ```ts
-   * const response = await client.memory.retrieveStatus(
-   *   'memory_id',
-   * );
+   * const batchMemoryResponse = await client.memory.addBatch({
+   *   memories: [
+   *     {
+   *       content:
+   *         'Meeting notes from the product planning session',
+   *     },
+   *     {
+   *       content: 'Follow-up tasks from the planning meeting',
+   *     },
+   *   ],
+   * });
    * ```
    */
-  retrieveStatus(memoryID: string, options?: RequestOptions): APIPromise<MemoryRetrieveStatusResponse> {
-    return this._client.get(path`/v1/memory/status/${memoryID}`, options);
+  addBatch(params: MemoryAddBatchParams, options?: RequestOptions): APIPromise<BatchMemoryResponse> {
+    const { enable_holographic, frequency_schema_id, skip_background_processing, ...body } = params;
+    return this._client.post('/v1/memory/batch', {
+      query: { enable_holographic, frequency_schema_id, skip_background_processing },
+      body,
+      ...options,
+    });
   }
 
   /**
@@ -337,6 +291,52 @@ export class Memory extends APIResource {
         options?.headers,
       ]),
     });
+  }
+
+  /**
+   * Get processing status for a memory item.
+   *
+   *     Returns the current processing lifecycle stage:
+   *     - `queued` — Accepted, waiting to be processed
+   *     - `quick_saved` — Quick add complete (stored in DB + vector store), background processing pending
+   *     - `processing` — Background processing in progress (graph indexing, Neo4j nodes, enrichment)
+   *     - `completed` — All processing finished
+   *     - `failed` — Processing failed
+   *
+   *     Use this endpoint to poll for completion after adding a memory.
+   *     For real-time updates, connect to WebSocket at `/ws/memory-status/{memory_id}`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.memory.retrieveStatus(
+   *   'memory_id',
+   * );
+   * ```
+   */
+  retrieveStatus(memoryID: string, options?: RequestOptions): APIPromise<MemoryRetrieveStatusResponse> {
+    return this._client.get(path`/v1/memory/status/${memoryID}`, options);
+  }
+
+  /**
+   * Get processing status for a batch of memories.
+   *
+   *     Returns overall batch progress and per-memory status breakdown.
+   *     The `batch_id` is returned in the POST /v1/memory/batch response.
+   *
+   *     For real-time updates, connect to WebSocket at `/ws/memory-status`.
+   *
+   * @example
+   * ```ts
+   * const response = await client.memory.retrieveBatchStatus(
+   *   'batch_id',
+   * );
+   * ```
+   */
+  retrieveBatchStatus(
+    batchID: string,
+    options?: RequestOptions,
+  ): APIPromise<MemoryRetrieveBatchStatusResponse> {
+    return this._client.get(path`/v1/memory/batch/status/${batchID}`, options);
   }
 }
 
@@ -1117,115 +1117,6 @@ export type MemoryRetrieveBatchStatusResponse = { [key: string]: unknown };
 
 export type MemoryRetrieveStatusResponse = { [key: string]: unknown };
 
-export interface MemoryUpdateParams {
-  /**
-   * Query param: If True, re-processes holographic neural transforms after content
-   * update
-   */
-  enable_holographic?: boolean;
-
-  /**
-   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
-   * 'scifact').
-   */
-  frequency_schema_id?: string | null;
-
-  /**
-   * Body param: The new content of the memory item
-   */
-  content?: string | null;
-
-  /**
-   * Body param: Updated context for the memory item
-   */
-  context?: Array<ContextItem> | null;
-
-  /**
-   * Body param: Graph generation configuration
-   */
-  graph_generation?: GraphGeneration | null;
-
-  /**
-   * @deprecated DEPRECATED: Use policy.graph.link_to instead. Shorthand DSL for
-   * node/edge constraints (same as node_constraints, compact syntax). Expands and
-   * merges into memory_policy.node_constraints and edge_constraints at resolve time.
-   * Default create is upsert; use dict form with create='lookup' (or legacy 'never')
-   * for link-only. Formats: - String: 'Task:title' (semantic match on Task.title,
-   * upsert by default) - List: ['Task:title', 'Person:email'] (multiple
-   * constraints) - Dict: {'Task:title': {'set': {...}, 'create': 'lookup'}} (full
-   * options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
-   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
-   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
-   * '$this', '$previous', '$context:N' Example lookup-only: {'SecurityPolicy:name':
-   * {'create': 'lookup'}}
-   */
-  link_to?: string | Array<string> | { [key: string]: unknown } | null;
-
-  /**
-   * Body param: Unified memory processing policy.
-   *
-   * This is the SINGLE source of truth for how a memory should be processed,
-   * combining graph generation control AND OMO (Open Memory Object) safety
-   * standards.
-   *
-   * **Graph Generation Modes:**
-   *
-   * - auto: LLM extracts entities freely (default)
-   * - manual: Developer provides exact nodes (no LLM extraction)
-   *
-   * **OMO Safety Standards:**
-   *
-   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
-   * - risk: Safety assessment (none, sensitive, flagged)
-   * - acl: Access control list for read/write permissions
-   *
-   * **Schema Integration:**
-   *
-   * - schema_id: Reference a schema that may have its own default memory_policy
-   * - Schema-level policies are merged with request-level (request takes precedence)
-   */
-  memory_policy?: Shared.MemoryPolicy | null;
-
-  /**
-   * Body param: Metadata for memory request
-   */
-  metadata?: MemoryMetadata | null;
-
-  /**
-   * Body param: Optional namespace ID for multi-tenant memory scoping. When
-   * provided, update is scoped to memories within this namespace.
-   */
-  namespace_id?: string | null;
-
-  /**
-   * Body param: Optional organization ID for multi-tenant memory scoping. When
-   * provided, update is scoped to memories within this organization.
-   */
-  organization_id?: string | null;
-
-  /**
-   * Body param: Policy for add / batch / document / message ingestion.
-   */
-  policy?: Shared.MemoryAddPolicy | null;
-
-  /**
-   * Body param: Updated relationships for Graph DB (neo4J)
-   */
-  relationships_json?: Array<RelationshipItem> | null;
-
-  /**
-   * Body param: Valid memory types
-   */
-  type?: MemoryType | null;
-}
-
-export interface MemoryDeleteParams {
-  /**
-   * Skip Parse Server deletion
-   */
-  skip_parse?: boolean;
-}
-
 export interface MemoryAddParams {
   /**
    * Body param: The content of the memory item you want to add to memory
@@ -1358,6 +1249,158 @@ export interface MemoryAddParams {
   user_id?: string | null;
 }
 
+export interface MemoryUpdateParams {
+  /**
+   * Query param: If True, re-processes holographic neural transforms after content
+   * update
+   */
+  enable_holographic?: boolean;
+
+  /**
+   * Query param: Frequency schema for holographic embedding (e.g. 'cosqa',
+   * 'scifact').
+   */
+  frequency_schema_id?: string | null;
+
+  /**
+   * Body param: The new content of the memory item
+   */
+  content?: string | null;
+
+  /**
+   * Body param: Updated context for the memory item
+   */
+  context?: Array<ContextItem> | null;
+
+  /**
+   * Body param: Graph generation configuration
+   */
+  graph_generation?: GraphGeneration | null;
+
+  /**
+   * @deprecated DEPRECATED: Use policy.graph.link_to instead. Shorthand DSL for
+   * node/edge constraints (same as node_constraints, compact syntax). Expands and
+   * merges into memory_policy.node_constraints and edge_constraints at resolve time.
+   * Default create is upsert; use dict form with create='lookup' (or legacy 'never')
+   * for link-only. Formats: - String: 'Task:title' (semantic match on Task.title,
+   * upsert by default) - List: ['Task:title', 'Person:email'] (multiple
+   * constraints) - Dict: {'Task:title': {'set': {...}, 'create': 'lookup'}} (full
+   * options) Syntax: - Node: 'Type:property', 'Type:prop=value' (exact),
+   * 'Type:prop~value' (semantic) - Edge: 'Source->EDGE->Target:property' (arrow
+   * syntax) - Via: 'Type.via(EDGE->Target:prop)' (relationship traversal) - Special:
+   * '$this', '$previous', '$context:N' Example lookup-only: {'SecurityPolicy:name':
+   * {'create': 'lookup'}}
+   */
+  link_to?: string | Array<string> | { [key: string]: unknown } | null;
+
+  /**
+   * Body param: Unified memory processing policy.
+   *
+   * This is the SINGLE source of truth for how a memory should be processed,
+   * combining graph generation control AND OMO (Open Memory Object) safety
+   * standards.
+   *
+   * **Graph Generation Modes:**
+   *
+   * - auto: LLM extracts entities freely (default)
+   * - manual: Developer provides exact nodes (no LLM extraction)
+   *
+   * **OMO Safety Standards:**
+   *
+   * - consent: How data owner allowed storage (explicit, implicit, terms, none)
+   * - risk: Safety assessment (none, sensitive, flagged)
+   * - acl: Access control list for read/write permissions
+   *
+   * **Schema Integration:**
+   *
+   * - schema_id: Reference a schema that may have its own default memory_policy
+   * - Schema-level policies are merged with request-level (request takes precedence)
+   */
+  memory_policy?: Shared.MemoryPolicy | null;
+
+  /**
+   * Body param: Metadata for memory request
+   */
+  metadata?: MemoryMetadata | null;
+
+  /**
+   * Body param: Optional namespace ID for multi-tenant memory scoping. When
+   * provided, update is scoped to memories within this namespace.
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Body param: Optional organization ID for multi-tenant memory scoping. When
+   * provided, update is scoped to memories within this organization.
+   */
+  organization_id?: string | null;
+
+  /**
+   * Body param: Policy for add / batch / document / message ingestion.
+   */
+  policy?: Shared.MemoryAddPolicy | null;
+
+  /**
+   * Body param: Updated relationships for Graph DB (neo4J)
+   */
+  relationships_json?: Array<RelationshipItem> | null;
+
+  /**
+   * Body param: Valid memory types
+   */
+  type?: MemoryType | null;
+}
+
+export interface MemoryDeleteParams {
+  /**
+   * Skip Parse Server deletion
+   */
+  skip_parse?: boolean;
+}
+
+export interface MemoryDeleteAllParams {
+  /**
+   * Optional external user ID to resolve and delete memories for
+   */
+  external_user_id?: string | null;
+
+  /**
+   * Optional namespace ID to scope deletion to
+   */
+  namespace_id?: string | null;
+
+  /**
+   * Skip Parse Server deletion
+   */
+  skip_parse?: boolean;
+
+  /**
+   * Optional user ID to delete memories for (if not provided, uses authenticated
+   * user)
+   */
+  user_id?: string | null;
+}
+
+export interface MemoryGetParams {
+  /**
+   * If true, return 404 if the memory has risk='flagged'. Filters out flagged
+   * content.
+   */
+  exclude_flagged?: boolean;
+
+  /**
+   * Maximum risk level allowed. Values: 'none', 'sensitive', 'flagged'. If memory
+   * exceeds this, return 404.
+   */
+  max_risk?: string | null;
+
+  /**
+   * If true, return 404 if the memory has consent='none'. Ensures only consented
+   * memories are returned.
+   */
+  require_consent?: boolean;
+}
+
 export interface MemoryAddBatchParams {
   /**
    * Body param: List of memory items to add in batch
@@ -1477,49 +1520,6 @@ export interface MemoryAddBatchParams {
   webhook_url?: string | null;
 
   [k: string]: unknown;
-}
-
-export interface MemoryDeleteAllParams {
-  /**
-   * Optional external user ID to resolve and delete memories for
-   */
-  external_user_id?: string | null;
-
-  /**
-   * Optional namespace ID to scope deletion to
-   */
-  namespace_id?: string | null;
-
-  /**
-   * Skip Parse Server deletion
-   */
-  skip_parse?: boolean;
-
-  /**
-   * Optional user ID to delete memories for (if not provided, uses authenticated
-   * user)
-   */
-  user_id?: string | null;
-}
-
-export interface MemoryGetParams {
-  /**
-   * If true, return 404 if the memory has risk='flagged'. Filters out flagged
-   * content.
-   */
-  exclude_flagged?: boolean;
-
-  /**
-   * Maximum risk level allowed. Values: 'none', 'sensitive', 'flagged'. If memory
-   * exceeds this, return 404.
-   */
-  max_risk?: string | null;
-
-  /**
-   * If true, return 404 if the memory has consent='none'. Ensures only consented
-   * memories are returned.
-   */
-  require_consent?: boolean;
 }
 
 export interface MemorySearchParams {
@@ -1976,12 +1976,12 @@ export declare namespace Memory {
     type MemoryDeleteResponse as MemoryDeleteResponse,
     type MemoryRetrieveBatchStatusResponse as MemoryRetrieveBatchStatusResponse,
     type MemoryRetrieveStatusResponse as MemoryRetrieveStatusResponse,
+    type MemoryAddParams as MemoryAddParams,
     type MemoryUpdateParams as MemoryUpdateParams,
     type MemoryDeleteParams as MemoryDeleteParams,
-    type MemoryAddParams as MemoryAddParams,
-    type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemoryDeleteAllParams as MemoryDeleteAllParams,
     type MemoryGetParams as MemoryGetParams,
+    type MemoryAddBatchParams as MemoryAddBatchParams,
     type MemorySearchParams as MemorySearchParams,
   };
 }
