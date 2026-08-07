@@ -29,11 +29,11 @@ Types:
 Methods:
 
 - <code title="post /v1/user">client.user.<a href="./src/resources/user.ts">create</a>({ ...params }) -> UserResponse</code>
+- <code title="put /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">update</a>(userID, { ...params }) -> UserResponse</code>
 - <code title="get /v1/user">client.user.<a href="./src/resources/user.ts">list</a>({ ...params }) -> UserListResponse</code>
-- <code title="get /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">get</a>(userID) -> UserResponse</code>
 - <code title="delete /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">delete</a>(userID, { ...params }) -> UserDeleteResponse</code>
 - <code title="post /v1/user/batch">client.user.<a href="./src/resources/user.ts">createBatch</a>({ ...params }) -> UserCreateBatchResponse</code>
-- <code title="put /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">update</a>(userID, { ...params }) -> UserResponse</code>
+- <code title="get /v1/user/{user_id}">client.user.<a href="./src/resources/user.ts">get</a>(userID) -> UserResponse</code>
 
 # Memory
 
@@ -60,15 +60,15 @@ Types:
 
 Methods:
 
-- <code title="post /v1/memory">client.memory.<a href="./src/resources/memory.ts">add</a>({ ...params }) -> AddMemoryResponse</code>
 - <code title="put /v1/memory/{memory_id}">client.memory.<a href="./src/resources/memory.ts">update</a>(memoryID, { ...params }) -> MemoryUpdateResponse</code>
 - <code title="delete /v1/memory/{memory_id}">client.memory.<a href="./src/resources/memory.ts">delete</a>(memoryID, { ...params }) -> MemoryDeleteResponse</code>
+- <code title="post /v1/memory">client.memory.<a href="./src/resources/memory.ts">add</a>({ ...params }) -> AddMemoryResponse</code>
+- <code title="post /v1/memory/batch">client.memory.<a href="./src/resources/memory.ts">addBatch</a>({ ...params }) -> BatchMemoryResponse</code>
 - <code title="delete /v1/memory/all">client.memory.<a href="./src/resources/memory.ts">deleteAll</a>({ ...params }) -> BatchMemoryResponse</code>
 - <code title="get /v1/memory/{memory_id}">client.memory.<a href="./src/resources/memory.ts">get</a>(memoryID, { ...params }) -> SearchResponse</code>
-- <code title="post /v1/memory/batch">client.memory.<a href="./src/resources/memory.ts">addBatch</a>({ ...params }) -> BatchMemoryResponse</code>
-- <code title="post /v1/memory/search">client.memory.<a href="./src/resources/memory.ts">search</a>({ ...params }) -> SearchResponse</code>
-- <code title="get /v1/memory/status/{memory_id}">client.memory.<a href="./src/resources/memory.ts">retrieveStatus</a>(memoryID) -> MemoryRetrieveStatusResponse</code>
 - <code title="get /v1/memory/batch/status/{batch_id}">client.memory.<a href="./src/resources/memory.ts">retrieveBatchStatus</a>(batchID) -> MemoryRetrieveBatchStatusResponse</code>
+- <code title="get /v1/memory/status/{memory_id}">client.memory.<a href="./src/resources/memory.ts">retrieveStatus</a>(memoryID) -> MemoryRetrieveStatusResponse</code>
+- <code title="post /v1/memory/search">client.memory.<a href="./src/resources/memory.ts">search</a>({ ...params }) -> SearchResponse</code>
 
 # Feedback
 
@@ -82,9 +82,9 @@ Types:
 
 Methods:
 
+- <code title="get /v1/feedback/{feedback_id}">client.feedback.<a href="./src/resources/feedback.ts">getByID</a>(feedbackID) -> FeedbackResponse</code>
 - <code title="post /v1/feedback">client.feedback.<a href="./src/resources/feedback.ts">submit</a>({ ...params }) -> FeedbackResponse</code>
 - <code title="post /v1/feedback/batch">client.feedback.<a href="./src/resources/feedback.ts">submitBatch</a>({ ...params }) -> BatchResponse</code>
-- <code title="get /v1/feedback/{feedback_id}">client.feedback.<a href="./src/resources/feedback.ts">getByID</a>(feedbackID) -> FeedbackResponse</code>
 
 # Document
 
@@ -96,9 +96,9 @@ Types:
 
 Methods:
 
-- <code title="post /v1/document">client.document.<a href="./src/resources/document.ts">upload</a>({ ...params }) -> DocumentUploadResponse</code>
-- <code title="get /v1/document/status/{upload_id}">client.document.<a href="./src/resources/document.ts">getStatus</a>(uploadID, { ...params }) -> DocumentGetStatusResponse</code>
 - <code title="delete /v1/document/{upload_id}">client.document.<a href="./src/resources/document.ts">cancelProcessing</a>(uploadID) -> DocumentCancelProcessingResponse</code>
+- <code title="get /v1/document/status/{upload_id}">client.document.<a href="./src/resources/document.ts">getStatus</a>(uploadID, { ...params }) -> DocumentGetStatusResponse</code>
+- <code title="post /v1/document">client.document.<a href="./src/resources/document.ts">upload</a>({ ...params }) -> DocumentUploadResponse</code>
 
 # Schemas
 
@@ -116,9 +116,9 @@ Types:
 Methods:
 
 - <code title="post /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">create</a>({ ...params }) -> SchemaCreateResponse</code>
-- <code title="get /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">list</a>({ ...params }) -> SchemaListResponse</code>
 - <code title="get /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">retrieve</a>(schemaID) -> SchemaRetrieveResponse</code>
 - <code title="put /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">update</a>(schemaID, { ...params }) -> SchemaUpdateResponse</code>
+- <code title="get /v1/schemas">client.schemas.<a href="./src/resources/schemas.ts">list</a>({ ...params }) -> SchemaListResponse</code>
 - <code title="delete /v1/schemas/{schema_id}">client.schemas.<a href="./src/resources/schemas.ts">delete</a>(schemaID) -> SchemaDeleteResponse</code>
 
 # Graphql
@@ -156,11 +156,11 @@ Types:
 
 Methods:
 
-- <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>
-- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> SessionRetrieveStatusResponse</code>
+- <code title="patch /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">update</a>(sessionID, { ...params }) -> SessionUpdateResponse</code>
 - <code title="get /v1/messages/sessions/{session_id}/compress">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">compress</a>(sessionID) -> SessionCompressResponse</code>
 - <code title="post /v1/messages/sessions/{session_id}/process">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">process</a>(sessionID) -> SessionProcessResponse</code>
-- <code title="patch /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">update</a>(sessionID, { ...params }) -> SessionUpdateResponse</code>
+- <code title="get /v1/messages/sessions/{session_id}">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveHistory</a>(sessionID, { ...params }) -> SessionRetrieveHistoryResponse</code>
+- <code title="get /v1/messages/sessions/{session_id}/status">client.messages.sessions.<a href="./src/resources/messages/sessions.ts">retrieveStatus</a>(sessionID) -> SessionRetrieveStatusResponse</code>
 
 # Omo
 
@@ -173,8 +173,8 @@ Types:
 Methods:
 
 - <code title="post /v1/omo/export">client.omo.<a href="./src/resources/omo.ts">exportMemories</a>({ ...params }) -> OmoExportMemoriesResponse</code>
-- <code title="post /v1/omo/import">client.omo.<a href="./src/resources/omo.ts">importMemories</a>({ ...params }) -> OmoImportMemoriesResponse</code>
 - <code title="get /v1/omo/export.json">client.omo.<a href="./src/resources/omo.ts">exportMemoriesAsJson</a>({ ...params }) -> OmoExportMemoriesAsJsonResponse</code>
+- <code title="post /v1/omo/import">client.omo.<a href="./src/resources/omo.ts">importMemories</a>({ ...params }) -> OmoImportMemoriesResponse</code>
 
 # Sync
 
@@ -185,8 +185,8 @@ Types:
 
 Methods:
 
-- <code title="post /v1/sync/tiers">client.sync.<a href="./src/resources/sync.ts">getTiers</a>({ ...params }) -> SyncGetTiersResponse</code>
 - <code title="get /v1/sync/delta">client.sync.<a href="./src/resources/sync.ts">getDelta</a>({ ...params }) -> SyncGetDeltaResponse</code>
+- <code title="post /v1/sync/tiers">client.sync.<a href="./src/resources/sync.ts">getTiers</a>({ ...params }) -> SyncGetTiersResponse</code>
 
 # Namespace
 
@@ -205,9 +205,9 @@ Types:
 Methods:
 
 - <code title="post /v1/namespace">client.namespace.<a href="./src/resources/namespace/namespace.ts">create</a>({ ...params }) -> NamespaceCreateResponse</code>
-- <code title="get /v1/namespace">client.namespace.<a href="./src/resources/namespace/namespace.ts">list</a>({ ...params }) -> NamespaceListResponse</code>
 - <code title="get /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">retrieve</a>(namespaceID) -> NamespaceRetrieveResponse</code>
 - <code title="put /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">update</a>(namespaceID, { ...params }) -> NamespaceUpdateResponse</code>
+- <code title="get /v1/namespace">client.namespace.<a href="./src/resources/namespace/namespace.ts">list</a>({ ...params }) -> NamespaceListResponse</code>
 - <code title="delete /v1/namespace/{namespace_id}">client.namespace.<a href="./src/resources/namespace/namespace.ts">delete</a>(namespaceID, { ...params }) -> NamespaceDeleteResponse</code>
 - <code title="post /v1/namespace/{namespace_id}/api-keys">client.namespace.<a href="./src/resources/namespace/namespace.ts">createAPIKey</a>(namespaceID, { ...params }) -> NamespaceCreateAPIKeyResponse</code>
 
@@ -221,8 +221,8 @@ Types:
 
 Methods:
 
-- <code title="put /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">update</a>(namespaceID, { ...params }) -> InstanceUpdateResponse</code>
 - <code title="get /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">retrieve</a>(namespaceID) -> InstanceRetrieveResponse</code>
+- <code title="put /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">update</a>(namespaceID, { ...params }) -> InstanceUpdateResponse</code>
 - <code title="delete /v1/namespace/{namespace_id}/instance">client.namespace.instance.<a href="./src/resources/namespace/instance.ts">delete</a>(namespaceID) -> InstanceDeleteResponse</code>
 
 # Organization
@@ -237,8 +237,8 @@ Types:
 
 Methods:
 
-- <code title="put /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">update</a>({ ...params }) -> InstanceUpdateResponse</code>
 - <code title="get /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">retrieve</a>() -> InstanceRetrieveResponse</code>
+- <code title="put /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">update</a>({ ...params }) -> InstanceUpdateResponse</code>
 - <code title="delete /v1/organization/instance">client.organization.instance.<a href="./src/resources/organization/instance.ts">delete</a>() -> InstanceDeleteResponse</code>
 
 # AI
@@ -366,8 +366,8 @@ Types:
 
 Methods:
 
-- <code title="post /v1/graph/transform">client.graph.<a href="./src/resources/graph/graph.ts">transform</a>({ ...params }) -> GraphTransformResponse</code>
 - <code title="post /v1/graph/rerank">client.graph.<a href="./src/resources/graph/graph.ts">rerank</a>({ ...params }) -> GraphRerankResponse</code>
+- <code title="post /v1/graph/transform">client.graph.<a href="./src/resources/graph/graph.ts">transform</a>({ ...params }) -> GraphTransformResponse</code>
 
 ## Domains
 
@@ -385,8 +385,8 @@ Types:
 
 Methods:
 
-- <code title="get /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains.ts">list</a>() -> DomainListResponse</code>
 - <code title="post /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains.ts">create</a>({ ...params }) -> DomainCreateResponse</code>
 - <code title="get /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains.ts">retrieve</a>(domainID) -> DomainRetrieveResponse</code>
 - <code title="put /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains.ts">update</a>(domainID, { ...params }) -> DomainUpdateResponse</code>
+- <code title="get /v1/graph/domains">client.graph.domains.<a href="./src/resources/graph/domains.ts">list</a>() -> DomainListResponse</code>
 - <code title="delete /v1/graph/domains/{domain_id}">client.graph.domains.<a href="./src/resources/graph/domains.ts">delete</a>(domainID) -> DomainDeleteResponse</code>

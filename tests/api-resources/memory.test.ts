@@ -9,6 +9,38 @@ const client = new Papr({
 
 describe('resource memory', () => {
   // Mock server tests are disabled
+  test.skip('update', async () => {
+    const responsePromise = client.memory.update('memory_id', {});
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('delete', async () => {
+    const responsePromise = client.memory.delete('memory_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('delete: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.memory.delete('memory_id', { skip_parse: true }, { path: '/_stainless_unknown_path' }),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Mock server tests are disabled
   test.skip('add: only required params', async () => {
     const responsePromise = client.memory.add({
       content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',
@@ -386,94 +418,6 @@ describe('resource memory', () => {
       type: 'text',
       user_id: 'user_id',
     });
-  });
-
-  // Mock server tests are disabled
-  test.skip('update', async () => {
-    const responsePromise = client.memory.update('memory_id', {});
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('delete', async () => {
-    const responsePromise = client.memory.delete('memory_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('delete: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.memory.delete('memory_id', { skip_parse: true }, { path: '/_stainless_unknown_path' }),
-    ).rejects.toThrow(Papr.NotFoundError);
-  });
-
-  // Mock server tests are disabled
-  test.skip('deleteAll', async () => {
-    const responsePromise = client.memory.deleteAll();
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('deleteAll: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.memory.deleteAll(
-        {
-          external_user_id: 'external_user_id',
-          namespace_id: 'namespace_id',
-          skip_parse: true,
-          user_id: 'user_id',
-        },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(Papr.NotFoundError);
-  });
-
-  // Mock server tests are disabled
-  test.skip('get', async () => {
-    const responsePromise = client.memory.get('memory_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('get: request options and params are passed correctly', async () => {
-    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
-    await expect(
-      client.memory.get(
-        'memory_id',
-        {
-          exclude_flagged: true,
-          max_risk: 'max_risk',
-          require_consent: true,
-        },
-        { path: '/_stainless_unknown_path' },
-      ),
-    ).rejects.toThrow(Papr.NotFoundError);
   });
 
   // Mock server tests are disabled
@@ -1527,6 +1471,86 @@ describe('resource memory', () => {
   });
 
   // Mock server tests are disabled
+  test.skip('deleteAll', async () => {
+    const responsePromise = client.memory.deleteAll();
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('deleteAll: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.memory.deleteAll(
+        {
+          external_user_id: 'external_user_id',
+          namespace_id: 'namespace_id',
+          skip_parse: true,
+          user_id: 'user_id',
+        },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Mock server tests are disabled
+  test.skip('get', async () => {
+    const responsePromise = client.memory.get('memory_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('get: request options and params are passed correctly', async () => {
+    // ensure the request options are being passed correctly by passing an invalid HTTP method in order to cause an error
+    await expect(
+      client.memory.get(
+        'memory_id',
+        {
+          exclude_flagged: true,
+          max_risk: 'max_risk',
+          require_consent: true,
+        },
+        { path: '/_stainless_unknown_path' },
+      ),
+    ).rejects.toThrow(Papr.NotFoundError);
+  });
+
+  // Mock server tests are disabled
+  test.skip('retrieveBatchStatus', async () => {
+    const responsePromise = client.memory.retrieveBatchStatus('batch_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
+  test.skip('retrieveStatus', async () => {
+    const responsePromise = client.memory.retrieveStatus('memory_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
   test.skip('search: only required params', async () => {
     const responsePromise = client.memory.search({
       query:
@@ -1793,29 +1817,5 @@ describe('resource memory', () => {
       user_id: 'user_id',
       'Accept-Encoding': 'Accept-Encoding',
     });
-  });
-
-  // Mock server tests are disabled
-  test.skip('retrieveStatus', async () => {
-    const responsePromise = client.memory.retrieveStatus('memory_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
-  });
-
-  // Mock server tests are disabled
-  test.skip('retrieveBatchStatus', async () => {
-    const responsePromise = client.memory.retrieveBatchStatus('batch_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
   });
 });

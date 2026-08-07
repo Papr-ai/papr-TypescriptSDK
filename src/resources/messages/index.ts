@@ -9,6 +9,6 @@ export {
   type SessionProcessResponse,
   type SessionRetrieveHistoryResponse,
   type SessionRetrieveStatusResponse,
-  type SessionRetrieveHistoryParams,
   type SessionUpdateParams,
+  type SessionRetrieveHistoryParams,
 } from './sessions';

@@ -22,6 +22,18 @@ export class User extends APIResource {
   }
 
   /**
+   * Update user details by user_id (\_User.objectId) and developer association
+   *
+   * @example
+   * ```ts
+   * const userResponse = await client.user.update('user_id');
+   * ```
+   */
+  update(userID: string, body: UserUpdateParams, options?: RequestOptions): APIPromise<UserResponse> {
+    return this._client.put(path`/v1/user/${userID}`, { body, ...options });
+  }
+
+  /**
    * List users for a developer
    *
    * @example
@@ -34,18 +46,6 @@ export class User extends APIResource {
     options?: RequestOptions,
   ): APIPromise<UserListResponse> {
     return this._client.get('/v1/user', { query, ...options });
-  }
-
-  /**
-   * Get user details by user_id (\_User.objectId) and developer association
-   *
-   * @example
-   * ```ts
-   * const userResponse = await client.user.get('user_id');
-   * ```
-   */
-  get(userID: string, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.get(path`/v1/user/${userID}`, options);
   }
 
   /**
@@ -82,15 +82,15 @@ export class User extends APIResource {
   }
 
   /**
-   * Update user details by user_id (\_User.objectId) and developer association
+   * Get user details by user_id (\_User.objectId) and developer association
    *
    * @example
    * ```ts
-   * const userResponse = await client.user.update('user_id');
+   * const userResponse = await client.user.get('user_id');
    * ```
    */
-  update(userID: string, body: UserUpdateParams, options?: RequestOptions): APIPromise<UserResponse> {
-    return this._client.put(path`/v1/user/${userID}`, { body, ...options });
+  get(userID: string, options?: RequestOptions): APIPromise<UserResponse> {
+    return this._client.get(path`/v1/user/${userID}`, options);
   }
 }
 
@@ -217,6 +217,16 @@ export interface UserCreateParams {
   type?: UserType;
 }
 
+export interface UserUpdateParams {
+  email?: string | null;
+
+  external_id?: string | null;
+
+  metadata?: { [key: string]: unknown } | null;
+
+  type?: UserType | null;
+}
+
 export interface UserListParams {
   email?: string | null;
 
@@ -253,16 +263,6 @@ export namespace UserCreateBatchParams {
   }
 }
 
-export interface UserUpdateParams {
-  email?: string | null;
-
-  external_id?: string | null;
-
-  metadata?: { [key: string]: unknown } | null;
-
-  type?: UserType | null;
-}
-
 export declare namespace User {
   export {
     type UserResponse as UserResponse,
@@ -271,9 +271,9 @@ export declare namespace User {
     type UserDeleteResponse as UserDeleteResponse,
     type UserCreateBatchResponse as UserCreateBatchResponse,
     type UserCreateParams as UserCreateParams,
+    type UserUpdateParams as UserUpdateParams,
     type UserListParams as UserListParams,
     type UserDeleteParams as UserDeleteParams,
     type UserCreateBatchParams as UserCreateBatchParams,
-    type UserUpdateParams as UserUpdateParams,
   };
 }

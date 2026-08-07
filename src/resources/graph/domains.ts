@@ -9,13 +9,6 @@ import { path } from '../../internal/utils/path';
 
 export class Domains extends APIResource {
   /**
-   * List available domains (builtins + caller's custom domains)
-   */
-  list(options?: RequestOptions): APIPromise<DomainListResponse> {
-    return this._client.get('/v1/graph/domains', options);
-  }
-
-  /**
    * Create a custom domain
    */
   create(body: DomainCreateParams, options?: RequestOptions): APIPromise<DomainCreateResponse> {
@@ -38,6 +31,13 @@ export class Domains extends APIResource {
     options?: RequestOptions,
   ): APIPromise<DomainUpdateResponse> {
     return this._client.put(path`/v1/graph/domains/${domainID}`, { body, ...options });
+  }
+
+  /**
+   * List available domains (builtins + caller's custom domains)
+   */
+  list(options?: RequestOptions): APIPromise<DomainListResponse> {
+    return this._client.get('/v1/graph/domains', options);
   }
 
   /**

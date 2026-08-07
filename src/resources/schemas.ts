@@ -87,28 +87,6 @@ export class Schemas extends APIResource {
   }
 
   /**
-   * List all schemas accessible to the authenticated user.
-   *
-   *     Returns schemas that the user owns or has read access to, including:
-   *     - Personal schemas created by the user
-   *     - Workspace schemas shared within the user's workspace (legacy)
-   *     - Namespace schemas shared within the user's namespace
-   *     - Organization schemas available to the user's organization
-   *
-   *     **Authentication Required**:
-   *     One of the following authentication methods must be used:
-   *     - Bearer token in `Authorization` header
-   *     - API Key in `X-API-Key` header
-   *     - Session token in `X-Session-Token` header
-   */
-  list(
-    query: SchemaListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<SchemaListResponse> {
-    return this._client.get('/v1/schemas', { query, ...options });
-  }
-
-  /**
    * Get a specific schema by ID.
    *
    *     Returns the complete schema definition including node types, relationship types,
@@ -137,6 +115,28 @@ export class Schemas extends APIResource {
   ): APIPromise<SchemaUpdateResponse> {
     const { body } = params;
     return this._client.put(path`/v1/schemas/${schemaID}`, { body: body, ...options });
+  }
+
+  /**
+   * List all schemas accessible to the authenticated user.
+   *
+   *     Returns schemas that the user owns or has read access to, including:
+   *     - Personal schemas created by the user
+   *     - Workspace schemas shared within the user's workspace (legacy)
+   *     - Namespace schemas shared within the user's namespace
+   *     - Organization schemas available to the user's organization
+   *
+   *     **Authentication Required**:
+   *     One of the following authentication methods must be used:
+   *     - Bearer token in `Authorization` header
+   *     - API Key in `X-API-Key` header
+   *     - Session token in `X-Session-Token` header
+   */
+  list(
+    query: SchemaListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<SchemaListResponse> {
+    return this._client.get('/v1/schemas', { query, ...options });
   }
 
   /**
@@ -1145,6 +1145,10 @@ export namespace SchemaCreateParams {
   }
 }
 
+export interface SchemaUpdateParams {
+  body: { [key: string]: unknown };
+}
+
 export interface SchemaListParams {
   /**
    * Filter by status (draft, active, deprecated, archived)
@@ -1155,10 +1159,6 @@ export interface SchemaListParams {
    * Filter by workspace ID
    */
   workspace_id?: string | null;
-}
-
-export interface SchemaUpdateParams {
-  body: { [key: string]: unknown };
 }
 
 export declare namespace Schemas {
@@ -1172,7 +1172,7 @@ export declare namespace Schemas {
     type SchemaListResponse as SchemaListResponse,
     type SchemaDeleteResponse as SchemaDeleteResponse,
     type SchemaCreateParams as SchemaCreateParams,
-    type SchemaListParams as SchemaListParams,
     type SchemaUpdateParams as SchemaUpdateParams,
+    type SchemaListParams as SchemaListParams,
   };
 }

@@ -31,21 +31,6 @@ export class Namespace extends APIResource {
   }
 
   /**
-   * List namespaces for the developer's organization.
-   *
-   * @example
-   * ```ts
-   * const namespaces = await client.namespace.list();
-   * ```
-   */
-  list(
-    query: NamespaceListParams | null | undefined = {},
-    options?: RequestOptions,
-  ): APIPromise<NamespaceListResponse> {
-    return this._client.get('/v1/namespace', { query, ...options });
-  }
-
-  /**
    * Retrieve a single namespace by ID.
    *
    * @example
@@ -75,6 +60,21 @@ export class Namespace extends APIResource {
     options?: RequestOptions,
   ): APIPromise<NamespaceUpdateResponse> {
     return this._client.put(path`/v1/namespace/${namespaceID}`, { body, ...options });
+  }
+
+  /**
+   * List namespaces for the developer's organization.
+   *
+   * @example
+   * ```ts
+   * const namespaces = await client.namespace.list();
+   * ```
+   */
+  list(
+    query: NamespaceListParams | null | undefined = {},
+    options?: RequestOptions,
+  ): APIPromise<NamespaceListResponse> {
+    return this._client.get('/v1/namespace', { query, ...options });
   }
 
   /**
@@ -577,18 +577,6 @@ export interface NamespaceCreateParams {
   rate_limits?: { [key: string]: number | null } | null;
 }
 
-export interface NamespaceListParams {
-  /**
-   * Max items to return
-   */
-  limit?: number;
-
-  /**
-   * Number of items to skip
-   */
-  skip?: number;
-}
-
 export interface NamespaceUpdateParams {
   /**
    * Default memory policy for add/search when request omits policy.
@@ -614,6 +602,18 @@ export interface NamespaceUpdateParams {
    * Updated rate limits (None values inherit from organization)
    */
   rate_limits?: { [key: string]: number | null } | null;
+}
+
+export interface NamespaceListParams {
+  /**
+   * Max items to return
+   */
+  limit?: number;
+
+  /**
+   * Number of items to skip
+   */
+  skip?: number;
 }
 
 export interface NamespaceDeleteParams {
@@ -665,8 +665,8 @@ export declare namespace Namespace {
     type NamespaceDeleteResponse as NamespaceDeleteResponse,
     type NamespaceCreateAPIKeyResponse as NamespaceCreateAPIKeyResponse,
     type NamespaceCreateParams as NamespaceCreateParams,
-    type NamespaceListParams as NamespaceListParams,
     type NamespaceUpdateParams as NamespaceUpdateParams,
+    type NamespaceListParams as NamespaceListParams,
     type NamespaceDeleteParams as NamespaceDeleteParams,
     type NamespaceCreateAPIKeyParams as NamespaceCreateAPIKeyParams,
   };

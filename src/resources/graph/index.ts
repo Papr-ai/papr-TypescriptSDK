@@ -20,6 +20,6 @@ export {
   type GraphDomainRoutingConfig,
   type GraphRerankResponse,
   type GraphTransformResponse,
-  type GraphTransformParams,
   type GraphRerankParams,
+  type GraphTransformParams,
 } from './graph';

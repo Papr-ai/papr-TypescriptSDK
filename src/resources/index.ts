@@ -8,8 +8,8 @@ export {
   type DocumentCancelProcessingResponse,
   type DocumentGetStatusResponse,
   type DocumentUploadResponse,
-  type DocumentUploadParams,
   type DocumentGetStatusParams,
+  type DocumentUploadParams,
 } from './document';
 export {
   Feedback,
@@ -27,8 +27,8 @@ export {
   type GraphDomainRoutingConfig,
   type GraphRerankResponse,
   type GraphTransformResponse,
-  type GraphTransformParams,
   type GraphRerankParams,
+  type GraphTransformParams,
 } from './graph/graph';
 export { Graphql, type GraphqlPlaygroundResponse, type GraphqlQueryResponse } from './graphql';
 export { Login, type LoginInitiateResponse } from './login';
@@ -54,12 +54,12 @@ export {
   type MemoryDeleteResponse,
   type MemoryRetrieveBatchStatusResponse,
   type MemoryRetrieveStatusResponse,
-  type MemoryAddParams,
   type MemoryUpdateParams,
   type MemoryDeleteParams,
+  type MemoryAddParams,
+  type MemoryAddBatchParams,
   type MemoryDeleteAllParams,
   type MemoryGetParams,
-  type MemoryAddBatchParams,
   type MemorySearchParams,
 } from './memory';
 export { Messages, type MessageStoreResponse, type MessageStoreParams } from './messages/messages';
@@ -75,8 +75,8 @@ export {
   type NamespaceDeleteResponse,
   type NamespaceCreateAPIKeyResponse,
   type NamespaceCreateParams,
-  type NamespaceListParams,
   type NamespaceUpdateParams,
+  type NamespaceListParams,
   type NamespaceDeleteParams,
   type NamespaceCreateAPIKeyParams,
 } from './namespace/namespace';
@@ -86,8 +86,8 @@ export {
   type OmoExportMemoriesAsJsonResponse,
   type OmoImportMemoriesResponse,
   type OmoExportMemoriesParams,
-  type OmoImportMemoriesParams,
   type OmoExportMemoriesAsJsonParams,
+  type OmoImportMemoriesParams,
 } from './omo';
 export { Organization } from './organization/organization';
 export {
@@ -101,15 +101,15 @@ export {
   type SchemaListResponse,
   type SchemaDeleteResponse,
   type SchemaCreateParams,
-  type SchemaListParams,
   type SchemaUpdateParams,
+  type SchemaListParams,
 } from './schemas';
 export {
   Sync,
   type SyncGetDeltaResponse,
   type SyncGetTiersResponse,
-  type SyncGetTiersParams,
   type SyncGetDeltaParams,
+  type SyncGetTiersParams,
 } from './sync';
 export { Telemetry, type TelemetryTrackEventResponse, type TelemetryTrackEventParams } from './telemetry';
 export { Token, type TokenCreateResponse } from './token';
@@ -121,8 +121,8 @@ export {
   type UserDeleteResponse,
   type UserCreateBatchResponse,
   type UserCreateParams,
+  type UserUpdateParams,
   type UserListParams,
   type UserDeleteParams,
   type UserCreateBatchParams,
-  type UserUpdateParams,
 } from './user';

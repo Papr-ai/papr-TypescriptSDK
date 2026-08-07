@@ -8,6 +8,21 @@ import { path } from '../../internal/utils/path';
 
 export class Instance extends APIResource {
   /**
+   * Get resolved instance configuration for a namespace (namespace > org). Passwords
+   * are masked.
+   *
+   * @example
+   * ```ts
+   * const instance = await client.namespace.instance.retrieve(
+   *   'namespace_id',
+   * );
+   * ```
+   */
+  retrieve(namespaceID: string, options?: RequestOptions): APIPromise<InstanceRetrieveResponse> {
+    return this._client.get(path`/v1/namespace/${namespaceID}/instance`, options);
+  }
+
+  /**
    * Set dedicated instance configuration for a namespace.
    *
    * @example
@@ -28,21 +43,6 @@ export class Instance extends APIResource {
       body,
       ...options,
     });
-  }
-
-  /**
-   * Get resolved instance configuration for a namespace (namespace > org). Passwords
-   * are masked.
-   *
-   * @example
-   * ```ts
-   * const instance = await client.namespace.instance.retrieve(
-   *   'namespace_id',
-   * );
-   * ```
-   */
-  retrieve(namespaceID: string, options?: RequestOptions): APIPromise<InstanceRetrieveResponse> {
-    return this._client.get(path`/v1/namespace/${namespaceID}/instance`, options);
   }
 
   /**

@@ -10,21 +10,10 @@ import { path } from '../internal/utils/path';
 
 export class Document extends APIResource {
   /**
-   * Upload and process documents using the pluggable architecture.
-   *
-   *     **Authentication Required**: Bearer token or API key
-   *
-   *     **Supported Providers**: TensorLake.ai, Reducto AI, Gemini Vision (fallback)
-   *
-   *     **Features**:
-   *     - Multi-tenant organization/namespace scoping
-   *     - Temporal workflow for durable execution
-   *     - Real-time WebSocket status updates
-   *     - Integration with Parse Server (Post/PostSocial/PageVersion)
-   *     - Automatic fallback between providers
+   * Cancel document processing
    */
-  upload(body: DocumentUploadParams, options?: RequestOptions): APIPromise<DocumentUploadResponse> {
-    return this._client.post('/v1/document', multipartFormRequestOptions({ body, ...options }, this._client));
+  cancelProcessing(uploadID: string, options?: RequestOptions): APIPromise<DocumentCancelProcessingResponse> {
+    return this._client.delete(path`/v1/document/${uploadID}`, options);
   }
 
   /**
@@ -42,10 +31,21 @@ export class Document extends APIResource {
   }
 
   /**
-   * Cancel document processing
+   * Upload and process documents using the pluggable architecture.
+   *
+   *     **Authentication Required**: Bearer token or API key
+   *
+   *     **Supported Providers**: TensorLake.ai, Reducto AI, Gemini Vision (fallback)
+   *
+   *     **Features**:
+   *     - Multi-tenant organization/namespace scoping
+   *     - Temporal workflow for durable execution
+   *     - Real-time WebSocket status updates
+   *     - Integration with Parse Server (Post/PostSocial/PageVersion)
+   *     - Automatic fallback between providers
    */
-  cancelProcessing(uploadID: string, options?: RequestOptions): APIPromise<DocumentCancelProcessingResponse> {
-    return this._client.delete(path`/v1/document/${uploadID}`, options);
+  upload(body: DocumentUploadParams, options?: RequestOptions): APIPromise<DocumentUploadResponse> {
+    return this._client.post('/v1/document', multipartFormRequestOptions({ body, ...options }, this._client));
   }
 }
 
@@ -272,6 +272,14 @@ export namespace DocumentUploadResponse {
   }
 }
 
+export interface DocumentGetStatusParams {
+  /**
+   * When true, include a `timeline` object with ordered processing steps, per-step
+   * status, and timing. Default response shape is unchanged.
+   */
+  timeline?: boolean;
+}
+
 export interface DocumentUploadParams {
   file: Uploadable;
 
@@ -335,20 +343,12 @@ export interface DocumentUploadParams {
   webhook_url?: string | null;
 }
 
-export interface DocumentGetStatusParams {
-  /**
-   * When true, include a `timeline` object with ordered processing steps, per-step
-   * status, and timing. Default response shape is unchanged.
-   */
-  timeline?: boolean;
-}
-
 export declare namespace Document {
   export {
     type DocumentCancelProcessingResponse as DocumentCancelProcessingResponse,
     type DocumentGetStatusResponse as DocumentGetStatusResponse,
     type DocumentUploadResponse as DocumentUploadResponse,
-    type DocumentUploadParams as DocumentUploadParams,
     type DocumentGetStatusParams as DocumentGetStatusParams,
+    type DocumentUploadParams as DocumentUploadParams,
   };
 }

@@ -9,6 +9,18 @@ const client = new Papr({
 
 describe('resource feedback', () => {
   // Mock server tests are disabled
+  test.skip('getByID', async () => {
+    const responsePromise = client.feedback.getByID('feedback_id');
+    const rawResponse = await responsePromise.asResponse();
+    expect(rawResponse).toBeInstanceOf(Response);
+    const response = await responsePromise;
+    expect(response).not.toBeInstanceOf(Response);
+    const dataAndResponse = await responsePromise.withResponse();
+    expect(dataAndResponse.data).toBe(response);
+    expect(dataAndResponse.response).toBe(rawResponse);
+  });
+
+  // Mock server tests are disabled
   test.skip('submit: only required params', async () => {
     const responsePromise = client.feedback.submit({
       feedbackData: { feedbackSource: 'inline', feedbackType: 'thumbs_up' },
@@ -109,17 +121,5 @@ describe('resource feedback', () => {
       ],
       session_context: { foo: 'bar' },
     });
-  });
-
-  // Mock server tests are disabled
-  test.skip('getByID', async () => {
-    const responsePromise = client.feedback.getByID('feedback_id');
-    const rawResponse = await responsePromise.asResponse();
-    expect(rawResponse).toBeInstanceOf(Response);
-    const response = await responsePromise;
-    expect(response).not.toBeInstanceOf(Response);
-    const dataAndResponse = await responsePromise.withResponse();
-    expect(dataAndResponse.data).toBe(response);
-    expect(dataAndResponse.response).toBe(rawResponse);
   });
 });
