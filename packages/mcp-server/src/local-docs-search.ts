@@ -74,14 +74,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst userResponse = await client.user.create({ external_id: 'user123' });\n\nconsole.log(userResponse.external_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/user \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "external_id": "user123",\n          "email": "user@example.com",\n          "metadata": {\n            "name": "bar",\n            "preferences": "bar"\n          },\n          "type": "developerUser"\n        }\'',
+      },
       python: {
         method: 'user.create',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nuser_response = client.user.create(\n    external_id="user123",\n)\nprint(user_response.external_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/user \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "external_id": "user123",\n          "email": "user@example.com",\n          "metadata": {\n            "name": "bar",\n            "preferences": "bar"\n          },\n          "type": "developerUser"\n        }\'',
       },
     },
   },
@@ -104,13 +104,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst users = await client.user.list();\n\nconsole.log(users.code);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/user \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'user.list',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nusers = client.user.list()\nprint(users.code)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/user \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -133,13 +133,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst userResponse = await client.user.get('user_id');\n\nconsole.log(userResponse.external_id);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'user.get',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nuser_response = client.user.get(\n    "user_id",\n)\nprint(user_response.external_id)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -163,14 +163,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst user = await client.user.delete('user_id');\n\nconsole.log(user.user_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'user.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nuser = client.user.delete(\n    user_id="user_id",\n)\nprint(user.user_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -196,14 +196,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.user.createBatch({ users: [{ external_id: 'user123' }] });\n\nconsole.log(response.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/user/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "users": [\n            {\n              "external_id": "user123",\n              "email": "user@example.com",\n              "metadata": {\n                "name": "bar",\n                "preferences": "bar"\n              },\n              "type": "developerUser"\n            }\n          ]\n        }\'',
+      },
       python: {
         method: 'user.create_batch',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.user.create_batch(\n    users=[{\n        "external_id": "user123"\n    }],\n)\nprint(response.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/user/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "users": [\n            {\n              "external_id": "user123",\n              "email": "user@example.com",\n              "metadata": {\n                "name": "bar",\n                "preferences": "bar"\n              },\n              "type": "developerUser"\n            }\n          ]\n        }\'',
       },
     },
   },
@@ -232,14 +232,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst userResponse = await client.user.update('user_id');\n\nconsole.log(userResponse.external_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "email": "updated.user@example.com",\n          "external_id": "updated_user_123",\n          "metadata": {\n            "name": "bar",\n            "preferences": "bar"\n          },\n          "type": "developerUser"\n        }\'',
+      },
       python: {
         method: 'user.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nuser_response = client.user.update(\n    user_id="user_id",\n)\nprint(user_response.external_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/user/$USER_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "email": "updated.user@example.com",\n          "external_id": "updated_user_123",\n          "metadata": {\n            "name": "bar",\n            "preferences": "bar"\n          },\n          "type": "developerUser"\n        }\'',
       },
     },
   },
@@ -281,14 +281,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst addMemoryResponse = await client.memory.add({\n  content: 'Meeting with John Smith from Acme Corp about the Q4 project timeline',\n});\n\nconsole.log(addMemoryResponse.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"content\\": \\"Meeting with John Smith from Acme Corp about the Q4 project timeline\\",\n          \\"context\\": [\n            {\n              \\"content\\": \\"Let\'s discuss the Q4 project timeline with John\\",\n              \\"role\\": \\"user\\"\n            },\n            {\n              \\"content\\": \\"I\'ll help you prepare for the timeline discussion. What are your key milestones?\\",\n              \\"role\\": \\"assistant\\"\n            }\n          ],\n          \\"external_user_id\\": \\"user_alice_123\\",\n          \\"metadata\\": {\n            \\"conversationId\\": \\"conv-123\\",\n            \\"customMetadata\\": {\n              \\"meeting_type\\": \\"planning\\",\n              \\"project_id\\": \\"q4-roadmap\\"\n            },\n            \\"hierarchical_structures\\": \\"Business/Meetings/Project Planning\\",\n            \\"location\\": \\"Conference Room A\\",\n            \\"sourceUrl\\": \\"https://calendar.example.com/meeting/123\\",\n            \\"topics\\": [\n              \\"product\\",\n              \\"planning\\",\n              \\"meetings\\"\n            ]\n          },\n          \\"policy\\": {\n            \\"acl\\": {\n              \\"read\\": [\n                \\"external_user:user_alice_123\\"\n              ],\n              \\"write\\": [\n                \\"external_user:user_alice_123\\"\n              ]\n            },\n            \\"consent\\": \\"implicit\\",\n            \\"graph\\": {\n              \\"link_to\\": [\n                \\"Person:name~John Smith\\",\n                \\"Company:name~Acme Corp\\",\n                \\"Meeting:title~Q4 project timeline\\"\n              ],\n              \\"mode\\": \\"auto\\"\n            },\n            \\"risk\\": \\"none\\",\n            \\"transform_embedding\\": {\n              \\"domain_id\\": \\"general\\",\n              \\"mode\\": \\"auto\\"\n            }\n          },\n          \\"type\\": \\"text\\"\n        }"',
+      },
       python: {
         method: 'memory.add',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nadd_memory_response = client.memory.add(\n    content="Meeting with John Smith from Acme Corp about the Q4 project timeline",\n)\nprint(add_memory_response.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"content\\": \\"Meeting with John Smith from Acme Corp about the Q4 project timeline\\",\n          \\"context\\": [\n            {\n              \\"content\\": \\"Let\'s discuss the Q4 project timeline with John\\",\n              \\"role\\": \\"user\\"\n            },\n            {\n              \\"content\\": \\"I\'ll help you prepare for the timeline discussion. What are your key milestones?\\",\n              \\"role\\": \\"assistant\\"\n            }\n          ],\n          \\"external_user_id\\": \\"user_alice_123\\",\n          \\"metadata\\": {\n            \\"conversationId\\": \\"conv-123\\",\n            \\"customMetadata\\": {\n              \\"meeting_type\\": \\"planning\\",\n              \\"project_id\\": \\"q4-roadmap\\"\n            },\n            \\"hierarchical_structures\\": \\"Business/Meetings/Project Planning\\",\n            \\"location\\": \\"Conference Room A\\",\n            \\"sourceUrl\\": \\"https://calendar.example.com/meeting/123\\",\n            \\"topics\\": [\n              \\"product\\",\n              \\"planning\\",\n              \\"meetings\\"\n            ]\n          },\n          \\"policy\\": {\n            \\"acl\\": {\n              \\"read\\": [\n                \\"external_user:user_alice_123\\"\n              ],\n              \\"write\\": [\n                \\"external_user:user_alice_123\\"\n              ]\n            },\n            \\"consent\\": \\"implicit\\",\n            \\"graph\\": {\n              \\"link_to\\": [\n                \\"Person:name~John Smith\\",\n                \\"Company:name~Acme Corp\\",\n                \\"Meeting:title~Q4 project timeline\\"\n              ],\n              \\"mode\\": \\"auto\\"\n            },\n            \\"risk\\": \\"none\\",\n            \\"transform_embedding\\": {\n              \\"domain_id\\": \\"general\\",\n              \\"mode\\": \\"auto\\"\n            }\n          },\n          \\"type\\": \\"text\\"\n        }"',
       },
     },
   },
@@ -327,14 +327,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst memory = await client.memory.update('memory_id');\n\nconsole.log(memory.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"content\\": \\"Updated meeting notes from the product planning session\\",\n          \\"context\\": [\n            {\n              \\"content\\": \\"Let\'s update the Q2 product roadmap\\",\n              \\"role\\": \\"user\\"\n            },\n            {\n              \\"content\\": \\"I\'ll help you update the roadmap. What changes would you like to make?\\",\n              \\"role\\": \\"assistant\\"\n            }\n          ],\n          \\"metadata\\": {\n            \\"emoji tags\\": [\n              \\"string\\"\n            ],\n            \\"emotion tags\\": [\n              \\"string\\"\n            ],\n            \\"topics\\": [\n              \\"string\\"\n            ]\n          },\n          \\"relationships_json\\": [\n            {\n              \\"relation_type\\": \\"updates\\",\n              \\"metadata\\": {\n                \\"relevance\\": \\"bar\\"\n              },\n              \\"related_item_id\\": \\"previous_memory_item_id\\",\n              \\"related_item_type\\": \\"TextMemoryItem\\"\n            }\n          ],\n          \\"type\\": \\"text\\"\n        }"',
+      },
       python: {
         method: 'memory.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nmemory = client.memory.update(\n    memory_id="memory_id",\n)\nprint(memory.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"content\\": \\"Updated meeting notes from the product planning session\\",\n          \\"context\\": [\n            {\n              \\"content\\": \\"Let\'s update the Q2 product roadmap\\",\n              \\"role\\": \\"user\\"\n            },\n            {\n              \\"content\\": \\"I\'ll help you update the roadmap. What changes would you like to make?\\",\n              \\"role\\": \\"assistant\\"\n            }\n          ],\n          \\"metadata\\": {\n            \\"emoji tags\\": [\n              \\"string\\"\n            ],\n            \\"emotion tags\\": [\n              \\"string\\"\n            ],\n            \\"topics\\": [\n              \\"string\\"\n            ]\n          },\n          \\"relationships_json\\": [\n            {\n              \\"relation_type\\": \\"updates\\",\n              \\"metadata\\": {\n                \\"relevance\\": \\"bar\\"\n              },\n              \\"related_item_id\\": \\"previous_memory_item_id\\",\n              \\"related_item_type\\": \\"TextMemoryItem\\"\n            }\n          ],\n          \\"type\\": \\"text\\"\n        }"',
       },
     },
   },
@@ -358,14 +358,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst memory = await client.memory.delete('memory_id');\n\nconsole.log(memory.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'memory.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nmemory = client.memory.delete(\n    memory_id="memory_id",\n)\nprint(memory.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -394,14 +394,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst batchMemoryResponse = await client.memory.deleteAll();\n\nconsole.log(batchMemoryResponse.batch_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/all \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'memory.delete_all',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nbatch_memory_response = client.memory.delete_all()\nprint(batch_memory_response.batch_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/all \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -430,14 +430,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst searchResponse = await client.memory.get('memory_id');\n\nconsole.log(searchResponse.search_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'memory.get',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nsearch_response = client.memory.get(\n    memory_id="memory_id",\n)\nprint(search_response.search_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/$MEMORY_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -477,14 +477,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst batchMemoryResponse = await client.memory.addBatch({\n  memories: [\n    { content: 'Meeting notes from the product planning session' },\n    { content: 'Follow-up tasks from the planning meeting' },\n  ],\n});\n\nconsole.log(batchMemoryResponse.batch_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memories": [\n            {\n              "content": "Meeting notes from the product planning session",\n              "metadata": {\n                "createdAt": "2024-03-21T10:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            },\n            {\n              "content": "Follow-up tasks from the planning meeting",\n              "metadata": {\n                "createdAt": "2024-03-21T11:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            }\n          ],\n          "batch_size": 10,\n          "external_user_id": "external_user_abcde",\n          "user_id": "internal_user_id_12345"\n        }\'',
+      },
       python: {
         method: 'memory.add_batch',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nbatch_memory_response = client.memory.add_batch(\n    memories=[{\n        "content": "Meeting notes from the product planning session"\n    }, {\n        "content": "Follow-up tasks from the planning meeting"\n    }],\n)\nprint(batch_memory_response.batch_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memories": [\n            {\n              "content": "Meeting notes from the product planning session",\n              "metadata": {\n                "createdAt": "2024-03-21T10:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            },\n            {\n              "content": "Follow-up tasks from the planning meeting",\n              "metadata": {\n                "createdAt": "2024-03-21T11:00:00Z",\n                "emoji tags": [\n                  "string"\n                ],\n                "emotion tags": [\n                  "string"\n                ],\n                "topics": [\n                  "string"\n                ]\n              },\n              "type": "text"\n            }\n          ],\n          "batch_size": 10,\n          "external_user_id": "external_user_abcde",\n          "user_id": "internal_user_id_12345"\n        }\'',
       },
     },
   },
@@ -528,14 +528,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst searchResponse = await client.memory.search({\n  query:\n    \"Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they've suggested.\",\n});\n\nconsole.log(searchResponse.search_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/search \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"query\\": \\"Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they\'ve suggested.\\",\n          \\"enable_agentic_graph\\": false,\n          \\"external_user_id\\": \\"external_user_123\\",\n          \\"rank_results\\": true\n        }"',
+      },
       python: {
         method: 'memory.search',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nsearch_response = client.memory.search(\n    query="Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they\'ve suggested.",\n)\nprint(search_response.search_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/search \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d "{\n          \\"query\\": \\"Find recurring customer complaints about API performance from the last month. Focus on issues that multiple customers have mentioned and any specific feature requests or workflow improvements they\'ve suggested.\\",\n          \\"enable_agentic_graph\\": false,\n          \\"external_user_id\\": \\"external_user_123\\",\n          \\"rank_results\\": true\n        }"',
       },
     },
   },
@@ -558,14 +558,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.memory.retrieveStatus('memory_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/status/$MEMORY_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'memory.retrieve_status',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.memory.retrieve_status(\n    "memory_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/status/$MEMORY_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -588,14 +588,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.memory.retrieveBatchStatus('batch_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/memory/batch/status/$BATCH_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'memory.retrieve_batch_status',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.memory.retrieve_batch_status(\n    "batch_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/memory/batch/status/$BATCH_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -626,14 +626,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst feedbackResponse = await client.feedback.submit({\n  feedbackData: { feedbackSource: 'inline', feedbackType: 'thumbs_up' },\n  search_id: 'abc123def456',\n});\n\nconsole.log(feedbackResponse.feedback_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/feedback \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "feedbackData": {\n            "feedbackSource": "inline",\n            "feedbackType": "thumbs_up",\n            "assistantMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            },\n            "citedMemoryIds": [\n              "mem_123",\n              "mem_456"\n            ],\n            "citedNodeIds": [\n              "node_123",\n              "node_456"\n            ],\n            "feedbackImpact": "positive",\n            "feedbackProcessed": true,\n            "feedbackScore": 1,\n            "feedbackText": "This answer was very helpful and accurate",\n            "feedbackValue": "helpful",\n            "userMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            }\n          },\n          "search_id": "abc123def456",\n          "external_user_id": "dev_api_key_123",\n          "user_id": "abc123def456"\n        }\'',
+      },
       python: {
         method: 'feedback.submit',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nfeedback_response = client.feedback.submit(\n    feedback_data={\n        "feedback_source": "inline",\n        "feedback_type": "thumbs_up",\n    },\n    search_id="abc123def456",\n)\nprint(feedback_response.feedback_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/feedback \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "feedbackData": {\n            "feedbackSource": "inline",\n            "feedbackType": "thumbs_up",\n            "assistantMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            },\n            "citedMemoryIds": [\n              "mem_123",\n              "mem_456"\n            ],\n            "citedNodeIds": [\n              "node_123",\n              "node_456"\n            ],\n            "feedbackImpact": "positive",\n            "feedbackProcessed": true,\n            "feedbackScore": 1,\n            "feedbackText": "This answer was very helpful and accurate",\n            "feedbackValue": "helpful",\n            "userMessage": {\n              "className": "PostMessage",\n              "objectId": "abc123def456",\n              "__type": "Pointer"\n            }\n          },\n          "search_id": "abc123def456",\n          "external_user_id": "dev_api_key_123",\n          "user_id": "abc123def456"\n        }\'',
       },
     },
   },
@@ -660,14 +660,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst batchResponse = await client.feedback.submitBatch({\n  feedback_items: [\n    {\n      feedbackData: { feedbackSource: 'inline', feedbackType: 'thumbs_up' },\n      search_id: 'abc123def456',\n    },\n  ],\n});\n\nconsole.log(batchResponse.feedback_ids);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/feedback/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "feedback_items": [\n            {\n              "feedbackData": {\n                "feedbackSource": "inline",\n                "feedbackType": "thumbs_up",\n                "assistantMessage": {\n                  "className": "PostMessage",\n                  "objectId": "abc123def456",\n                  "__type": "Pointer"\n                },\n                "citedMemoryIds": [\n                  "mem_123",\n                  "mem_456"\n                ],\n                "citedNodeIds": [\n                  "node_123",\n                  "node_456"\n                ],\n                "feedbackImpact": "positive",\n                "feedbackProcessed": true,\n                "feedbackScore": 1,\n                "feedbackText": "This answer was very helpful and accurate",\n                "feedbackValue": "helpful",\n                "userMessage": {\n                  "className": "PostMessage",\n                  "objectId": "abc123def456",\n                  "__type": "Pointer"\n                }\n              },\n              "search_id": "abc123def456",\n              "external_user_id": "dev_api_key_123",\n              "user_id": "abc123def456"\n            }\n          ]\n        }\'',
+      },
       python: {
         method: 'feedback.submit_batch',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nbatch_response = client.feedback.submit_batch(\n    feedback_items=[{\n        "feedback_data": {\n            "feedback_source": "inline",\n            "feedback_type": "thumbs_up",\n        },\n        "search_id": "abc123def456",\n    }],\n)\nprint(batch_response.feedback_ids)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/feedback/batch \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "feedback_items": [\n            {\n              "feedbackData": {\n                "feedbackSource": "inline",\n                "feedbackType": "thumbs_up",\n                "assistantMessage": {\n                  "className": "PostMessage",\n                  "objectId": "abc123def456",\n                  "__type": "Pointer"\n                },\n                "citedMemoryIds": [\n                  "mem_123",\n                  "mem_456"\n                ],\n                "citedNodeIds": [\n                  "node_123",\n                  "node_456"\n                ],\n                "feedbackImpact": "positive",\n                "feedbackProcessed": true,\n                "feedbackScore": 1,\n                "feedbackText": "This answer was very helpful and accurate",\n                "feedbackValue": "helpful",\n                "userMessage": {\n                  "className": "PostMessage",\n                  "objectId": "abc123def456",\n                  "__type": "Pointer"\n                }\n              },\n              "search_id": "abc123def456",\n              "external_user_id": "dev_api_key_123",\n              "user_id": "abc123def456"\n            }\n          ]\n        }\'',
       },
     },
   },
@@ -691,14 +691,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst feedbackResponse = await client.feedback.getByID('feedback_id');\n\nconsole.log(feedbackResponse.feedback_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/feedback/$FEEDBACK_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'feedback.get_by_id',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nfeedback_response = client.feedback.get_by_id(\n    "feedback_id",\n)\nprint(feedback_response.feedback_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/feedback/$FEEDBACK_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -739,14 +739,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import fs from 'fs';\nimport Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.document.upload({ file: fs.createReadStream('path/to/file') });\n\nconsole.log(response.document_status);",
       },
+      http: {
+        example:
+          "curl https://memory.papr.ai/v1/document \\\n    -H 'Content-Type: multipart/form-data' \\\n    -H \"Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN\" \\\n    -F 'file=@/path/to/file'",
+      },
       python: {
         method: 'document.upload',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nresponse = client.document.upload(\n    file=b"Example data",\n)\nprint(response.document_status)',
-      },
-      http: {
-        example:
-          "curl https://memory.papr.ai/v1/document \\\n    -H 'Content-Type: multipart/form-data' \\\n    -H \"Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN\" \\\n    -F 'file=@/path/to/file'",
       },
     },
   },
@@ -770,14 +770,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.document.getStatus('upload_id');\n\nconsole.log(response.upload_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/document/status/$UPLOAD_ID \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
+      },
       python: {
         method: 'document.get_status',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nresponse = client.document.get_status(\n    upload_id="upload_id",\n)\nprint(response.upload_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/document/status/$UPLOAD_ID \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
       },
     },
   },
@@ -799,14 +799,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.document.cancelProcessing('upload_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/document/$UPLOAD_ID \\\n    -X DELETE \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
+      },
       python: {
         method: 'document.cancel_processing',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nresponse = client.document.cancel_processing(\n    "upload_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/document/$UPLOAD_ID \\\n    -X DELETE \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
       },
     },
   },
@@ -852,14 +852,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst schema = await client.schemas.create({ name: 'x' });\n\nconsole.log(schema.success);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/schemas \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "x"\n        }\'',
+      },
       python: {
         method: 'schemas.create',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nschema = client.schemas.create(\n    name="x",\n)\nprint(schema.success)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/schemas \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "x"\n        }\'',
       },
     },
   },
@@ -883,13 +883,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst schemas = await client.schemas.list();\n\nconsole.log(schemas.success);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/schemas \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'schemas.list',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nschemas = client.schemas.list()\nprint(schemas.success)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/schemas \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -913,14 +913,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst schema = await client.schemas.retrieve('schema_id');\n\nconsole.log(schema.success);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/schemas/$SCHEMA_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'schemas.retrieve',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nschema = client.schemas.retrieve(\n    "schema_id",\n)\nprint(schema.success)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/schemas/$SCHEMA_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -944,14 +944,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst schema = await client.schemas.update('schema_id', { body: { foo: 'bar' } });\n\nconsole.log(schema.success);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/schemas/$SCHEMA_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "foo": "bar"\n        }\'',
+      },
       python: {
         method: 'schemas.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nschema = client.schemas.update(\n    schema_id="schema_id",\n    body={\n        "foo": "bar"\n    },\n)\nprint(schema.success)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/schemas/$SCHEMA_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "foo": "bar"\n        }\'',
       },
     },
   },
@@ -974,14 +974,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst schema = await client.schemas.delete('schema_id');\n\nconsole.log(schema.message);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/schemas/$SCHEMA_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'schemas.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nschema = client.schemas.delete(\n    "schema_id",\n)\nprint(schema.message)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/schemas/$SCHEMA_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1002,13 +1002,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.graphql.playground();\n\nconsole.log(response);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/graphql \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'graphql.playground',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.graphql.playground()\nprint(response)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/graphql \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1030,14 +1030,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.graphql.query();\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/graphql \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'graphql.query',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.graphql.query()\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/graphql \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1077,14 +1077,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.messages.store({\n  content: 'Can you help me plan the Q4 product roadmap?',\n  role: 'user',\n  sessionId: 'session_123',\n});\n\nconsole.log(response.content);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/messages \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "Can you help me plan the Q4 product roadmap?",\n          "role": "user",\n          "sessionId": "session_123",\n          "metadata": {\n            "location": "Office",\n            "topics": [\n              "product",\n              "planning",\n              "roadmap"\n            ]\n          },\n          "process_messages": true,\n          "title": "Q4 Product Planning"\n        }\'',
+      },
       python: {
         method: 'messages.store',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.messages.store(\n    content="Can you help me plan the Q4 product roadmap?",\n    role="user",\n    session_id="session_123",\n)\nprint(response.content)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/messages \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "content": "Can you help me plan the Q4 product roadmap?",\n          "role": "user",\n          "sessionId": "session_123",\n          "metadata": {\n            "location": "Office",\n            "topics": [\n              "product",\n              "planning",\n              "roadmap"\n            ]\n          },\n          "process_messages": true,\n          "title": "Q4 Product Planning"\n        }\'',
       },
     },
   },
@@ -1108,14 +1108,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.messages.sessions.retrieveHistory('session_id');\n\nconsole.log(response.messages);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'messages.sessions.retrieve_history',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.messages.sessions.retrieve_history(\n    session_id="session_id",\n)\nprint(response.messages)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1138,14 +1138,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.messages.sessions.retrieveStatus('session_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID/status \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
+      },
       python: {
         method: 'messages.sessions.retrieve_status',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nresponse = client.messages.sessions.retrieve_status(\n    "session_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID/status \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
       },
     },
   },
@@ -1169,14 +1169,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.messages.sessions.compress('session_id');\n\nconsole.log(response.session_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID/compress \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
+      },
       python: {
         method: 'messages.sessions.compress',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nresponse = client.messages.sessions.compress(\n    "session_id",\n)\nprint(response.session_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID/compress \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
       },
     },
   },
@@ -1199,14 +1199,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst response = await client.messages.sessions.process('session_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID/process \\\n    -X POST \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
+      },
       python: {
         method: 'messages.sessions.process',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nresponse = client.messages.sessions.process(\n    "session_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID/process \\\n    -X POST \\\n    -H "Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN"',
       },
     },
   },
@@ -1229,14 +1229,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  bearerToken: process.env['PAPR_MEMORY_BEARER_TOKEN'], // This is the default and can be omitted\n});\n\nconst session = await client.messages.sessions.update('session_id');\n\nconsole.log(session);",
       },
+      http: {
+        example:
+          "curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID \\\n    -X PATCH \\\n    -H 'Content-Type: application/json' \\\n    -H \"Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN\" \\\n    -d '{}'",
+      },
       python: {
         method: 'messages.sessions.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    bearer_token=os.environ.get("PAPR_MEMORY_BEARER_TOKEN"),  # This is the default and can be omitted\n)\nsession = client.messages.sessions.update(\n    session_id="session_id",\n)\nprint(session)',
-      },
-      http: {
-        example:
-          "curl https://memory.papr.ai/v1/messages/sessions/$SESSION_ID \\\n    -X PATCH \\\n    -H 'Content-Type: application/json' \\\n    -H \"Authorization: Bearer $PAPR_MEMORY_BEARER_TOKEN\" \\\n    -d '{}'",
       },
     },
   },
@@ -1259,14 +1259,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.omo.exportMemories({ memory_ids: ['string'] });\n\nconsole.log(response.count);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/omo/export \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memory_ids": [\n            "string"\n          ]\n        }\'',
+      },
       python: {
         method: 'omo.export_memories',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.omo.export_memories(\n    memory_ids=["string"],\n)\nprint(response.count)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/omo/export \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memory_ids": [\n            "string"\n          ]\n        }\'',
       },
     },
   },
@@ -1290,14 +1290,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.omo.importMemories({ memories: [{ foo: 'bar' }] });\n\nconsole.log(response.memory_ids);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/omo/import \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memories": [\n            {\n              "foo": "bar"\n            }\n          ]\n        }\'',
+      },
       python: {
         method: 'omo.import_memories',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.omo.import_memories(\n    memories=[{\n        "foo": "bar"\n    }],\n)\nprint(response.memory_ids)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/omo/import \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "memories": [\n            {\n              "foo": "bar"\n            }\n          ]\n        }\'',
       },
     },
   },
@@ -1319,14 +1319,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.omo.exportMemoriesAsJson({ memory_ids: 'memory_ids' });\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/omo/export.json \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'omo.export_memories_as_json',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.omo.export_memories_as_json(\n    memory_ids="memory_ids",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/omo/export.json \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1362,14 +1362,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.sync.getTiers();\n\nconsole.log(response.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/sync/tiers \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "embed_limit": 200,\n          "embed_model": "sbert",\n          "external_user_id": "external_user_abc",\n          "include_embeddings": false,\n          "max_tier0": 300,\n          "max_tier1": 1000,\n          "user_id": "internal_user_123",\n          "workspace_id": "workspace_123"\n        }\'',
+      },
       python: {
         method: 'sync.get_tiers',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.sync.get_tiers()\nprint(response.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/sync/tiers \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "embed_limit": 200,\n          "embed_model": "sbert",\n          "external_user_id": "external_user_abc",\n          "include_embeddings": false,\n          "max_tier0": 300,\n          "max_tier1": 1000,\n          "user_id": "internal_user_123",\n          "workspace_id": "workspace_123"\n        }\'',
       },
     },
   },
@@ -1397,13 +1397,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.sync.getDelta();\n\nconsole.log(response);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/sync/delta \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'sync.get_delta',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.sync.get_delta()\nprint(response)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/sync/delta \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1432,14 +1432,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst namespace = await client.namespace.create({ name: 'acme-production' });\n\nconsole.log(namespace.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "acme-production",\n          "environment_type": "production",\n          "is_active": true\n        }\'',
+      },
       python: {
         method: 'namespace.create',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nnamespace = client.namespace.create(\n    name="acme-production",\n)\nprint(namespace.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "acme-production",\n          "environment_type": "production",\n          "is_active": true\n        }\'',
       },
     },
   },
@@ -1462,13 +1462,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst namespaces = await client.namespace.list();\n\nconsole.log(namespaces.code);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/namespace \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'namespace.list',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nnamespaces = client.namespace.list()\nprint(namespaces.code)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/namespace \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1491,14 +1491,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst namespace = await client.namespace.retrieve('namespace_id');\n\nconsole.log(namespace.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'namespace.retrieve',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nnamespace = client.namespace.retrieve(\n    "namespace_id",\n)\nprint(namespace.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1528,14 +1528,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst namespace = await client.namespace.update('namespace_id');\n\nconsole.log(namespace.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "environment_type": "staging",\n          "is_active": true,\n          "name": "acme-staging"\n        }\'',
+      },
       python: {
         method: 'namespace.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nnamespace = client.namespace.update(\n    namespace_id="namespace_id",\n)\nprint(namespace.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "environment_type": "staging",\n          "is_active": true,\n          "name": "acme-staging"\n        }\'',
       },
     },
   },
@@ -1564,14 +1564,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst namespace = await client.namespace.delete('namespace_id');\n\nconsole.log(namespace.namespace_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'namespace.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nnamespace = client.namespace.delete(\n    namespace_id="namespace_id",\n)\nprint(namespace.namespace_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1600,14 +1600,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.namespace.createAPIKey('namespace_id', {\n  name: 'Acme Production API Key',\n});\n\nconsole.log(response.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/api-keys \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "Acme Production API Key",\n          "environment": "production",\n          "permissions": [\n            "read",\n            "write",\n            "delete"\n          ]\n        }\'',
+      },
       python: {
         method: 'namespace.create_api_key',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.namespace.create_api_key(\n    namespace_id="namespace_id",\n    name="Acme Production API Key",\n)\nprint(response.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/api-keys \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "name": "Acme Production API Key",\n          "environment": "production",\n          "permissions": [\n            "read",\n            "write",\n            "delete"\n          ]\n        }\'',
       },
     },
   },
@@ -1636,14 +1636,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.namespace.instance.update('namespace_id');\n\nconsole.log(instance.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          },\n          "provider": "gcp",\n          "region": "us-west1"\n        }\'',
+      },
       python: {
         method: 'namespace.instance.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.namespace.instance.update(\n    namespace_id="namespace_id",\n)\nprint(instance.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          },\n          "provider": "gcp",\n          "region": "us-west1"\n        }\'',
       },
     },
   },
@@ -1667,14 +1667,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.namespace.instance.retrieve('namespace_id');\n\nconsole.log(instance.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'namespace.instance.retrieve',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.namespace.instance.retrieve(\n    "namespace_id",\n)\nprint(instance.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1697,14 +1697,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.namespace.instance.delete('namespace_id');\n\nconsole.log(instance.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'namespace.instance.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.namespace.instance.delete(\n    "namespace_id",\n)\nprint(instance.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/namespace/$NAMESPACE_ID/instance \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1733,14 +1733,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.organization.instance.update();\n\nconsole.log(instance.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          },\n          "provider": "gcp",\n          "region": "us-west1"\n        }\'',
+      },
       python: {
         method: 'organization.instance.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.organization.instance.update()\nprint(instance.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X PUT \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "neo4j": {\n            "bolt_url": "neo4j+s://abc12345.databases.neo4j.io",\n            "password": "my-secret-password",\n            "graphql_endpoint": "https://abc12345-graphql.production-orch-0042.neo4j.io/graphql",\n            "username": "neo4j"\n          },\n          "provider": "gcp",\n          "region": "us-west1"\n        }\'',
       },
     },
   },
@@ -1762,14 +1762,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.organization.instance.retrieve();\n\nconsole.log(instance.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'organization.instance.retrieve',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.organization.instance.retrieve()\nprint(instance.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/organization/instance \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1791,14 +1791,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst instance = await client.organization.instance.delete();\n\nconsole.log(instance.code);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'organization.instance.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ninstance = client.organization.instance.delete()\nprint(instance.code)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/organization/instance \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1819,13 +1819,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.getUsage();\n\nconsole.log(response);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/ai/usage \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'ai.get_usage',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.get_usage()\nprint(response)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/ai/usage \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1846,14 +1846,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.openai.createResponse();\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/openai/responses \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'ai.openai.create_response',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.openai.create_response()\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/ai/openai/responses \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1874,14 +1874,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.openai.chat.createCompletion();\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/openai/chat/completions \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'ai.openai.chat.create_completion',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.openai.chat.create_completion()\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/ai/openai/chat/completions \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1902,14 +1902,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.anthropic.sendMessage();\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/anthropic/messages \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'ai.anthropic.send_message',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.anthropic.send_message()\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/ai/anthropic/messages \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1931,14 +1931,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.google.models.generateContent('model_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/google/models/$MODEL_ID:generateContent \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'ai.google.models.generate_content',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.google.models.generate_content(\n    "model_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/ai/google/models/$MODEL_ID:generateContent \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1960,14 +1960,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.ai.google.models.streamGenerateContent('model_id');\n\nconsole.log(response);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/ai/google/models/$MODEL_ID:streamGenerateContent \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'ai.google.models.stream_generate_content',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.ai.google.models.stream_generate_content(\n    "model_id",\n)\nprint(response)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/ai/google/models/$MODEL_ID:streamGenerateContent \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -1993,14 +1993,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.telemetry.trackEvent({ events: [{ event_name: 'event_name' }] });\n\nconsole.log(response.events_processed);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/telemetry/events \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "events": [\n            {\n              "event_name": "event_name"\n            }\n          ]\n        }\'',
+      },
       python: {
         method: 'telemetry.track_event',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.telemetry.track_event(\n    events=[{\n        "event_name": "event_name"\n    }],\n)\nprint(response.events_processed)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/telemetry/events \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "events": [\n            {\n              "event_name": "event_name"\n            }\n          ]\n        }\'',
       },
     },
   },
@@ -2022,13 +2022,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.login.initiate();\n\nconsole.log(response.message);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/login \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'login.initiate',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.login.initiate()\nprint(response.message)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/login \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2050,13 +2050,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.callback.process();\n\nconsole.log(response.code);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/callback \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'callback.process',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.callback.process()\nprint(response.code)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/callback \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2079,14 +2079,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst token = await client.token.create();\n\nconsole.log(token.user_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/token \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'token.create',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ntoken = client.token.create()\nprint(token.user_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/token \\\n    -X POST \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2109,13 +2109,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst me = await client.me.retrieve();\n\nconsole.log(me.user_id);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/me \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'me.retrieve',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nme = client.me.retrieve()\nprint(me.user_id)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/me \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2137,13 +2137,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.logout.perform();\n\nconsole.log(response.logout_url);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/logout \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'logout.perform',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.logout.perform()\nprint(response.logout_url)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/logout \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2175,14 +2175,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.graph.transform({ text: 'text' });\n\nconsole.log(response.id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/graph/transform \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "text": "text"\n        }\'',
+      },
       python: {
         method: 'graph.transform',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.graph.transform(\n    text="text",\n)\nprint(response.id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/graph/transform \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "text": "text"\n        }\'',
       },
     },
   },
@@ -2218,14 +2218,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst response = await client.graph.rerank({ documents: ['string'], query: 'string' });\n\nconsole.log(response.id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/graph/rerank \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "documents": [\n            "string"\n          ],\n          "query": "string"\n        }\'',
+      },
       python: {
         method: 'graph.rerank',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\nresponse = client.graph.rerank(\n    documents=["string"],\n    query="string",\n)\nprint(response.id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/graph/rerank \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "documents": [\n            "string"\n          ],\n          "query": "string"\n        }\'',
       },
     },
   },
@@ -2247,13 +2247,13 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst domains = await client.graph.domains.list();\n\nconsole.log(domains.domains);",
       },
+      http: {
+        example: 'curl https://memory.papr.ai/v1/graph/domains \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'graph.domains.list',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ndomains = client.graph.domains.list()\nprint(domains.domains)',
-      },
-      http: {
-        example: 'curl https://memory.papr.ai/v1/graph/domains \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2284,14 +2284,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst domain = await client.graph.domains.create({\n  description: 'description',\n  domain_id: 'domain_id',\n  name: 'name',\n  signals: [{ description: 'description', name: 'name' }],\n});\n\nconsole.log(domain.domain_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/graph/domains \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "description": "description",\n          "domain_id": "domain_id",\n          "name": "name",\n          "signals": [\n            {\n              "description": "description",\n              "name": "name"\n            }\n          ]\n        }\'',
+      },
       python: {
         method: 'graph.domains.create',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ndomain = client.graph.domains.create(\n    description="description",\n    domain_id="domain_id",\n    name="name",\n    signals=[{\n        "description": "description",\n        "name": "name",\n    }],\n)\nprint(domain.domain_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/graph/domains \\\n    -H \'Content-Type: application/json\' \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY" \\\n    -d \'{\n          "description": "description",\n          "domain_id": "domain_id",\n          "name": "name",\n          "signals": [\n            {\n              "description": "description",\n              "name": "name"\n            }\n          ]\n        }\'',
       },
     },
   },
@@ -2314,14 +2314,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst domain = await client.graph.domains.retrieve('domain_id');\n\nconsole.log(domain.domain_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/graph/domains/$DOMAIN_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'graph.domains.retrieve',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ndomain = client.graph.domains.retrieve(\n    "domain_id",\n)\nprint(domain.domain_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/graph/domains/$DOMAIN_ID \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
@@ -2351,14 +2351,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst domain = await client.graph.domains.update('domain_id');\n\nconsole.log(domain.domain_id);",
       },
+      http: {
+        example:
+          "curl https://memory.papr.ai/v1/graph/domains/$DOMAIN_ID \\\n    -X PUT \\\n    -H 'Content-Type: application/json' \\\n    -H \"X-API-Key: $PAPR_MEMORY_API_KEY\" \\\n    -d '{}'",
+      },
       python: {
         method: 'graph.domains.update',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ndomain = client.graph.domains.update(\n    domain_id="domain_id",\n)\nprint(domain.domain_id)',
-      },
-      http: {
-        example:
-          "curl https://memory.papr.ai/v1/graph/domains/$DOMAIN_ID \\\n    -X PUT \\\n    -H 'Content-Type: application/json' \\\n    -H \"X-API-Key: $PAPR_MEMORY_API_KEY\" \\\n    -d '{}'",
       },
     },
   },
@@ -2380,14 +2380,14 @@ const EMBEDDED_METHODS: MethodEntry[] = [
         example:
           "import Papr from '@papr/memory';\n\nconst client = new Papr({\n  xAPIKey: process.env['PAPR_MEMORY_API_KEY'], // This is the default and can be omitted\n});\n\nconst domain = await client.graph.domains.delete('domain_id');\n\nconsole.log(domain.domain_id);",
       },
+      http: {
+        example:
+          'curl https://memory.papr.ai/v1/graph/domains/$DOMAIN_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
+      },
       python: {
         method: 'graph.domains.delete',
         example:
           'import os\nfrom papr_memory import Papr\n\nclient = Papr(\n    x_api_key=os.environ.get("PAPR_MEMORY_API_KEY"),  # This is the default and can be omitted\n)\ndomain = client.graph.domains.delete(\n    "domain_id",\n)\nprint(domain.domain_id)',
-      },
-      http: {
-        example:
-          'curl https://memory.papr.ai/v1/graph/domains/$DOMAIN_ID \\\n    -X DELETE \\\n    -H "X-API-Key: $PAPR_MEMORY_API_KEY"',
       },
     },
   },
