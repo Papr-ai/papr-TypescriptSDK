@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.9.0 (2026-09-01)
+
+Full Changelog: [v2.8.0...v2.9.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.8.0...v2.9.0)
+
+### Features
+
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([cf55b0a](https://github.com/Papr-ai/papr-TypescriptSDK/commit/cf55b0a8f7b216ef93bad2da500a611428469e59))
+
+
+### Bug Fixes
+
+* **ci:** bump @arethetypeswrong/cli to ^0.18.0 and run CI workflows on Node 24 ([e680b1e](https://github.com/Papr-ai/papr-TypescriptSDK/commit/e680b1efa7e71b4eeec6631749ed280a60ee1cd6))
+* **client:** send content-type header for requests with an omitted optional body ([6fb5975](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6fb5975cdc8c44165c21ab8cd69b845865d8dcf7))
+* **stlc:** stop hand-edited CI workflows from blocking seals and builds ([da00052](https://github.com/Papr-ai/papr-TypescriptSDK/commit/da00052ac8e1edfe691140482bf5dff3d9bce564))
+
+
+### Chores
+
+* **internal:** codegen related update ([267ad56](https://github.com/Papr-ai/papr-TypescriptSDK/commit/267ad5652a5d6ffbb2dfba24fa4f07758a878bb2))
+* **internal:** codegen related update ([95ed5bb](https://github.com/Papr-ai/papr-TypescriptSDK/commit/95ed5bb90a3b190d10c3b347644a12e12ed38399))
+
+
+### Documentation
+
+* **mcp:** document code execution modes and the local code runner ([7c7cecf](https://github.com/Papr-ai/papr-TypescriptSDK/commit/7c7cecf6d87abd0405ba4c6fc3c0fdc21b4030b5))
+
 ## 2.8.0 (2026-06-11)
 
 Full Changelog: [v2.7.0...v2.8.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.7.0...v2.8.0)
