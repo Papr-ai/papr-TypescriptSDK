@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.1](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.9.0...v2.9.1) (2026-09-19)
+
+
+### Chores
+
+* reconcile production into staging ([6b722fb](https://github.com/Papr-ai/papr-TypescriptSDK/commit/6b722fb6d14309155cdb10315ca305ba0399c412))
+
 ## 2.9.0 (2026-09-01)
 
 Full Changelog: [v2.8.0...v2.9.0](https://github.com/Papr-ai/papr-TypescriptSDK/compare/v2.8.0...v2.9.0)
