@@ -228,9 +228,22 @@ export function buildMemoryPolicy(
     edgeConstraints?: Array<Record<string, unknown>>;
     schemaId?: string;
     mode?: 'auto' | 'manual';
+    /** OMO safety: never lower than the schema's floors (the server enforces this). */
+    risk?: 'none' | 'sensitive' | 'flagged';
+    consent?: 'explicit' | 'implicit' | 'terms' | 'none';
+    acl?: { read?: string[]; write?: string[] };
   } = {},
 ): MemoryPolicy {
   const policy: Record<string, unknown> = {};
+  if (options.risk !== undefined) {
+    policy['risk'] = options.risk;
+  }
+  if (options.consent !== undefined) {
+    policy['consent'] = options.consent;
+  }
+  if (options.acl !== undefined) {
+    policy['acl'] = options.acl;
+  }
   if (options.mode !== undefined) {
     policy['mode'] = options.mode;
   }
