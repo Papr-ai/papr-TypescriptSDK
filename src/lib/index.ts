@@ -66,3 +66,16 @@ export type { Condition } from './conditions';
 
 // Builders
 export { buildLinkTo, buildSchemaParams, buildMemoryPolicy, serializeSetValues } from './builders';
+
+// Schema packs (registry, install, diff, versions)
+export { schemaPacks, parsePackRef } from './packs';
+export type {
+  SchemaPacks,
+  PackSummary,
+  PackDetail,
+  InstallResult,
+  SchemaChange,
+  SchemaVersion,
+  ChangeKindLabel,
+  RawClient,
+} from './packs';
