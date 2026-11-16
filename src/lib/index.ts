@@ -66,3 +66,7 @@ export type { Condition } from './conditions';
 
 // Builders
 export { buildLinkTo, buildSchemaParams, buildMemoryPolicy, serializeSetValues } from './builders';
+
+// Code context: sync a local code index with Papr Memory
+export { CodeContext, gitBlobSha } from './codeContext';
+export type { CodeChunk, CodeHit, CodeSearchOptions, CodeEmbedModel, PostClient } from './codeContext';
