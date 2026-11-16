@@ -58,7 +58,11 @@ describe('CodeContext', () => {
     const { client, calls } = fakeClient({
       '/v1/memory/batch': () => (n++ === 1 ? { errors: [{ index: 3, error: 'x' }] } : { successful: [] }),
     });
-    const chunks = Array.from({ length: 300 }, (_, i) => ({ content: String(i), blobSha: 'c'.repeat(40), chunk: i }));
+    const chunks = Array.from({ length: 300 }, (_, i) => ({
+      content: String(i),
+      blobSha: 'c'.repeat(40),
+      chunk: i,
+    }));
     const out = await new CodeContext(client, 'm').add(chunks);
     expect(calls).toHaveLength(2);
     expect(calls[1]!.body.memories).toHaveLength(44);
@@ -73,20 +77,45 @@ describe('CodeContext', () => {
             {
               id: 'p1',
               content: '',
-              customMetadata: { score: 0.9, blob_sha: 'a'.repeat(40), chunk: 2, line_start: 10, line_end: 40, path_hint: 'x.ts' },
+              customMetadata: {
+                score: 0.9,
+                blob_sha: 'a'.repeat(40),
+                chunk: 2,
+                line_start: 10,
+                line_end: 40,
+                path_hint: 'x.ts',
+              },
             },
           ],
         },
       },
     });
-    const hits = await new CodeContext(client, 'm').search('q', { queryEmbedding: [1], repoIds: ['r'], limit: 5 });
-    expect(hits[0]).toMatchObject({ id: 'p1', score: 0.9, chunk: 2, lineStart: 10, lineEnd: 40, pathHint: 'x.ts' });
+    const hits = await new CodeContext(client, 'm').search('q', {
+      queryEmbedding: [1],
+      repoIds: ['r'],
+      limit: 5,
+    });
+    expect(hits[0]).toMatchObject({
+      id: 'p1',
+      score: 0.9,
+      chunk: 2,
+      lineStart: 10,
+      lineEnd: 40,
+      pathHint: 'x.ts',
+    });
     expect(hits[0]!.content).toBeUndefined();
-    expect(calls[0]!.body.code_search).toMatchObject({ embed_model: 'm', query_embedding: [1], repo_ids: ['r'], limit: 5 });
+    expect(calls[0]!.body.code_search).toMatchObject({
+      embed_model: 'm',
+      query_embedding: [1],
+      repo_ids: ['r'],
+      limit: 5,
+    });
   });
 
   test('missing dedupes, lowercases and chunks by 5000', async () => {
-    const { client, calls } = fakeClient({ '/v1/memory/code/missing': (b: any) => ({ missing: b.blob_shas.slice(0, 1) }) });
+    const { client, calls } = fakeClient({
+      '/v1/memory/code/missing': (b: any) => ({ missing: b.blob_shas.slice(0, 1) }),
+    });
     const shas = Array.from({ length: 6000 }, (_, i) => i.toString(16).padStart(40, '0'));
     const out = await new CodeContext(client, 'm').missing([...shas, shas[0]!.toUpperCase()]);
     expect(calls).toHaveLength(2);

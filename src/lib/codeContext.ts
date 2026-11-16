@@ -99,14 +99,19 @@ export class CodeContext {
   }
 
   /** Upsert chunks (idempotent). Batches of 256. Returns stored ids and per-item errors. */
-  async add(chunks: CodeChunk[]): Promise<{ ids: string[]; errors: Array<{ index: number; error: string }> }> {
+  async add(
+    chunks: CodeChunk[],
+  ): Promise<{ ids: string[]; errors: Array<{ index: number; error: string }> }> {
     const ids: string[] = [];
     const errors: Array<{ index: number; error: string }> = [];
     for (let i = 0; i < chunks.length; i += MAX_BATCH) {
       const part = chunks.slice(i, i + MAX_BATCH);
-      const res: any = await this.client.post('/v1/memory/batch', { body: { memories: part.map((c) => this.item(c)) } });
+      const res: any = await this.client.post('/v1/memory/batch', {
+        body: { memories: part.map((c) => this.item(c)) },
+      });
       for (const ok of res?.successful ?? []) for (const d of ok?.data ?? []) ids.push(d.memoryId);
-      for (const e of res?.errors ?? []) errors.push({ index: e.index < 0 ? -1 : e.index + i, error: e.error });
+      for (const e of res?.errors ?? [])
+        errors.push({ index: e.index < 0 ? -1 : e.index + i, error: e.error });
     }
     return { ids, errors };
   }
